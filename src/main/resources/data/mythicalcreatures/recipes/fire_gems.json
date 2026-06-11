@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "mythicalcreatures:scorching_bone"
+    },
+    {
+      "item": "mythicalcreatures:gems"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:fire_gems"
+  }
+}

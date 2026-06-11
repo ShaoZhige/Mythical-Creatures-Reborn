@@ -33,6 +33,22 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
                     .strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
 
+    public static final RegistryObject<Block> BONE_BRICK = register("bone_brick_block",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
+
+    public static final RegistryObject<Block> BONE_ORE = register("bone_ore",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(3.0F, 9.0F).sound(SoundType.BONE_BLOCK)));
+
+    public static final RegistryObject<Block> BONE_WALL = register("bone_wall",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
+
+    public static final RegistryObject<Block> GLOWING_BONE = register("glowing_bone_block",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 12)));
+
     public static final RegistryObject<Block> CRYSTAL = register("crystal_block",
             () -> new CrystalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIAMOND)
                     .strength(30.0F, 45.0F).sound(SoundType.GLASS).lightLevel(s -> 8)));

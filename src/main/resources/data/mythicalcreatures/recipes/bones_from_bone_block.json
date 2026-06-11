@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:bone_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:bones_from_bone_block"
+  }
+}

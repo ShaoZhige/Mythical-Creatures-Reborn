@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MeteorFireballEntity extends ThrowableItemProjectile {
 
-    private static final float DAMAGE = 6.0F;
+    private static final float DAMAGE = 13.0F;
     private boolean hasHit = false;
 
     public MeteorFireballEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
@@ -36,7 +36,7 @@ public class MeteorFireballEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide && !hasHit) {
             hasHit = true;
             result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), DAMAGE);
-            result.getEntity().setRemainingFireTicks(60);
+            result.getEntity().setRemainingFireTicks(100);
             explode(result.getLocation());
         }
     }
@@ -53,12 +53,12 @@ public class MeteorFireballEntity extends ThrowableItemProjectile {
     private void explode(Vec3 pos) {
         ServerLevel serverLevel = (ServerLevel) this.level();
         // 大爆炸
-        serverLevel.explode(this, pos.x, pos.y, pos.z, 3.0F, Level.ExplosionInteraction.MOB);
+        serverLevel.explode(this, pos.x, pos.y, pos.z, 5.0F, Level.ExplosionInteraction.TNT);
         // 黑色粒子
-        for (int i = 0; i < 60; i++) {
-            double dx = (this.random.nextDouble() - 0.5) * 5.0;
-            double dy = this.random.nextDouble() * 4.0;
-            double dz = (this.random.nextDouble() - 0.5) * 5.0;
+        for (int i = 0; i < 100; i++) {
+            double dx = (this.random.nextDouble() - 0.5) * 7.0;
+            double dy = this.random.nextDouble() * 5.0;
+            double dz = (this.random.nextDouble() - 0.5) * 7.0;
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
                     pos.x + dx, pos.y + dy, pos.z + dz,
                     1, dx * 0.15, dy * 0.15, dz * 0.15, 0.05);

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  B",
+    " FU",
+    "B  "
+  ],
+  "key": {
+    "B": {
+      "item": "mythicalcreatures:reinforced_bone"
+    },
+    "F": {
+      "item": "mythicalcreatures:fire_gems"
+    },
+    "U": {
+      "item": "mythicalcreatures:unstable_item"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bowser_rod"
+  }
+}

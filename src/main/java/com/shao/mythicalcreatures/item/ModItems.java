@@ -36,6 +36,14 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.BEAR_FUR.get(), new Item.Properties()));
     public static final RegistryObject<Item> BONE_BLOCK = ITEMS.register("bone_block",
             () -> new BlockItem(ModBlocks.BONE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> BONE_BRICK_BLOCK = ITEMS.register("bone_brick_block",
+            () -> new BlockItem(ModBlocks.BONE_BRICK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> BONE_ORE = ITEMS.register("bone_ore",
+            () -> new BlockItem(ModBlocks.BONE_ORE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> BONE_WALL = ITEMS.register("bone_wall",
+            () -> new BlockItem(ModBlocks.BONE_WALL.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GLOWING_BONE_BLOCK = ITEMS.register("glowing_bone_block",
+            () -> new BlockItem(ModBlocks.GLOWING_BONE.get(), new Item.Properties()));
     public static final RegistryObject<Item> CRYSTAL_BLOCK = ITEMS.register("crystal_block",
             () -> new BlockItem(ModBlocks.CRYSTAL.get(), new Item.Properties()));
     public static final RegistryObject<Item> DARK_CRYSTAL_BLOCK = ITEMS.register("dark_crystal_block",
@@ -77,7 +85,7 @@ public class ModItems {
             () -> new TwilightStarItem(new Item.Properties()));
     public static final RegistryObject<RainbowCloudItem> RAINBOW_CLOUD_ITEM = ITEMS.register("rainbow_cloud",
             () -> new RainbowCloudItem(new Item.Properties()));
-    public static final RegistryObject<Item> DIAMOND_GEMS = ITEMS.register("diamond_gems",
+    public static final RegistryObject<Item> PRECIOUS_GEM = ITEMS.register("precious_gem",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> BUTTERFLIES = ITEMS.register("butterflies",
             () -> new Item(new Item.Properties()));
@@ -89,18 +97,18 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
 
     // 可爱标志
-    public static final RegistryObject<Item> APPLEJACK_CUTIEMARK = ITEMS.register("applejack_cutiemark",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> PINKIE_PIE_CUTIEMARK = ITEMS.register("pinkie_pie_cutiemark",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> FLUTTERSHY_CUTIEMARK = ITEMS.register("fluttershy_cutiemark",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> RARITY_CUTIEMARK = ITEMS.register("rarity_cutiemark",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> RAINBOW_DASH_CUTIEMARK = ITEMS.register("rainbow_dash_cutiemark",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> TWILIGHT_CUTIEMARK = ITEMS.register("twilight_cutiemark",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<CutieMarkItem> APPLEJACK_CUTIEMARK = ITEMS.register("applejack_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.applejack"));
+    public static final RegistryObject<CutieMarkItem> PINKIE_PIE_CUTIEMARK = ITEMS.register("pinkie_pie_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.pinkie_pie"));
+    public static final RegistryObject<CutieMarkItem> FLUTTERSHY_CUTIEMARK = ITEMS.register("fluttershy_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.fluttershy"));
+    public static final RegistryObject<CutieMarkItem> RARITY_CUTIEMARK = ITEMS.register("rarity_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.rarity"));
+    public static final RegistryObject<CutieMarkItem> RAINBOW_DASH_CUTIEMARK = ITEMS.register("rainbow_dash_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.rainbow_dash"));
+    public static final RegistryObject<CutieMarkItem> TWILIGHT_CUTIEMARK = ITEMS.register("twilight_cutiemark",
+            () -> new CutieMarkItem(new Item.Properties().stacksTo(1), "tooltip.mythicalcreatures.cutiemark.twilight"));
 
     public static final RegistryObject<Item> BEAR_FUR = ITEMS.register("bear_fur",
             () -> new Item(new Item.Properties()));

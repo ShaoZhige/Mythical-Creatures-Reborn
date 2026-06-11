@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:bear_fur_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:bear_fur_from_bear_fur_block"
+  }
+}

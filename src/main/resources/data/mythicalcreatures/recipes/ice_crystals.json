@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:ice"
+    },
+    {
+      "item": "mythicalcreatures:gems"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:ice_crystals"
+  }
+}

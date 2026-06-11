@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " K ",
+    "KEK",
+    " K "
+  ],
+  "key": {
+    "K": {
+      "item": "mythicalcreatures:king_gems"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:eye_of_bowser"
+  }
+}

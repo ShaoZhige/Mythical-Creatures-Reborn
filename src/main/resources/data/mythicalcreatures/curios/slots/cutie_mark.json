@@ -1,0 +1,8 @@
+{
+  "order": 9999,
+  "size": 1,
+  "icon": "mythicalcreatures:slot/empty_cutie_mark_slot",
+  "add_cosmetic": false,
+  "render_toggle": true,
+  "drop_rule": "ALWAYS_KEEP"
+}

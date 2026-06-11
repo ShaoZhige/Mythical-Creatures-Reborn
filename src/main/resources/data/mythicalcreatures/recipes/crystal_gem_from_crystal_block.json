@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:crystal_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:crystal_gem_from_crystal_block"
+  }
+}

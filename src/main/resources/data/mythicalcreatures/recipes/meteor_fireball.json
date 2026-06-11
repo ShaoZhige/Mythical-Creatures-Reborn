@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "FUF",
+    " F "
+  ],
+  "key": {
+    "F": {
+      "item": "mythicalcreatures:fire_gems"
+    },
+    "U": {
+      "item": "mythicalcreatures:unstable_item"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:meteor_fireball"
+  }
+}

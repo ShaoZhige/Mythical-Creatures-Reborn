@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:hard_apple_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:hardened_apple_from_hard_apple_block"
+  }
+}

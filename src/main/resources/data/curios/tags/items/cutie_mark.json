@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "mythicalcreatures:applejack_cutiemark",
+    "mythicalcreatures:pinkie_pie_cutiemark",
+    "mythicalcreatures:fluttershy_cutiemark",
+    "mythicalcreatures:rarity_cutiemark",
+    "mythicalcreatures:rainbow_dash_cutiemark",
+    "mythicalcreatures:twilight_cutiemark"
+  ]
+}

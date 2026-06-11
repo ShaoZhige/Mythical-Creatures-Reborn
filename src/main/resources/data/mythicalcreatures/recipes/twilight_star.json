@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " M ",
+    "MTM",
+    " M "
+  ],
+  "key": {
+    "T": {
+      "item": "mythicalcreatures:twilight_gems"
+    },
+    "M": {
+      "item": "mythicalcreatures:magic_shards"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:twilight_star"
+  }
+}

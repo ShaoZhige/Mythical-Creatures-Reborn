@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:dark_crystal_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:dark_crystal_from_dark_crystal_block"
+  }
+}

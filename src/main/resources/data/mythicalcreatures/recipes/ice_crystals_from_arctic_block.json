@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:arctic_block"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:ice_crystals_from_arctic_block"
+  }
+}

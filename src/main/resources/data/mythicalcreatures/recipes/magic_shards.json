@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythicalcreatures:magic_gems"
+    }
+  ],
+  "result": {
+    "item": "mythicalcreatures:magic_shards"
+  }
+}

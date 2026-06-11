@@ -11,12 +11,16 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -50,6 +54,21 @@ public class MythicalCreaturesMod {
         TABS.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
+
+        // Curios 联动：仅在客户端且 Curios 已加载时注册渲染器
+        if (FMLEnvironment.dist == Dist.CLIENT && ModList.get().isLoaded("curios")) {
+            modEventBus.addListener(this::onCuriosClientSetup);
+        }
+    }
+
+    private void onCuriosClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            try {
+                Class.forName("com.shao.mythicalcreatures.client.CuriosIntegration")
+                        .getMethod("registerRenderers")
+                        .invoke(null);
+            } catch (Exception ignored) {}
+        });
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

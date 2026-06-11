@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H H",
+    "HHH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "mythicalcreatures:rainbow_dash_cutiemark"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:rainbow_dash_chestplate"
+  }
+}

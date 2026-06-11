@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BGB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "mythicalcreatures:bone_block"
+    },
+    "G": {
+      "item": "mythicalcreatures:precious_gem"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bone_ore"
+  }
+}

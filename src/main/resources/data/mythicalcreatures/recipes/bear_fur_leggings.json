@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "H H",
+    "H H"
+  ],
+  "key": {
+    "H": {
+      "item": "mythicalcreatures:bear_fur"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bear_fur_leggings"
+  }
+}

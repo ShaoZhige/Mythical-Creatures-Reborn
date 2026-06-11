@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "mythicalcreatures:bone_brick_block"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bone_wall"
+  }
+}

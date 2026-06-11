@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GEG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "mythicalcreatures:magic_gems"
+    },
+    "E": {
+      "item": "mythicalcreatures:twilicorn_magic_egg"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:twilicorn_block"
+  }
+}

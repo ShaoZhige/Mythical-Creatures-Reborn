@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  M",
+    " B ",
+    "B  "
+  ],
+  "key": {
+    "B": {
+      "item": "mythicalcreatures:bones"
+    },
+    "M": {
+      "item": "mythicalcreatures:magic_shards"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bone_wand"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RMR"
+  ],
+  "key": {
+    "R": {
+      "item": "mythicalcreatures:raindrops"
+    },
+    "M": {
+      "item": "mythicalcreatures:magic_shards"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:rainbow_cloud"
+  }
+}

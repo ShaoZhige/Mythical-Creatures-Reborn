@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "mythicalcreatures:apples"
+  },
+  "result": "mythicalcreatures:hardened_apple",
+  "experience": 0.3,
+  "cookingtime": 200
+}

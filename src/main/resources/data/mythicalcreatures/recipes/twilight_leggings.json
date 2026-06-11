@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "H H",
+    "H H"
+  ],
+  "key": {
+    "H": {
+      "item": "mythicalcreatures:magic_gems"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:twilight_leggings"
+  }
+}

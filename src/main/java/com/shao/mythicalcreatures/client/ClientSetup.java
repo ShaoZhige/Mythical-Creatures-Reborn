@@ -7,6 +7,7 @@ import com.shao.mythicalcreatures.client.renderer.RainbowBeamRenderer;
 import com.shao.mythicalcreatures.client.renderer.TwilightMagicRenderer;
 import com.shao.mythicalcreatures.client.renderer.TwilightSparkleRenderer;
 import com.shao.mythicalcreatures.entity.ModEntities;
+import com.shao.mythicalcreatures.client.renderer.ScaledThrownItemRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -26,7 +27,8 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.TWILIGHT_MAGIC.get(), TwilightMagicRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_BEAM.get(), RainbowBeamRenderer::new);
         event.registerEntityRenderer(ModEntities.PHOENIX_FEATHER.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.METEOR_FIREBALL.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.METEOR_FIREBALL.get(),
+                ctx -> new ScaledThrownItemRenderer<>(ctx, 2.0F));
     }
 
     @SubscribeEvent

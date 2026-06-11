@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "H H",
+    "H H"
+  ],
+  "key": {
+    "H": {
+      "item": "mythicalcreatures:hardened_apple"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:apple_leggings"
+  }
+}
