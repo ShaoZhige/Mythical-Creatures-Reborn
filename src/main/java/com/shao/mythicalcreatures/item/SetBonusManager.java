@@ -143,17 +143,49 @@ public class SetBonusManager {
      * 被 {@code MythicalCreaturesMod.commonSetup} 调用。
      */
     public static void registerAllSets() {
-        // === 苹果嘉儿套装 ===
+        // === 苹果嘉儿套装 — 全套伤害吸收 I ===
         registerSet("applejack", "苹果嘉儿套装", ModItems.APPLEJACK_HELMET, ModItems.APPLEJACK_CHESTPLATE,
                 ModItems.APPLEJACK_LEGGINGS, ModItems.APPLEJACK_BOOTS,
-                bonuses().id("applejack").maxHealth(30.0).build(), null);
+                bonuses().id("applejack").build(),
+                (player, wearing) -> {
+                    if (wearing) {
+                        if (!player.hasEffect(net.minecraft.world.effect.MobEffects.ABSORPTION)) {
+                            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                                    net.minecraft.world.effect.MobEffects.ABSORPTION,
+                                    -1, 0, false, false, true));
+                        }
+                    } else {
+                        player.removeEffect(net.minecraft.world.effect.MobEffects.ABSORPTION);
+                    }
+                });
 
-        // === 紫悦套装 — 数值对标苹果嘉儿，全套生命更高 ===
+        // === 紫悦套装 — 全套 +20 最大生命 ===
         registerSet("twilight", "紫悦套装", ModItems.TWILIGHT_HELMET, ModItems.TWILIGHT_CHESTPLATE,
                 ModItems.TWILIGHT_LEGGINGS, ModItems.TWILIGHT_BOOTS,
-                bonuses().id("twilight").maxHealth(40.0).build(), null);
+                bonuses().id("twilight").maxHealth(20.0).build(), null);
 
-        // === 云宝套装 — 数值低于AJ，散件加速，全套飞行+免摔落 ===
+        // === 库巴套装 — 全套 +15 最大生命 + 防火 ===
+        registerSet("bowsers", "库巴套装", ModItems.BOWSERS_HELMET, ModItems.BOWSERS_CHESTPLATE,
+                ModItems.BOWSERS_LEGGINGS, ModItems.BOWSERS_BOOTS,
+                bonuses().id("bowsers").maxHealth(15.0).build(),
+                (player, wearing) -> {
+                    if (wearing) {
+                        if (!player.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) {
+                            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                                    net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE,
+                                    -1, 0, false, false, true));
+                        }
+                    } else {
+                        player.removeEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
+                    }
+                });
+
+        // === 熊皮套装 — 全套 +4 攻击伤害 ===
+        registerSet("bear_fur", "熊皮套装", ModItems.BEAR_FUR_HELMET, ModItems.BEAR_FUR_CHESTPLATE,
+                ModItems.BEAR_FUR_LEGGINGS, ModItems.BEAR_FUR_BOOTS,
+                bonuses().id("bear_fur").attackDamage(4.0).build(), null);
+
+        // === 云宝套装 — 飞行 + 免疫摔落（摔落在 ModEvents 处理） ===
         registerSet("rainbow_dash", "云宝套装", ModItems.RAINBOW_DASH_HELMET, ModItems.RAINBOW_DASH_CHESTPLATE,
                 ModItems.RAINBOW_DASH_LEGGINGS, ModItems.RAINBOW_DASH_BOOTS,
                 bonuses().id("rainbow_dash").build(),

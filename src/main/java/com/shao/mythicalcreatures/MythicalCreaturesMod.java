@@ -52,7 +52,6 @@ public class MythicalCreaturesMod {
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
         TABS.register(modEventBus);
-
         modEventBus.addListener(this::commonSetup);
 
         // Curios 联动：仅在客户端且 Curios 已加载时注册渲染器

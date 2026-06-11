@@ -12,4 +12,6 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> BLEEDING = EFFECTS.register("bleeding",
             BleedingEffect::new);
+    public static final RegistryObject<MobEffect> REPAIR = EFFECTS.register("repair",
+            RepairEffect::new);
 }

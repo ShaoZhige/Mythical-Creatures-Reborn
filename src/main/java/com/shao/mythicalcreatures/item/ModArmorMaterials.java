@@ -63,25 +63,25 @@ public class ModArmorMaterials {
     public static final ArmorMaterial DASH = new ArmorMaterial() {
         @Override public int getDurabilityForType(ArmorItem.Type type) {
             return switch (type) {
-                case HELMET -> 1500;
-                case CHESTPLATE -> 2200;
-                case LEGGINGS -> 2000;
-                case BOOTS -> 1750;
+                case HELMET -> 363;
+                case CHESTPLATE -> 528;
+                case LEGGINGS -> 495;
+                case BOOTS -> 429;
             };
         }
         @Override public int getDefenseForType(ArmorItem.Type type) {
             return switch (type) {
-                case HELMET -> 3;
-                case CHESTPLATE -> 8;
-                case LEGGINGS -> 6;
-                case BOOTS -> 3;
+                case HELMET -> 2;
+                case CHESTPLATE -> 7;
+                case LEGGINGS -> 5;
+                case BOOTS -> 2;
             };
         }
         @Override public int getEnchantmentValue() { return 25; }
         @Override public net.minecraft.sounds.SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_DIAMOND; }
         @Override public Ingredient getRepairIngredient() { return Ingredient.EMPTY; }
         @Override public String getName() { return "mythicalcreatures:dash"; }
-        @Override public float getToughness() { return 1.5F; }
+        @Override public float getToughness() { return 0.0F; }
         @Override public float getKnockbackResistance() { return 0.0F; }
     };
 

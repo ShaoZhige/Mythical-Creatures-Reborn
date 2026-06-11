@@ -1,6 +1,7 @@
 package com.shao.mythicalcreatures.event;
 
 import com.shao.mythicalcreatures.MythicalCreaturesMod;
+import com.shao.mythicalcreatures.effect.ModEffects;
 import com.shao.mythicalcreatures.item.ModItems;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -17,6 +18,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * 可爱标志 Buff：无限时长，1.5 秒检查一次，放入给予、取出移除。
@@ -25,24 +27,24 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = MythicalCreaturesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CutieMarkHandler {
 
-    private record EffectInfo(MobEffect effect, int amplifier) {}
+    private record EffectInfo(Supplier<MobEffect> effect, int amplifier) {}
 
     private static final Map<RegistryObject<? extends Item>, EffectInfo[]> CUTIEMARK_EFFECTS = new LinkedHashMap<>();
 
     static {
         CUTIEMARK_EFFECTS.put(ModItems.APPLEJACK_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.DIG_SPEED, 1)});
+                new EffectInfo(() -> MobEffects.DIG_SPEED, 1)});
         CUTIEMARK_EFFECTS.put(ModItems.PINKIE_PIE_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.JUMP, 1)});
+                new EffectInfo(() -> MobEffects.JUMP, 1)});
         CUTIEMARK_EFFECTS.put(ModItems.FLUTTERSHY_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.REGENERATION, 0)});
+                new EffectInfo(() -> MobEffects.REGENERATION, 0)});
         CUTIEMARK_EFFECTS.put(ModItems.RARITY_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.LUCK, 1)});
+                new EffectInfo(ModEffects.REPAIR, 0)});
         CUTIEMARK_EFFECTS.put(ModItems.RAINBOW_DASH_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.MOVEMENT_SPEED, 1)});
+                new EffectInfo(() -> MobEffects.MOVEMENT_SPEED, 1)});
         CUTIEMARK_EFFECTS.put(ModItems.TWILIGHT_CUTIEMARK, new EffectInfo[]{
-                new EffectInfo(MobEffects.WATER_BREATHING, 0),
-                new EffectInfo(MobEffects.NIGHT_VISION, 0)});
+                new EffectInfo(() -> MobEffects.WATER_BREATHING, 0),
+                new EffectInfo(() -> MobEffects.NIGHT_VISION, 0)});
     }
 
     @SubscribeEvent
@@ -58,7 +60,7 @@ public class CutieMarkHandler {
             boolean found = hasItem(player, item);
 
             for (EffectInfo info : entry.getValue()) {
-                MobEffect type = info.effect();
+                MobEffect type = info.effect().get();
                 int ourLevel = info.amplifier();
 
                 if (found) {
