@@ -8,7 +8,7 @@
 |---|---|
 | 版本 | 1.1.0-Forge-1.20.1 |
 | 加载器 | Forge 47.2.0+ |
-| 作者 | Shao_Zhige |
+| 作者 | Shao_Zhige / Holy Light Radiance / fffqu |
 | 许可 | MIT |
 
 ## 内容
