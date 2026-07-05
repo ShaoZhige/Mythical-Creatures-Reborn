@@ -10,10 +10,10 @@
       "item": "mythicalcreatures:bear_fur"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {
-    "item": "mythicalcreatures:bear_shovel"
+    "item": "mythicalcreatures:bear_claw_shovel"
   }
 }

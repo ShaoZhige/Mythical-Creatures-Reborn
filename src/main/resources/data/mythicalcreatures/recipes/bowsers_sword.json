@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "#",
+    "S"
+  ],
+  "key": {
+    "#": {
+      "item": "mythicalcreatures:scorching_bone"
+    },
+    "S": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:bowsers_sword"
+  }
+}

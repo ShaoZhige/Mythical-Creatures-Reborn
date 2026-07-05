@@ -138,10 +138,10 @@ public class ModArmorMaterials {
     public static final ArmorMaterial APPLE_ARMOR = new ArmorMaterial() {
         @Override public int getDurabilityForType(ArmorItem.Type type) {
             return switch (type) {
-                case HELMET -> 675;
-                case CHESTPLATE -> 980;
-                case LEGGINGS -> 920;
-                case BOOTS -> 800;
+                case HELMET -> 110;
+                case CHESTPLATE -> 160;
+                case LEGGINGS -> 150;
+                case BOOTS -> 130;
             };
         }
         @Override public int getDefenseForType(ArmorItem.Type type) {

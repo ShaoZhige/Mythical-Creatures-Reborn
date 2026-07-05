@@ -2,7 +2,6 @@ package com.shao.mythicalcreatures.client;
 
 import com.shao.mythicalcreatures.MythicalCreaturesMod;
 import com.shao.mythicalcreatures.client.model.TwilightMagicModel;
-import com.shao.mythicalcreatures.client.model.TwilightSparkleModel;
 import com.shao.mythicalcreatures.client.renderer.RainbowBeamRenderer;
 import com.shao.mythicalcreatures.client.renderer.TwilightMagicRenderer;
 import com.shao.mythicalcreatures.client.renderer.TwilightSparkleRenderer;
@@ -24,16 +23,15 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.APPLE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.TWILIGHT_SPARKLE.get(), TwilightSparkleRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_DASH_SLASH.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.TWILIGHT_MAGIC.get(), TwilightMagicRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_BEAM.get(), RainbowBeamRenderer::new);
         event.registerEntityRenderer(ModEntities.PHOENIX_FEATHER.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.METEOR_FIREBALL.get(),
                 ctx -> new ScaledThrownItemRenderer<>(ctx, 2.0F));
+        event.registerEntityRenderer(ModEntities.TWILIGHT_MAGIC.get(), TwilightMagicRenderer::new);
     }
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(TwilightSparkleModel.LAYER_LOCATION, TwilightSparkleModel::createBodyLayer);
         event.registerLayerDefinition(TwilightMagicModel.LAYER, TwilightMagicModel::createBodyLayer);
     }
 }

@@ -1,15 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "B",
-    "S"
+    "   ",
+    "  I",
+    " S "
   ],
   "key": {
-    "B": {
-      "item": "mythicalcreatures:reinforced_bone"
+    "I": {
+      "tag": "forge:ingots/iron"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

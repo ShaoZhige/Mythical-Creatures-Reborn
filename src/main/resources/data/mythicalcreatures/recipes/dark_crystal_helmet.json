@@ -1,15 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "HHH",
-    "H H"
+    "###",
+    "###",
+    "###"
   ],
   "key": {
-    "H": {
-      "item": "mythicalcreatures:dark_crystal"
-    }
+    "#": { "item": "mythicalcreatures:dark_crystal" }
   },
-  "result": {
-    "item": "mythicalcreatures:dark_crystal_helmet"
-  }
+  "result": { "item": "mythicalcreatures:dark_crystal_helmet" }
 }

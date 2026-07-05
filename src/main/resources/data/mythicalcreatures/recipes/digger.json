@@ -1,19 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "CCC",
-    "ISI",
-    " S "
+    "HBH",
+    "DRD",
+    "IRI"
   ],
   "key": {
-    "C": {
-      "tag": "forge:gems/diamond"
+    "H": {
+      "item": "mythicalcreatures:reinforced_bone"
+    },
+    "B": {
+      "item": "minecraft:diamond"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "R": {
+      "tag": "forge:rods/wooden"
     },
     "I": {
-      "item": "minecraft:iron_block"
-    },
-    "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:ingots/iron"
     }
   },
   "result": {

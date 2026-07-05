@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    " # ",
+    " S "
+  ],
+  "key": {
+    "#": { "item": "mythicalcreatures:cragadile_scale" },
+    "S": { "tag": "forge:rods/wooden" }
+  },
+  "result": { "item": "mythicalcreatures:crag_hammer" }
+}

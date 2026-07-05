@@ -22,8 +22,8 @@ public class ModTiers {
     public static final Tier WOW = new ForgeTier(4, 1500, 12.0F, 5.0F, 16,
             Tags.Blocks.NEEDS_NETHERITE_TOOL, () -> Ingredient.EMPTY);
 
-    public static final Tier APPLE = new ForgeTier(3, 500, 8.0F, 3.0F, 12,
-            Tags.Blocks.NEEDS_NETHERITE_TOOL, () -> Ingredient.EMPTY);
+    public static final Tier APPLE = new ForgeTier(1, 100, 4.0F, 1.0F, 5,
+            BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.EMPTY);
 
     public static final Tier DASH = new ForgeTier(3, 800, 9.0F, 4.0F, 18,
             Tags.Blocks.NEEDS_NETHERITE_TOOL, () -> Ingredient.EMPTY);
@@ -46,8 +46,8 @@ public class ModTiers {
     public static final Tier URSA = new ForgeTier(5, 4500, 20.0F, 12.0F, 2,
             Tags.Blocks.NEEDS_NETHERITE_TOOL, () -> Ingredient.EMPTY);
 
-    public static final Tier RANDOM2 = new ForgeTier(2, 180, 5.0F, 2.0F, 10,
-            BlockTags.NEEDS_IRON_TOOL, () -> Ingredient.EMPTY);
+    public static final Tier RANDOM2 = new ForgeTier(0, 80, 5.0F, 1.0F, 10,
+            BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.EMPTY);
 
     public static final Tier RANDOM3 = new ForgeTier(3, 250, 6.0F, 3.0F, 12,
             BlockTags.NEEDS_DIAMOND_TOOL, () -> Ingredient.EMPTY);
@@ -56,7 +56,7 @@ public class ModTiers {
             BlockTags.NEEDS_DIAMOND_TOOL, () -> Ingredient.EMPTY);
 
     /** 泥土剑 — 等价木剑 */
-    public static final Tier DIRT = new ForgeTier(0, 59, 2.0F, 0.0F, 15,
+    public static final Tier DIRT = new ForgeTier(0, 39, 2.0F, 0.0F, 15,
             BlockTags.NEEDS_STONE_TOOL, () -> Ingredient.EMPTY);
 
     /** 挖掘者 — 钻石挖掘等级 + 铁镐基础速度 */

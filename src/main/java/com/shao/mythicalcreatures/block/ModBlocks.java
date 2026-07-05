@@ -49,7 +49,7 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
                     .strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 12)));
 
-    public static final RegistryObject<Block> CRYSTAL = register("crystal_block",
+    public static final RegistryObject<Block> CRYSTAL = register("crystal_ore",
             () -> new CrystalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIAMOND)
                     .strength(30.0F, 45.0F).sound(SoundType.GLASS).lightLevel(s -> 8)));
 
@@ -68,6 +68,10 @@ public class ModBlocks {
     public static final RegistryObject<Block> ROBOT = register("robot_block",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
                     .strength(80.0F, 400.0F).sound(SoundType.METAL)));
+
+    public static final RegistryObject<Block> AURORA = register("aurora_block",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_CYAN)
+                    .strength(3.0F, 9.0F).sound(SoundType.GLASS).lightLevel(s -> 12)));
 
     public static final RegistryObject<Block> TWILICORN = register("twilicorn_block",
             () -> new TwilicornBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)

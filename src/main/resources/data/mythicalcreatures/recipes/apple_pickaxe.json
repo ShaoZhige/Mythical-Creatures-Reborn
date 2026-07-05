@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "BBB",
+    "###",
     " S ",
     " S "
   ],
   "key": {
-    "B": {
-      "item": "mythicalcreatures:hardened_apple"
+    "#": {
+      "item": "mythicalcreatures:apples"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

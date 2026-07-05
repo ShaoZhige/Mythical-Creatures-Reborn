@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    " # ",
+    " S "
+  ],
+  "key": {
+    "#": { "item": "mythicalcreatures:bear_claw" },
+    "S": { "tag": "forge:rods/wooden" }
+  },
+  "result": { "item": "mythicalcreatures:bear_claw_sword" }
+}

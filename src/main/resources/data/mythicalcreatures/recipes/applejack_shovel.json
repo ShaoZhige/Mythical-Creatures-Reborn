@@ -10,7 +10,7 @@
       "item": "mythicalcreatures:hardened_apple"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

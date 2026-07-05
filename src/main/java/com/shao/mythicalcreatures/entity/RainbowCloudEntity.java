@@ -32,7 +32,7 @@ public class RainbowCloudEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide) {
             Vec3 pos = result.getLocation();
             ServerLevel serverLevel = (ServerLevel) this.level();
-            serverLevel.explode(this, pos.x, pos.y, pos.z, 0.3F, Level.ExplosionInteraction.NONE);
+            serverLevel.explode(this, pos.x, pos.y, pos.z, 3.0F, Level.ExplosionInteraction.NONE);
             // explode() 自带爆炸音效，不再重复播放
 
             // 白色云朵粒子

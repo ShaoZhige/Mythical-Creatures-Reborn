@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    " # ",
+    " S "
+  ],
+  "key": {
+    "#": { "item": "mythicalcreatures:rhino_horn" },
+    "S": { "tag": "forge:rods/wooden" }
+  },
+  "result": { "item": "mythicalcreatures:ursa_claws" }
+}

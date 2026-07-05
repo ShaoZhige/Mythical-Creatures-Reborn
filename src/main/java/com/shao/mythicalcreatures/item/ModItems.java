@@ -13,7 +13,6 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.BONE_WALL.get(), new Item.Properties()));
     public static final RegistryObject<Item> GLOWING_BONE_BLOCK = ITEMS.register("glowing_bone_block",
             () -> new BlockItem(ModBlocks.GLOWING_BONE.get(), new Item.Properties()));
-    public static final RegistryObject<Item> CRYSTAL_BLOCK = ITEMS.register("crystal_block",
+    public static final RegistryObject<Item> CRYSTAL_ORE = ITEMS.register("crystal_ore",
             () -> new BlockItem(ModBlocks.CRYSTAL.get(), new Item.Properties()));
     public static final RegistryObject<Item> DARK_CRYSTAL_BLOCK = ITEMS.register("dark_crystal_block",
             () -> new BlockItem(ModBlocks.DARK_CRYSTAL.get(), new Item.Properties()));
@@ -56,6 +55,8 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.ROBOT.get(), new Item.Properties()));
     public static final RegistryObject<Item> TWILICORN_BLOCK = ITEMS.register("twilicorn_block",
             () -> new BlockItem(ModBlocks.TWILICORN.get(), new Item.Properties()));
+    public static final RegistryObject<Item> AURORA_BLOCK = ITEMS.register("aurora_block",
+            () -> new BlockItem(ModBlocks.AURORA.get(), new Item.Properties()));
 
     // ==================== 一、特殊物品 & 材料 (30) ====================
 
@@ -160,7 +161,7 @@ public class ModItems {
     public static final RegistryObject<SwordItem> ALICORN_SWORD = ITEMS.register("alicorn_sword",
             () -> new SwordItem(ModTiers.ALICORN, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> DAGGER = ITEMS.register("dagger",
-            () -> new SwordItem(ModTiers.RANDOM2, 2, -2.0F, new Item.Properties()));
+            () -> new SwordItem(ModTiers.RANDOM2, 3, -1.0F, new Item.Properties()));
     public static final RegistryObject<SwordItem> URSA_CLAWS = ITEMS.register("ursa_claws",
             () -> new SwordItem(ModTiers.URSA, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> DIRT_SWORD = ITEMS.register("dirt_sword",
@@ -254,6 +255,16 @@ public class ModItems {
     public static final RegistryObject<ArmorItem> DARK_CRYSTAL_BOOTS = ITEMS.register("dark_crystal_boots",
             () -> new ModArmorItem(ModArmorMaterials.DARK, ArmorItem.Type.BOOTS, new Item.Properties(), "dark_crystal"));
 
+    // Dark Armor
+    public static final RegistryObject<ArmorItem> DARK_HELMET = ITEMS.register("dark_helmet",
+            () -> new ModArmorItem(ModArmorMaterials.DARK, ArmorItem.Type.HELMET, new Item.Properties(), "dark"));
+    public static final RegistryObject<ArmorItem> DARK_CHESTPLATE = ITEMS.register("dark_chestplate",
+            () -> new ModArmorItem(ModArmorMaterials.DARK, ArmorItem.Type.CHESTPLATE, new Item.Properties(), "dark"));
+    public static final RegistryObject<ArmorItem> DARK_LEGGINGS = ITEMS.register("dark_leggings",
+            () -> new ModArmorItem(ModArmorMaterials.DARK, ArmorItem.Type.LEGGINGS, new Item.Properties(), "dark"));
+    public static final RegistryObject<ArmorItem> DARK_BOOTS = ITEMS.register("dark_boots",
+            () -> new ModArmorItem(ModArmorMaterials.DARK, ArmorItem.Type.BOOTS, new Item.Properties(), "dark"));
+
     // Apple Armor
     public static final RegistryObject<ArmorItem> APPLE_HELMET = ITEMS.register("apple_helmet",
             () -> new ModArmorItem(ModArmorMaterials.APPLE_ARMOR, ArmorItem.Type.HELMET, new Item.Properties(), "apple"));
@@ -335,7 +346,7 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_EGG_ROBOT_SOMBRA = ITEMS.register("spawn_egg_robot_sombra",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_TWILIGHT_SPARKLE = ITEMS.register("spawn_egg_twilight_sparkle",
-            () -> new ForgeSpawnEggItem(ModEntities.TWILIGHT_SPARKLE, 0x7b2d8e, 0xd4a520, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.TWILIGHT_SPARKLE, 0xFFFFFF, 0xFFFFFF, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_EGG_CRAGADILE = ITEMS.register("spawn_egg_cragadile",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_EGG_PHOENIX = ITEMS.register("spawn_egg_phoenix",

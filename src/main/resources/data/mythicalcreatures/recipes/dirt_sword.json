@@ -10,7 +10,7 @@
       "item": "minecraft:dirt"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {
