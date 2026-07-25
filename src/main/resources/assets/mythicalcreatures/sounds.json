@@ -1,0 +1,45 @@
+{
+  "entity.twilight_sparkle.ambient": {
+    "subtitle": "subtitles.mythicalcreatures.entity.twilight_sparkle.ambient",
+    "sounds": [
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_ambient_1",
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_ambient_2",
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_ambient_3",
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_ambient_4"
+    ]
+  },
+  "entity.twilight_sparkle.hurt": {
+    "subtitle": "subtitles.mythicalcreatures.entity.twilight_sparkle.hurt",
+    "sounds": [
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  },
+  "entity.rainbow_dash.ambient": {
+    "subtitle": "subtitles.mythicalcreatures.entity.rainbow_dash.ambient",
+    "sounds": [
+      "mythicalcreatures:entity/rainbow_dash/rainbow_dash_ambient_1",
+      "mythicalcreatures:entity/rainbow_dash/rainbow_dash_ambient_3"
+    ]
+  },
+  "entity.rainbow_dash.hurt": {
+    "subtitle": "subtitles.mythicalcreatures.entity.rainbow_dash.hurt",
+    "sounds": [
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  },
+  "entity.applejack.ambient": {
+    "subtitle": "subtitles.mythicalcreatures.entity.applejack.ambient",
+    "sounds": [
+      "mythicalcreatures:entity/applejack/applejack_ambient_1",
+      "mythicalcreatures:entity/applejack/applejack_ambient_2",
+      "mythicalcreatures:entity/applejack/applejack_ambient_3",
+      "mythicalcreatures:entity/applejack/applejack_ambient_4"
+    ]
+  },
+  "entity.applejack.hurt": {
+    "subtitle": "subtitles.mythicalcreatures.entity.applejack.hurt",
+    "sounds": [
+      "mythicalcreatures:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  }
+}

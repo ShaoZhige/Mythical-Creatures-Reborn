@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mythicalcreatures:item/rainbowdashboots"
+    "layer0": "mythicalcreatures:item/rainbow_dash_boots"
   }
 }

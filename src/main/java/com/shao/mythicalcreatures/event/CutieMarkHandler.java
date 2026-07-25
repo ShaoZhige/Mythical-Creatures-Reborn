@@ -45,6 +45,8 @@ public class CutieMarkHandler {
         CUTIEMARK_EFFECTS.put(ModItems.TWILIGHT_CUTIEMARK, new EffectInfo[]{
                 new EffectInfo(() -> MobEffects.WATER_BREATHING, 0),
                 new EffectInfo(() -> MobEffects.NIGHT_VISION, 0)});
+        CUTIEMARK_EFFECTS.put(ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK, new EffectInfo[]{
+                new EffectInfo(() -> MobEffects.GLOWING, 0)});
     }
 
     @SubscribeEvent
@@ -69,10 +71,9 @@ public class CutieMarkHandler {
                     player.addEffect(new MobEffectInstance(type, -1, ourLevel,
                             false, false, true));
                 } else {
-                    // 仅移除与我们等级相同的效果（不误删外源高等 Buff）
                     MobEffectInstance current = player.getEffect(type);
                     if (current != null && current.getAmplifier() == ourLevel
-                            && current.getDuration() < 0) { // 无限时长 = 我们给的
+                            && current.getDuration() < 0) {
                         player.removeEffect(type);
                     }
                 }

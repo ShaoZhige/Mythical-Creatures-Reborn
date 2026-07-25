@@ -1,5 +1,6 @@
 package com.shao.mythicalcreatures.entity;
 
+import com.shao.mythicalcreatures.entity.custom.PonyEntity;
 import com.shao.mythicalcreatures.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +31,25 @@ public class AppleProjectileEntity extends ThrowableItemProjectile {
 
     @Override
     protected void onHit(HitResult result) {
-        super.onHit(result);
+        boolean healedPony = false;
+        if (result.getType() == HitResult.Type.ENTITY) {
+            net.minecraft.world.phys.EntityHitResult entityHit = (net.minecraft.world.phys.EntityHitResult) result;
+            if (entityHit.getEntity() instanceof PonyEntity pony) {
+                pony.heal(8.0F);
+                if (this.level() instanceof ServerLevel sl) {
+                    for (int i = 0; i < 10; i++) {
+                        sl.sendParticles(ParticleTypes.HEART, pony.getRandomX(0.5), pony.getY() + pony.getBbHeight() * 0.5, pony.getRandomZ(0.5),
+                                1, 0, 0.1, 0, 0.1);
+                    }
+                }
+                this.level().playSound(null, pony.getX(), pony.getY(), pony.getZ(),
+                        SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.6F, 1.2F);
+                healedPony = true;
+            }
+        }
+        if (!healedPony) {
+            super.onHit(result);
+        }
         if (!this.level().isClientSide) {
             Vec3 pos = result.getLocation();
             this.level().explode(this, pos.x, pos.y, pos.z, 0.3F, Level.ExplosionInteraction.NONE);

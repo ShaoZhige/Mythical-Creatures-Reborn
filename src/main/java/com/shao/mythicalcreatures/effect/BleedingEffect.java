@@ -1,9 +1,9 @@
 package com.shao.mythicalcreatures.effect;
 
+import com.shao.mythicalcreatures.config.MythicalConfig;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 public class BleedingEffect extends MobEffect {
 
@@ -13,8 +13,9 @@ public class BleedingEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        // 基础伤害：1.0 HP/秒 (amplifier 0)
-        float damage = 1.0F + (amplifier * 0.5F);
+        float base = (float) MythicalConfig.DATA.get("global_params", "bleeding_base", 1.0);
+        float amp  = (float) MythicalConfig.DATA.get("global_params", "bleeding_amp", 0.5);
+        float damage = base + (amplifier * amp);
 
         // 如果实体在移动，伤害翻倍
         if (entity.getDeltaMovement().horizontalDistance() > 0.01F) {
@@ -29,10 +30,5 @@ public class BleedingEffect extends MobEffect {
         // 每秒触发一次
         int interval = 20;
         return duration % interval == 0;
-    }
-
-    @Override
-    public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
-        super.removeAttributeModifiers(entity, attributes, amplifier);
     }
 }

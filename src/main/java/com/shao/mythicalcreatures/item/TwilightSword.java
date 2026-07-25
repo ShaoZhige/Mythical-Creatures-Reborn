@@ -1,7 +1,9 @@
 package com.shao.mythicalcreatures.item;
 
+import com.shao.mythicalcreatures.config.MythicalConfig;
 import com.shao.mythicalcreatures.entity.ModEntities;
 import com.shao.mythicalcreatures.entity.custom.TwilightMagicEntity;
+import com.shao.mythicalcreatures.util.KeyStateHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -32,7 +34,7 @@ public class TwilightSword extends SwordItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (!player.isShiftKeyDown()) {
+        if (!KeyStateHelper.isAbilityKeyDown(player)) {
             // 右键 → 在玩家前方召唤紫悦的魔法
             Vec3 spawn = player.position().add(player.getLookAngle().scale(1.5)).add(0, 1.0, 0);
             summonMagic(level, player, hand, stack, spawn);
@@ -113,7 +115,7 @@ public class TwilightSword extends SwordItem {
 
         ItemStack stack = player.getItemInHand(context.getHand());
 
-        if (!player.isShiftKeyDown()) {
+        if (!KeyStateHelper.isAbilityKeyDown(player)) {
             // 对方块右键 → 在方块位置召唤紫悦的魔法
             Vec3 spawn = context.getClickLocation();
             summonMagic(context.getLevel(), player, context.getHand(), stack, spawn);
@@ -139,6 +141,6 @@ public class TwilightSword extends SwordItem {
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
-        player.getCooldowns().addCooldown(this, 40);
+        player.getCooldowns().addCooldown(this, MythicalConfig.DATA.getInt("global_params", "sword_cooldown", 40));
     }
 }

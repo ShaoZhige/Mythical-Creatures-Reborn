@@ -14,5 +14,6 @@ public class CuriosIntegration {
         CuriosRendererRegistry.register(ModItems.RARITY_CUTIEMARK.get(), () -> renderer);
         CuriosRendererRegistry.register(ModItems.RAINBOW_DASH_CUTIEMARK.get(), () -> renderer);
         CuriosRendererRegistry.register(ModItems.TWILIGHT_CUTIEMARK.get(), () -> renderer);
+        CuriosRendererRegistry.register(ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK.get(), () -> renderer);
     }
 }

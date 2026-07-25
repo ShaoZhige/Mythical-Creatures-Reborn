@@ -1,0 +1,9 @@
+{
+  "format_version": "1.12.0",
+  "animations": {
+    "animation.unknown.idle": {
+      "loop": true,
+      "bones": {}
+    }
+  }
+}

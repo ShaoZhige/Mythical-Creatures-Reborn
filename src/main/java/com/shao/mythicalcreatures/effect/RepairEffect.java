@@ -1,5 +1,6 @@
 package com.shao.mythicalcreatures.effect;
 
+import com.shao.mythicalcreatures.config.MythicalConfig;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -17,7 +18,7 @@ public class RepairEffect extends MobEffect {
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!(entity instanceof Player player)) return;
 
-        int repairAmount = 1 + amplifier; // 每 3 秒回复 (1 + 等级) 点
+        int repairAmount = MythicalConfig.DATA.getInt("global_params", "repair_amount", 1) + amplifier;
 
         // 遍历背包 36 格
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
@@ -39,8 +40,8 @@ public class RepairEffect extends MobEffect {
 
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
-        // 每 3 秒（60 tick）触发一次
-        return duration % 60 == 0;
+        int interval = Math.max(1, MythicalConfig.DATA.getInt("global_params", "repair_interval", 60));
+        return duration % interval == 0;
     }
 
     @Override

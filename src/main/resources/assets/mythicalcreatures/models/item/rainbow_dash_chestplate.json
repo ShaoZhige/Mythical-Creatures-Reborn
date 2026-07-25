@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mythicalcreatures:item/rainbowdashchest"
+    "layer0": "mythicalcreatures:item/rainbow_dash_chestplate"
   }
 }

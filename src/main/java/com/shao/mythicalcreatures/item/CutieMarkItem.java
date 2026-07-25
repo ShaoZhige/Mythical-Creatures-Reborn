@@ -21,9 +21,7 @@ public class CutieMarkItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        // 常规可见：名字 + 台词
         tooltip.add(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
-        // Shift 查看：具体效果
         if (Screen.hasShiftDown()) {
             tooltip.add(Component.translatable(tooltipKey + ".detail").withStyle(ChatFormatting.DARK_GRAY));
         } else {

@@ -2,6 +2,7 @@ package com.shao.mythicalcreatures.item;
 
 import com.shao.mythicalcreatures.entity.RainbowBeamEntity;
 import com.shao.mythicalcreatures.entity.RainbowCloudEntity;
+import com.shao.mythicalcreatures.util.KeyStateHelper;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -44,7 +45,7 @@ public class RainbowDashSword extends SwordItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (!player.isShiftKeyDown()) {
+        if (!KeyStateHelper.isAbilityKeyDown(player)) {
             // 右键 → 发射彩虹云
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.8F);

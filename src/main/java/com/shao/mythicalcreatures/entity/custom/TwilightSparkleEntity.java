@@ -1,183 +1,132 @@
 package com.shao.mythicalcreatures.entity.custom;
 
+import com.shao.mythicalcreatures.config.MythicalConfig;
+import com.shao.mythicalcreatures.entity.TwilightStarEntity;
 import com.shao.mythicalcreatures.item.ModItems;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import com.shao.mythicalcreatures.sound.ModSounds;
+import com.shao.mythicalcreatures.util.KeyStateHelper;
+import com.shao.mythicalcreatures.entity.TwilightStarEntity;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class TwilightSparkleEntity extends TamableAnimal implements GeoEntity {
+public class TwilightSparkleEntity extends PonyEntity {
 
-    private static final EntityDataAccessor<Boolean> DATA_FLYING =
-            SynchedEntityData.defineId(TwilightSparkleEntity.class, EntityDataSerializers.BOOLEAN);
-
-    private static final Ingredient TEMPT_ITEM = Ingredient.of(ModItems.TWILIGHT_CUTIEMARK.get());
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
-    private int flyCooldown = 0;
-    private int flyDuration = 0;
-    private double flyStartY = 0;
-    public float wingFlapTicks = 0;
-
-    public TwilightSparkleEntity(EntityType<? extends TwilightSparkleEntity> type, Level level) {
+    public TwilightSparkleEntity(EntityType<TwilightSparkleEntity> type, Level level) {
         super(type, level);
     }
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main", 5, this::predicate));
+    @Override protected void refreshConfigAttributes() {
+        var h = this.getAttribute(Attributes.MAX_HEALTH);
+        if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "max_health"));
+        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (s != null) s.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "move_speed"));
+        var f = this.getAttribute(Attributes.FLYING_SPEED);
+        if (f != null) f.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "fly_speed"));
+        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "attack_damage"));
+        this.setHealth(this.getMaxHealth());
     }
 
-    private PlayState predicate(software.bernie.geckolib.core.animation.AnimationState<TwilightSparkleEntity> state) {
-        if (this.isFlying()) {
-            state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.FLYING"));
-        } else if (state.isMoving()) {
-            state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.WALKING"));
-        } else {
-            state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.BREATHING"));
-        }
-        return PlayState.CONTINUE;
+    @Override protected boolean canFly() { return true; }
+    @Override protected Item getTamingItem() {
+        return resolveTamingItem(MythicalConfig.D.TS_TAMING, ModItems.TWILIGHT_CUTIEMARK.get());
     }
+    @Override @Nullable protected SoundEvent getAmbientSoundEvent() { return ModSounds.TWILIGHT_SPARKLE_AMBIENT.get(); }
+    @Override @Nullable protected SoundEvent getHurtSoundEvent() { return ModSounds.TWILIGHT_SPARKLE_HURT.get(); }
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob other) {
-        return null;
-    }
-
-    public boolean isFlying() {
-        return this.entityData.get(DATA_FLYING);
-    }
-
-    public void setFlying(boolean flying) {
-        this.entityData.set(DATA_FLYING, flying);
-    }
+    /* ── 飞行参数（慢速平稳，默认值即紫悦的风格） ── */
+    @Override protected int    getFlightChance()        { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "flight_chance", 200); }
+    @Override protected int    getFlightCooldownMin()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_cooldown_min", 200); }
+    @Override protected int    getFlightCooldownMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_cooldown_max", 400); }
+    @Override protected int    getFlightDurationMin()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_duration_min", 100); }
+    @Override protected int    getFlightDurationMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_duration_max", 150); }
+    @Override protected int    getAngryFlightChance()   { return 30; }
+    @Override protected int    getAngryFlightAscentDuration() { return 40; }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 1.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0);
+                .add(Attributes.MAX_HEALTH,  (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "max_health"))
+                .add(Attributes.MOVEMENT_SPEED, (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "move_speed"))
+                .add(Attributes.FLYING_SPEED,   (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "fly_speed"))
+                .add(Attributes.ATTACK_DAMAGE,  (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "attack_damage"))
+                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 
-    @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 0.8D, 60));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-    }
-
-    @Override
-    protected void defineSynchedData() {
+    @Override protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_FLYING, false);
+        defineFlyData();
     }
 
-    /** 右键用可爱标志驯服 */
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-
-        if (!this.isTame() && stack.is(ModItems.TWILIGHT_CUTIEMARK.get())) {
-            if (!this.level().isClientSide) {
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                this.tame(player);
-                this.navigation.stop();
-                this.setTarget(null);
-                this.level().broadcastEntityEvent(this, (byte) 7);
-            }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        }
-
-        return super.mobInteract(player, hand);
-    }
-
-    /** 已被驯服时无视伤害 */
-    @Override
-    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
-        if (this.isTame() && source.getEntity() instanceof Player player && player == this.getOwner()) {
-            return false;
-        }
+    @Override public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (source.getDirectEntity() instanceof TwilightStarEntity) return false;
         return super.hurt(source, amount);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    /* ── 骑乘飞行 ── */
+    @Override protected @NotNull Vec3 getRiddenInput(Player player, @NotNull Vec3 v) {
+        float fwd = player.zza;
+        float str = (float)(player.xxa * (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "ridden_speed_factor"));
+        if (fwd <= 0) fwd *= 0.25F;
+        return new Vec3(str, v.y, fwd);
+    }
 
-        if (!this.level().isClientSide()) {
-            if (this.isFlying()) {
-                this.flyDuration--;
-                this.wingFlapTicks += 0.5F;
-                double maxY = this.flyStartY + 4.0;
-                if (this.flyDuration <= 0) {
-                    if (this.onGround()) {
-                        this.setFlying(false);
-                        this.flyCooldown = 200 + this.random.nextInt(400);
-                    } else {
-                        Vec3 motion = this.getDeltaMovement();
-                        this.setDeltaMovement(motion.x, -0.08, motion.z);
-                    }
-                } else if (this.getY() < maxY) {
-                    Vec3 motion = this.getDeltaMovement();
-                    this.setDeltaMovement(motion.x, 0.15, motion.z);
-                } else {
-                    Vec3 motion = this.getDeltaMovement();
-                    this.setDeltaMovement(motion.x, 0, motion.z);
-                }
-            } else {
-                this.wingFlapTicks = 0;
-                if (this.onGround() && this.flyCooldown > 0) {
-                    this.flyCooldown--;
-                }
-                if (this.onGround() && this.flyCooldown <= 0 && this.random.nextInt(200) == 0) {
-                    this.setFlying(true);
-                    this.flyStartY = this.getY();
-                    this.flyDuration = 160 + this.random.nextInt(200);
-                    Vec3 motion = this.getDeltaMovement();
-                    this.setDeltaMovement(motion.x, 0.5, motion.z);
-                }
-            }
+    @Override protected float getRiddenSpeed(@NotNull Player player) {
+        return (float) this.getAttributeValue(Attributes.FLYING_SPEED);
+    }
+
+    @Override protected void tickRidden(@NotNull Player player, @NotNull Vec3 v) {
+        super.tickRidden(player, v);
+        this.setYRot(player.getYRot()); this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        if (this.isFlying() || this.isHovering()) {
+            float vert = KeyStateHelper.isJumpKeyDown(player)
+                    ? (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "vertical_up")
+                    : KeyStateHelper.isMountDescendDown(player)
+                    ? (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "vertical_down")
+                    : (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "vertical_hover");
+            this.setDeltaMovement(this.getDeltaMovement().add(0, vert, 0));
         }
     }
 
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, net.minecraft.world.damagesource.DamageSource source) {
-        return false;
+    @Override public void travel(@NotNull Vec3 v) {
+        if (this.isVehicle() && this.getControllingPassenger() instanceof Player) {
+            this.setNoGravity(true); this.fallDistance = 0;
+            if (this.isFlying() || this.isHovering()) {
+                float s = (float)(getRiddenSpeed((Player)this.getControllingPassenger())
+                        * (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "horizontal_factor"));
+                this.moveRelative(s, new Vec3(v.x, 0, v.z));
+                this.move(MoverType.SELF, this.getDeltaMovement());
+                this.setDeltaMovement(this.getDeltaMovement().scale((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "inertia_decay")));
+                if (this.getY() > this.level().getMaxBuildHeight() + 4)
+                    this.setDeltaMovement(this.getDeltaMovement().add(0, -0.5, 0));
+            } else { super.travel(v); }
+        } else { this.setNoGravity(false); super.travel(v); }
+    }
+
+    @Override public void tick() {
+        super.tick();
+        if (this.isVehicle()) {
+            this.setFlying(true);
+            this.wingFlapTicks = (float)((this.wingFlapTicks + MythicalConfig.DATA.get("global_params", "wing_flap_speed", 0.4)) % 360.0);
+            return;
+        }
+        tickFlight();
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
+    public void performRangedAttack(LivingEntity target, float power) {
+        TwilightStarEntity projectile = new TwilightStarEntity(this.level(), this);
+        projectile.shoot(target.getX() - this.getX(), target.getY(0.5) - this.getY(0.5),
+                target.getZ() - this.getZ(), 1.5F, 1.0F);
+        this.playSound(SoundEvents.LLAMA_SPIT, 1.0F, 1.0F);
+        this.level().addFreshEntity(projectile);
     }
 }

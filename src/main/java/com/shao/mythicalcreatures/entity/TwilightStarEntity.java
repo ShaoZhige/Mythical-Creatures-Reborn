@@ -70,7 +70,7 @@ public class TwilightStarEntity extends ThrowableItemProjectile {
         }
     }
 
-    /** 客户端粒子 — 持续追踪投掷物轨迹的紫色尾迹 */
+    /** 客户端粒子 — 紫色传送门 + 附魔符文拖尾 */
     @Override
     public void tick() {
         super.tick();
@@ -79,6 +79,11 @@ public class TwilightStarEntity extends ThrowableItemProjectile {
                 this.level().addParticle(ParticleTypes.PORTAL,
                         this.getRandomX(0.3), this.getRandomY(), this.getRandomZ(0.3),
                         0, 0, 0);
+            }
+            for (int i = 0; i < 2; i++) {
+                this.level().addParticle(ParticleTypes.ENCHANT,
+                        this.getRandomX(0.5), this.getRandomY(), this.getRandomZ(0.5),
+                        0, 0.05, 0);
             }
         }
     }

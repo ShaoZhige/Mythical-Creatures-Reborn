@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mythicalcreatures:item/magic_spawn_egg"
+    "layer0": "minecraft:item/spawn_egg",
+    "layer1": "minecraft:item/spawn_egg_overlay"
   }
 }

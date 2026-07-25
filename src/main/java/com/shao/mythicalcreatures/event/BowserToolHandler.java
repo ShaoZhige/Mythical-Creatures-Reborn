@@ -1,6 +1,7 @@
 package com.shao.mythicalcreatures.event;
 
 import com.shao.mythicalcreatures.MythicalCreaturesMod;
+import com.shao.mythicalcreatures.util.KeyStateHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ public class BowserToolHandler {
         if (state.getDestroySpeed(event.getLevel(), event.getPos()) < 0) return;
 
         // 可互动的方块（箱子、工作台、门等），需要潜行才替换
-        if (!player.isShiftKeyDown() && isInteractive(state)) return;
+        if (!KeyStateHelper.isAbilityKeyDown(player) && isInteractive(state)) return;
 
         // 1 秒冷却
         if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
