@@ -17,8 +17,7 @@
 
 ## 文档 / Documentation
 
-- 中文 Wiki：[wiki-zh.md](wiki-zh.md)
-- English Wiki：[wiki-en.md](wiki-en.md)
+- [wiki](https://github.com/ShaoZhige/Mythical-Creatures-Reborn/wiki)
 
 模组包含可驯服小马、多种怪物与 Boss、武器 / 工具 / 盔甲、可爱标志、投掷物、状态效果与大量合成配方；玩法、实体图鉴与配置方法请查阅上方 Wiki。
 
