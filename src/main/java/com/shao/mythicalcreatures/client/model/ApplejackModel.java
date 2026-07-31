@@ -6,7 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class ApplejackModel extends GeoModel<ApplejackEntity> {
-    @Override public ResourceLocation getModelResource(ApplejackEntity e)     { return new ResourceLocation(MythicalCreaturesMod.MODID, "geo/applejack.geo.json"); }
-    @Override public ResourceLocation getTextureResource(ApplejackEntity e)   { return new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/apple_jack.png"); }
-    @Override public ResourceLocation getAnimationResource(ApplejackEntity e) { return new ResourceLocation(MythicalCreaturesMod.MODID, "animations/applejack.animation.json"); }
+    private static final ResourceLocation MODEL = new ResourceLocation(MythicalCreaturesMod.MODID, "geo/applejack.geo.json");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/apple_jack.png");
+    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/applejack.animation.json");
+
+
+    @Override public ResourceLocation getModelResource(ApplejackEntity e)     { return MODEL; }
+    @Override public ResourceLocation getTextureResource(ApplejackEntity e)   { return TEXTURE; }
+    @Override public ResourceLocation getAnimationResource(ApplejackEntity e) { return ANIMATION; }
 }

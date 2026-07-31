@@ -32,6 +32,15 @@ public class RainbowCloudEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide) {
             Vec3 pos = result.getLocation();
             ServerLevel serverLevel = (ServerLevel) this.level();
+
+            // 直接命中的实体伤害
+            if (result.getType() == HitResult.Type.ENTITY) {
+                net.minecraft.world.phys.EntityHitResult ehr = (net.minecraft.world.phys.EntityHitResult) result;
+                if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
+                    target.hurt(this.damageSources().thrown(this, this.getOwner()), 7.0F);
+                }
+            }
+
             serverLevel.explode(this, pos.x, pos.y, pos.z, 3.0F, Level.ExplosionInteraction.NONE);
             // explode() 自带爆炸音效，不再重复播放
 

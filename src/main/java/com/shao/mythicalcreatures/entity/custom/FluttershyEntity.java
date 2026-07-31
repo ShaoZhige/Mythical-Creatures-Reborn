@@ -8,17 +8,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FluttershyEntity extends PonyEntity {
+public class FluttershyEntity extends NeutralPonyEntity {
     public FluttershyEntity(EntityType<FluttershyEntity> type, Level level) {
         super(type, level);
     }
 
     @Override protected void refreshConfigAttributes() {
+        cacheRideTuning("mythicalcreatures:fluttershy");
         var h = this.getAttribute(Attributes.MAX_HEALTH);
         if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "max_health"));
         var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -30,7 +34,9 @@ public class FluttershyEntity extends PonyEntity {
         this.setHealth(this.getMaxHealth());
     }
     @Override protected boolean canFly() { return true; }
-    @Override protected Item getTamingItem() { return Items.APPLE; }
+    @Override protected Item getTamingItem() {
+        return resolveTamingItem(MythicalConfig.D.FS_TAMING, com.shao.mythicalcreatures.item.ModItems.FLUTTERSHY_CUTIEMARK.get());
+    }
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
     public static AttributeSupplier.Builder createAttributes() {
@@ -46,5 +52,35 @@ public class FluttershyEntity extends PonyEntity {
                 target.getZ() - this.getZ(), 0.8F, 1.5F);
         this.playSound(SoundEvents.EGG_THROW, 0.5F, 1.2F);
         this.level().addFreshEntity(projectile);
+    }
+
+    /* ── 骑乘飞行：逻辑统一在 FlightRideAPI，实体只做委托调用（默认值见 MythicalConfig.D.ENTITY_DEFAULTS） ── */
+    // 飞行小马骑手定位以紫悦为标准（见 PonyEntity.FLYING_RIDER_*）
+    @Override protected double getRiderBackOffset()    { return FLYING_RIDER_BACK; }
+    @Override protected float  getRiderVerticalOffset() { return FLYING_RIDER_Y; }
+
+    @Override protected @NotNull Vec3 getRiddenInput(Player player, @NotNull Vec3 v) {
+        return FlightRideAPI.getRiddenInput(this, player, v);
+    }
+
+    @Override protected float getRiddenSpeed(@NotNull Player player) {
+        return FlightRideAPI.getRiddenSpeed(this);
+    }
+
+    @Override protected void tickRidden(@NotNull Player player, @NotNull Vec3 v) {
+        super.tickRidden(player, v);
+        FlightRideAPI.tickRidden(this, player, v);
+    }
+
+    @Override public void travel(@NotNull Vec3 v) {
+        if (!FlightRideAPI.flyingRideTravel(this, v)) {
+            this.setNoGravity(false);
+            super.travel(v);
+        }
+    }
+
+    @Override public void tick() {
+        super.tick();
+        if (!FlightRideAPI.tickRiddenFlight(this)) tickFlight();
     }
 }

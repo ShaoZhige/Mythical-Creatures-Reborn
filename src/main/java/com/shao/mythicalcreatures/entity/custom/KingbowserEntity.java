@@ -1,5 +1,7 @@
 package com.shao.mythicalcreatures.entity.custom;
 
+import com.shao.mythicalcreatures.sound.ModSounds;
+
 import com.shao.mythicalcreatures.config.MythicalConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KingbowserEntity extends PonyEntity {
+public class KingbowserEntity extends HostilePonyEntity {
 
     public KingbowserEntity(EntityType<KingbowserEntity> type, Level level) {
         super(type, level);
@@ -33,9 +35,9 @@ public class KingbowserEntity extends PonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
+    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.KINGBOWSER_9000_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.KINGBOWSER_9000_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

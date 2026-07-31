@@ -28,6 +28,12 @@ public class BalloonProjectileEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!this.level().isClientSide) {
+            if (result.getType() == HitResult.Type.ENTITY) {
+                net.minecraft.world.phys.EntityHitResult ehr = (net.minecraft.world.phys.EntityHitResult) result;
+                if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
+                    target.hurt(this.damageSources().thrown(this, this.getOwner()), 5.0F);
+                }
+            }
             ((net.minecraft.server.level.ServerLevel) this.level()).sendParticles(
                     ParticleTypes.HEART, this.getX(), this.getY(), this.getZ(),
                     8, 0.3, 0.3, 0.3, 0.05);

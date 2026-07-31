@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
+import com.shao.mythicalcreatures.config.MythicalConfig;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.Vec3;
@@ -54,6 +55,47 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         refreshConfigAttributes();
     }
 
+    /* ================================================================
+     * 骑乘调参缓存
+     * 原骑乘 API 每 tick 都调 MythicalConfig.DATA.entityAttr(entityId, ...)（字符串拼接+多次
+     * HashMap 查找），是项目中最热的路径。这里在实体创建/入场时按 entityId 缓存一次，
+     * 骑乘 API 之后直接读字段，避免每 tick 反复查配置。重载配置后现存实体的缓存不变
+     * （与 max_health 等属性重载语义一致：仅新建实体生效）。
+     * Ride-tuning cache: populated once at spawn/add so the per-tick riding API reads fields
+     * instead of hitting the config every tick.
+     * ================================================================ */
+
+    // 全局翅膀动画参数（所有小马共用，配置重载时刷新）
+    // Global wing-animation params shared by all ponies; refreshed on config reload.
+    // 包级可见：供同包 FlightRideAPI.tickRiddenFlight 直接读取缓存。
+    static double GLOBAL_WING_FLAP_SPEED  = 0.4;
+    static double GLOBAL_WING_DECAY_SPEED = 0.15;
+
+    public static void refreshGlobalRideTuning() {
+        GLOBAL_WING_FLAP_SPEED  = MythicalConfig.DATA.get("global_params", "wing_flap_speed", 0.4);
+        GLOBAL_WING_DECAY_SPEED = MythicalConfig.DATA.get("global_params", "wing_decay_speed", 0.15);
+    }
+
+    // 每实体骑乘调参缓存（字段默认值即“无覆盖”手感，始终被 cacheRideTuning 覆盖）
+    // Per-entity ride-tuning cache (defaults match the no-override feel; cacheRideTuning overwrites).
+    protected double rideSpeedFactor     = 1.0;
+    protected double rideVerticalUp      = 0.0;
+    protected double rideVerticalDown    = 0.0;
+    protected double rideVerticalHover   = 0.0;
+    protected double rideHorizontalFactor = 1.0;
+    protected double rideInertiaDecay    = 0.9;
+    protected double rideJumpHeight      = 0.0;
+
+    protected void cacheRideTuning(String entityId) {
+        this.rideSpeedFactor     = MythicalConfig.DATA.entityAttr(entityId, "ridden_speed_factor");
+        this.rideVerticalUp      = MythicalConfig.DATA.entityAttr(entityId, "vertical_up");
+        this.rideVerticalDown    = MythicalConfig.DATA.entityAttr(entityId, "vertical_down");
+        this.rideVerticalHover   = MythicalConfig.DATA.entityAttr(entityId, "vertical_hover");
+        this.rideHorizontalFactor = MythicalConfig.DATA.entityAttr(entityId, "horizontal_factor");
+        this.rideInertiaDecay    = MythicalConfig.DATA.entityAttr(entityId, "inertia_decay");
+        this.rideJumpHeight      = MythicalConfig.DATA.entityAttr(entityId, "jump_height");
+    }
+
     /** 从配置文件刷新属性值（子类重写调用各自的配置项） */
     protected void refreshConfigAttributes() {}
 
@@ -73,6 +115,10 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     }
 
     private <T extends PonyEntity> PlayState predicate(software.bernie.geckolib.core.animation.AnimationState<T> state) {
+        // 死亡时停止动画：让尸体交给游戏原生死亡动画处理，避免原地循环 idle 像“假死”。
+        // On death, stop the animation so the corpse is handled by the vanilla death animation
+        // instead of looping idle in place.
+        if (!this.isAlive()) return PlayState.STOP;
         if (this.isInSittingPose()) {
             state.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
         } else if (canFly() && (this.isFlying() || this.isHovering()) && !this.onGround()) {
@@ -191,10 +237,25 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
             this.setYHeadRot(passenger.getYHeadRot());
             this.setYBodyRot(passenger.getYRot());
         }
-        Vec3 back = this.getLookAngle().scale(-0.5);
-        float riderY = 0.6F;
+        Vec3 back = this.getLookAngle().scale(-getRiderBackOffset());
+        float riderY = getRiderVerticalOffset();
         passenger.setPos(this.getX() + back.x, this.getY() + riderY, this.getZ() + back.z);
     }
+
+    /* ── 骑手定位标准（所有小马共用，按坐骑类型分两套） ──
+     * 陆地小马统一以苹果嘉儿为准；飞行小马（紫悦/云宝/柔柔）统一以紫悦为准，由各飞行实体覆写下方两个方法。
+     * Rider seat offsets: ground mounts standardize on Applejack; flying mounts (Twilight/Dash/
+     * Fluttershy) on Twilight Sparkle. Flight entities override the two methods below. */
+    protected double getRiderBackOffset()    { return GROUND_RIDER_BACK; }
+    protected float  getRiderVerticalOffset() { return GROUND_RIDER_Y; }
+
+    // 陆地小马骑手标准（苹果嘉儿）
+    public static final double GROUND_RIDER_BACK = 0.5D;
+    public static final float  GROUND_RIDER_Y    = 0.6F;
+
+    // 飞行小马骑手标准（紫悦）
+    public static final double FLYING_RIDER_BACK = 0.5D;
+    public static final float  FLYING_RIDER_Y    = 0.6F;
 
     @Nullable @Override
     public LivingEntity getControllingPassenger() {
@@ -241,6 +302,10 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     /**
      * 把飞行同步数据和受保护的 defineSynchedData 分离，避免子类遗漏 super 调用。
      * 需要飞行的子类：在 defineSynchedData 中调用 defineFlyData()。
+     *
+     * Separate flying sync-data from the protected defineSynchedData so subclasses can't
+     * accidentally skip the super call. Flying subclasses call defineFlyData() from
+     * defineSynchedData().
      */
     protected static final class Flying {
         static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> DATA_FLYING =
@@ -267,12 +332,19 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
 
     protected void tickFlight() {
         if (!canFly()) return;
+        // 死亡后立即停止驱动飞行：避免尸体继续跑状态机/翅膀动画，造成“假死抽搐”。
+        // Stop all flight logic once dead; otherwise the corpse keeps moving and looks like it's
+        // faking death.
+        if (!this.isAlive()) return;
+        // 自主飞行状态机：0=上升 1=悬停 2=降落；有仇恨时优先悬停追击，无仇恨按 flight_chance 偶尔起飞观光。
+        // Autonomous flight FSM: 0=ascent, 1=hover, 2=descent. When angry it hovers to chase;
+        // when calm it only occasionally takes off (governed by flight_chance) for a short hop.
 
         // 翅膀动画（客户端 + 服务端）
         if ((this.isFlying() || this.isHovering()) && !this.isVehicle())
-            this.wingFlapTicks = (float)((this.wingFlapTicks + com.shao.mythicalcreatures.config.MythicalConfig.DATA.get("global_params", "wing_flap_speed", 0.4)) % 360.0);
+            this.wingFlapTicks = (float)((this.wingFlapTicks + GLOBAL_WING_FLAP_SPEED) % 360.0);
         else if (!this.isVehicle())
-            this.wingFlapTicks = (float)Math.max(0, this.wingFlapTicks - com.shao.mythicalcreatures.config.MythicalConfig.DATA.get("global_params", "wing_decay_speed", 0.15));
+            this.wingFlapTicks = (float)Math.max(0, this.wingFlapTicks - GLOBAL_WING_DECAY_SPEED);
 
         if (this.level().isClientSide()) return;
 

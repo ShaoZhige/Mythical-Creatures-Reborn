@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import com.shao.mythicalcreatures.item.MythicalSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -166,8 +167,9 @@ public class ModItems {
             () -> new SwordItem(ModTiers.ALICORN, 10, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> DAGGER = ITEMS.register("dagger",
             () -> new SwordItem(ModTiers.RANDOM2, 3, -1.0F, new Item.Properties()));
-    public static final RegistryObject<SwordItem> URSA_CLAWS = ITEMS.register("ursa_claws",
-            () -> new SwordItem(ModTiers.URSA, 3, -2.4F, new Item.Properties()));
+    public static final RegistryObject<UrsaClawsItem> URSA_CLAWS = ITEMS.register("ursa_claws",
+            // 攻速修正 -3.3F：原版基础 4.0 + (-3.3) = 0.7 次/秒，比最慢的斧头(0.8)还慢一点
+            () -> new UrsaClawsItem(ModTiers.URSA, 88, -3.3F, new Item.Properties().fireResistant()));
     public static final RegistryObject<SwordItem> DIRT_SWORD = ITEMS.register("dirt_sword",
             () -> new SwordItem(ModTiers.DIRT, 3, -2.4F, new Item.Properties()));
 
@@ -428,78 +430,47 @@ public class ModItems {
 
     // ==================== 六、刷怪蛋 (37) ====================
 
-    public static final RegistryObject<Item> SPAWN_EGG_ROBOT_SOMBRA = ITEMS.register("spawn_egg_robot_sombra",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_ROBOT_SOMBRA = ITEMS.register("spawn_egg_robot_sombra", () -> new MythicalSpawnEggItem(ModEntities.ROBOT_SOMBRA, 0x808080, 0xFF0000, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_TWILIGHT_SPARKLE = ITEMS.register("spawn_egg_twilight_sparkle",
             () -> new ForgeSpawnEggItem(ModEntities.TWILIGHT_SPARKLE, 0xFFFFFF, 0xFFFFFF, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_CRAGADILE = ITEMS.register("spawn_egg_cragadile",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_CRAGADILE = ITEMS.register("spawn_egg_cragadile", () -> new MythicalSpawnEggItem(ModEntities.CRAGADILE, 0x2E8B57, 0x006400, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_PHOENIX = ITEMS.register("spawn_egg_phoenix",
-            () -> new ForgeSpawnEggItem(ModEntities.PHOENIX, 0xFF6633, 0xFFAA00, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_CHIEF_THUNDERHOOVES = ITEMS.register("spawn_egg_chief_thunderhooves",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_BLACK_WIDOW_SPIDER = ITEMS.register("spawn_egg_black_widow_spider",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_LEVIATHAN = ITEMS.register("spawn_egg_leviathan",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.PHOENIX, 0xFF6633, 0xFFAA00, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_CHIEF_THUNDERHOOVES = ITEMS.register("spawn_egg_chief_thunderhooves", () -> new ForgeSpawnEggItem(ModEntities.CHIEF_THUNDERHOOVES, 0x8B5A2B, 0x3E1F0D, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_BLACK_WIDOW_SPIDER = ITEMS.register("spawn_egg_black_widow_spider", () -> new MythicalSpawnEggItem(ModEntities.BLACK_WIDOW_SPIDER, 0x111111, 0xFF0000, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_LEVIATHAN = ITEMS.register("spawn_egg_leviathan", () -> new MythicalSpawnEggItem(ModEntities.LEVIATHAN, 0x2A4D5E, 0x1A2E3A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_KINGBOWSER_9000 = ITEMS.register("spawn_egg_kingbowser_9000",
-            () -> new ForgeSpawnEggItem(ModEntities.KINGBOWSER_9000, 0x44AA44, 0x228822, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_CENTIPEDE = ITEMS.register("spawn_egg_centipede",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_HYDRA = ITEMS.register("spawn_egg_hydra",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_WINDIGO = ITEMS.register("spawn_egg_windigo",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_BABY_MOOSE = ITEMS.register("spawn_egg_baby_moose",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_BUFFALO = ITEMS.register("spawn_egg_buffalo",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_LEECH = ITEMS.register("spawn_egg_leech",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_ADULT_MOOSE = ITEMS.register("spawn_egg_adult_moose",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.KINGBOWSER_9000, 0x44AA44, 0x228822, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_CENTIPEDE = ITEMS.register("spawn_egg_centipede", () -> new MythicalSpawnEggItem(ModEntities.CENTIPEDE, 0x8B4513, 0xDAA520, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_HYDRA = ITEMS.register("spawn_egg_hydra", () -> new MythicalSpawnEggItem(ModEntities.HYDRA, 0x2E8B57, 0x006400, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_WINDIGO = ITEMS.register("spawn_egg_windigo", () -> new MythicalSpawnEggItem(ModEntities.WINDIGO, 0xE0FFFF, 0xFFFFFF, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_BABY_MOOSE = ITEMS.register("spawn_egg_baby_moose", () -> new MythicalSpawnEggItem(ModEntities.BABY_MOOSE, 0x8B5A2B, 0x5C3A1E, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_BUFFALO = ITEMS.register("spawn_egg_buffalo", () -> new MythicalSpawnEggItem(ModEntities.BUFFALO, 0x8B5A2B, 0x5C3A1E, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_ADULT_MOOSE = ITEMS.register("spawn_egg_adult_moose", () -> new MythicalSpawnEggItem(ModEntities.ADULT_MOOSE, 0x6B4226, 0x4A2E1A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_BEAR = ITEMS.register("spawn_egg_bear",
-            () -> new ForgeSpawnEggItem(ModEntities.BEAR, 0x8B4513, 0x3E1F0D, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_TOUGH_GUY = ITEMS.register("spawn_egg_tough_guy",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_MAVIS = ITEMS.register("spawn_egg_mavis",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.BEAR, 0x8B4513, 0x3E1F0D, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_TOUGH_GUY = ITEMS.register("spawn_egg_tough_guy", () -> new MythicalSpawnEggItem(ModEntities.TOUGH_GUY, 0xB22222, 0x8B0000, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_MAVIS = ITEMS.register("spawn_egg_mavis", () -> new MythicalSpawnEggItem(ModEntities.MAVIS, 0x800080, 0x4B0082, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_URSA_MAJOR = ITEMS.register("spawn_egg_ursa_major",
-            () -> new ForgeSpawnEggItem(ModEntities.URSA_MAJOR, 0x222244, 0x4444AA, new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.URSA_MAJOR, 0x222244, 0x4444AA, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_RAINBOW_DASH = ITEMS.register("spawn_egg_rainbow_dash",
-            () -> new ForgeSpawnEggItem(ModEntities.RAINBOW_DASH, 0x00CCFF, 0xFF6600, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_MANTICORE = ITEMS.register("spawn_egg_manticore",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_RAINBOW_CENTIPEDE = ITEMS.register("spawn_egg_rainbow_centipede",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.RAINBOW_DASH, 0x00CCFF, 0xFF6600, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_MANTICORE = ITEMS.register("spawn_egg_manticore", () -> new MythicalSpawnEggItem(ModEntities.MANTICORE, 0xCD5C5C, 0x8B0000, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_RAINBOW_CENTIPEDE = ITEMS.register("spawn_egg_rainbow_centipede", () -> new MythicalSpawnEggItem(ModEntities.RAINBOW_CENTIPEDE, 0xFF69B4, 0x9400D3, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_APPLEJACK = ITEMS.register("spawn_egg_applejack",
-            () -> new ForgeSpawnEggItem(ModEntities.APPLEJACK, 0xFF9900, 0xFFFF00, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_ARCTIC_SCORPION = ITEMS.register("spawn_egg_arctic_scorpion",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_TIMBER_WOLF = ITEMS.register("spawn_egg_timber_wolf",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.APPLEJACK, 0xFF9900, 0xFFFF00, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_ARCTIC_SCORPION = ITEMS.register("spawn_egg_arctic_scorpion", () -> new MythicalSpawnEggItem(ModEntities.ARCTIC_SCORPION, 0xADD8E6, 0x4682B4, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_TIMBER_WOLF = ITEMS.register("spawn_egg_timber_wolf", () -> new MythicalSpawnEggItem(ModEntities.TIMBER_WOLF, 0x8B7355, 0x5C4033, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_PARASPRITE = ITEMS.register("spawn_egg_parasprite",
-            () -> new ForgeSpawnEggItem(ModEntities.PARASPRITE, 0xFF88FF, 0xCC44CC, new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.PARASPRITE, 0xFF88FF, 0xCC44CC, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_COCKATRICE = ITEMS.register("spawn_egg_cockatrice",
-            () -> new ForgeSpawnEggItem(ModEntities.COCKATRICE, 0xCC6633, 0x663311, new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_CRABZILLA = ITEMS.register("spawn_egg_crabzilla",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_IRON_WILL = ITEMS.register("spawn_egg_iron_will",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_LIGHTNING_CLOUD = ITEMS.register("spawn_egg_lightning_cloud",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_TREVOR = ITEMS.register("spawn_egg_trevor",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_SKULL_OF_DOOM = ITEMS.register("spawn_egg_skull_of_doom",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_SKULL = ITEMS.register("spawn_egg_skull",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_PRINCE_RUTHERFORD = ITEMS.register("spawn_egg_prince_rutherford",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_SPIKEZILLA = ITEMS.register("spawn_egg_spikezilla",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SPAWN_EGG_RHINOCEROS = ITEMS.register("spawn_egg_rhinoceros",
-            () -> new Item(new Item.Properties()));
+            () -> new MythicalSpawnEggItem(ModEntities.COCKATRICE, 0xCC6633, 0x663311, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_CRABZILLA = ITEMS.register("spawn_egg_crabzilla", () -> new MythicalSpawnEggItem(ModEntities.CRABZILLA, 0xDC143C, 0x8B0000, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_IRON_WILL = ITEMS.register("spawn_egg_iron_will", () -> new MythicalSpawnEggItem(ModEntities.IRON_WILL, 0xA9A9A9, 0x696969, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_SKULL_OF_DOOM = ITEMS.register("spawn_egg_skull_of_doom", () -> new MythicalSpawnEggItem(ModEntities.SKULL_OF_DOOM, 0xEEEEEE, 0x888888, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_PRINCE_RUTHERFORD = ITEMS.register("spawn_egg_prince_rutherford", () -> new MythicalSpawnEggItem(ModEntities.PRINCE_RUTHERFORD, 0x8B5A2B, 0x3E1F0D, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_SPIKEZILLA = ITEMS.register("spawn_egg_spikezilla", () -> new MythicalSpawnEggItem(ModEntities.SPIKEZILLA, 0x556B2F, 0x6B8E23, new Item.Properties()));
+    public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_RHINOCEROS = ITEMS.register("spawn_egg_rhinoceros", () -> new MythicalSpawnEggItem(ModEntities.RHINOCEROS, 0x808080, 0x696969, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_GARBLE = ITEMS.register("spawn_egg_garble",
             () -> new ForgeSpawnEggItem(ModEntities.GARBLE, 0xFF2200, 0xFFAA00, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPAWN_EGG_FLUTTERSHY = ITEMS.register("spawn_egg_fluttershy",

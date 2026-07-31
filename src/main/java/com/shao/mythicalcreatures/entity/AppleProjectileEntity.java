@@ -45,6 +45,9 @@ public class AppleProjectileEntity extends ThrowableItemProjectile {
                 this.level().playSound(null, pony.getX(), pony.getY(), pony.getZ(),
                         SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.6F, 1.2F);
                 healedPony = true;
+            } else if (entityHit.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
+                // 命中敌人：造成 9 点伤害（苹果砸怪）
+                target.hurt(this.damageSources().thrown(this, this.getOwner()), 9.0F);
             }
         }
         if (!healedPony) {

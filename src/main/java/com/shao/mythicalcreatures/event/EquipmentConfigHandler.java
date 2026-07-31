@@ -21,6 +21,8 @@ import java.util.*;
 public class EquipmentConfigHandler {
 
     private static final UUID BASE_ATTACK_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+    // 原版 BASE_ATTACK_SPEED_ID：用于替换武器自带的攻速修饰器
+    private static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
     private static final UUID[] ARMOR_UUIDS = {
         UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), // FEET
@@ -40,6 +42,7 @@ public class EquipmentConfigHandler {
             applyArmor(event, key, armor.getType().getSlot());
         } else if (item instanceof TieredItem) {
             applyAttack(event, key);
+            applyAttackSpeed(event, key);
         }
     }
 
@@ -73,9 +76,25 @@ public class EquipmentConfigHandler {
         double atk = MythicalConfig.DATA.equipAttr(key, "attack_damage");
         if (atk <= 0) return;
 
+        // 移除物品自带的基础攻击修饰器后重新挂上配置值。
+        // generic.attack_damage 的基准值是 1.0（空手），原版 sword 的修饰器加的是
+        // (damage - 1.0)，因此这里也要加 (atk - 1.0)，否则显示/实际伤害会变成 atk + 1.0。
         event.removeAttribute(Attributes.ATTACK_DAMAGE);
         event.addModifier(Attributes.ATTACK_DAMAGE,
             new AttributeModifier(BASE_ATTACK_UUID, "config",
-                atk, AttributeModifier.Operation.ADDITION));
+                atk - 1.0, AttributeModifier.Operation.ADDITION));
+    }
+
+    /** 武器攻速：仅当 overrides 中指定了 attack_speed 才生效 */
+    private static void applyAttackSpeed(ItemAttributeModifierEvent event, String key) {
+        double speed = MythicalConfig.DATA.equipAttr(key, "attack_speed");
+        if (speed <= 0) return;
+
+        // generic.attack_speed 的基准值是 4.0（空手），原版 sword 的修饰器加的是
+        // (speed - 4.0)，因此这里也要加 (speed - 4.0)，否则显示/实际攻速会变成 speed + 4.0。
+        event.removeAttribute(Attributes.ATTACK_SPEED);
+        event.addModifier(Attributes.ATTACK_SPEED,
+            new AttributeModifier(BASE_ATTACK_SPEED_UUID, "config",
+                speed - 4.0, AttributeModifier.Operation.ADDITION));
     }
 }

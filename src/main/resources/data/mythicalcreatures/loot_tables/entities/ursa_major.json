@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:entity",
+	"random_sequence": "mythicalcreatures:entities/ursa_major",
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "mythicalcreatures:ursa_claws"
+				}
+			],
+			"conditions": [
+				{
+					"condition": "minecraft:killed_by_player"
+				}
+			]
+		}
+	]
+}

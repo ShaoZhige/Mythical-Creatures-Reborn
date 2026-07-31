@@ -2,5 +2,6 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "mythicalcreatures:item/eggprincerutherford"
-  }
+  },
+  "gui_light": "front"
 }

@@ -1,0 +1,396 @@
+{
+  "meta": {
+    "format_version": "5.0",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "meteor",
+  "parent": "",
+  "java_block_version": "1.9.0",
+  "ambientocclusion": true,
+  "front_gui_light": false,
+  "visible_box": [
+    1,
+    1,
+    0
+  ],
+  "variable_placeholders": "",
+  "multi_file_ruleset": "",
+  "variable_placeholder_buttons": [],
+  "unhandled_root_fields": {},
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Rock1",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        -6.0,
+        19.0,
+        -12.0
+      ],
+      "to": [
+        2.0,
+        25.0,
+        -4.0
+      ],
+      "origin": [
+        -6.0,
+        25.0,
+        -12.0
+      ],
+      "autouv": 0,
+      "color": 6,
+      "type": "cube",
+      "uuid": "13bf77b3-ce8d-4512-b87d-32bf54d1260b",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Rock2",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        1.0,
+        19.0,
+        -5.0
+      ],
+      "to": [
+        9.0,
+        25.0,
+        3.0
+      ],
+      "origin": [
+        1.0,
+        25.0,
+        -5.0
+      ],
+      "autouv": 0,
+      "color": 6,
+      "type": "cube",
+      "uuid": "1e98eae1-04cc-4703-ab3e-02fea26e75be",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Rock3",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        -3.0,
+        23.0,
+        -7.0
+      ],
+      "to": [
+        5.0,
+        29.0,
+        1.0
+      ],
+      "origin": [
+        -3.0,
+        29.0,
+        -7.0
+      ],
+      "autouv": 0,
+      "color": 6,
+      "type": "cube",
+      "uuid": "cbdcfe3c-3421-4799-9c01-9dea09f3c0ae",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "Rock4",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        -6.0,
+        17.0,
+        -2.0
+      ],
+      "to": [
+        2.0,
+        23.0,
+        6.0
+      ],
+      "origin": [
+        -6.0,
+        23.0,
+        -2.0
+      ],
+      "autouv": 0,
+      "color": 6,
+      "type": "cube",
+      "uuid": "ea423ba5-8ccb-4682-afd1-487d4371cb90",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      }
+    }
+  ],
+  "outliner": [
+    "13bf77b3-ce8d-4512-b87d-32bf54d1260b",
+    "1e98eae1-04cc-4703-ab3e-02fea26e75be",
+    "cbdcfe3c-3421-4799-9c01-9dea09f3c0ae",
+    "ea423ba5-8ccb-4682-afd1-487d4371cb90"
+  ],
+  "textures": [
+    {
+      "name": "meteor.png",
+      "relative_path": "../../src/main/resources/assets/mythicalcreatures/textures/entity/meteor.png",
+      "folder": "entity",
+      "namespace": "mythicalcreatures",
+      "id": "0",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "particle": true,
+      "visible": true,
+      "internal": true,
+      "saved": true,
+      "uuid": "18d66975-01f3-4119-aad7-8cac6e668d19",
+      "source": ""
+    }
+  ]
+}

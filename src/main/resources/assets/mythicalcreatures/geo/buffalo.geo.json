@@ -1,0 +1,32 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.buffalo",
+				"texture_width": 1024,
+				"texture_height": 1024,
+				"visible_bounds_width": 6,
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bone",
+					"pivot": [0.9, -8, -8],
+					"cubes": [
+						{"origin": [-22.1, 8, -31], "size": [45, 45, 50], "uv": [0, 0]},
+						{"origin": [15.9, 0, 12], "size": [6, 8, 6], "uv": [91, 66]},
+						{"origin": [-21.1, 0, -29], "size": [6, 8, 6], "uv": [92, 68]},
+						{"origin": [-21.1, 0, 12], "size": [6, 8, 6], "uv": [78, 49]},
+						{"origin": [15.9, 0, -30], "size": [6, 8, 6], "uv": [79, 51]},
+						{"origin": [-6.1, 17, -43], "size": [12, 12, 12], "uv": [0, 100]},
+						{"origin": [-5.1, 26, -49], "size": [1, 1, 6], "uv": [0, 140]},
+						{"origin": [3.9, 26, -49], "size": [1, 1, 6], "uv": [0, 140]},
+						{"origin": [-1.1, 22, 19], "size": [4, 4, 4], "uv": [44, 75]}
+					]
+				}
+			]
+		}
+	]
+}

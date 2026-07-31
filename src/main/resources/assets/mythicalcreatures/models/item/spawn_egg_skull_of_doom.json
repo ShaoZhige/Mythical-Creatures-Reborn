@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mythicalcreatures:item/eggrobosombra"
-  }
+    "layer0": "mythicalcreatures:item/eggskull"
+  },
+  "gui_light": "front"
 }

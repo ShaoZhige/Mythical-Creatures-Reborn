@@ -1,6 +1,4 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "mythicalcreatures:item/eggbuffalo"
-  }
+  "parent": "item/template_spawn_egg",
+  "gui_light": "front"
 }

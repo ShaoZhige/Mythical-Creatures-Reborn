@@ -40,6 +40,14 @@ public class TwilightStarEntity extends ThrowableItemProjectile {
         Vec3 pos = result.getLocation();
         ServerLevel serverLevel = (ServerLevel) this.level();
 
+        // 直接命中的实体伤害（确保弹射物有伤害）
+        if (result.getType() == HitResult.Type.ENTITY) {
+            net.minecraft.world.phys.EntityHitResult ehr = (net.minecraft.world.phys.EntityHitResult) result;
+            if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
+                target.hurt(this.damageSources().thrown(this, this.getOwner()), 8.0F);
+            }
+        }
+
         // 1 道闪电（LightningBolt 内部有 1-3 次闪烁，所以视觉效果足够）
         LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, serverLevel);
         bolt.setPos(pos.x, pos.y + 0.5, pos.z);

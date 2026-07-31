@@ -1,5 +1,7 @@
 package com.shao.mythicalcreatures.entity.custom;
 
+import com.shao.mythicalcreatures.sound.ModSounds;
+
 import com.shao.mythicalcreatures.config.MythicalConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class UrsamajorEntity extends PonyEntity {
+public class UrsamajorEntity extends HostilePonyEntity {
 
     public UrsamajorEntity(EntityType<UrsamajorEntity> type, Level level) {
         super(type, level);
@@ -33,9 +35,9 @@ public class UrsamajorEntity extends PonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
+    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.URSA_MAJOR_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.URSA_MAJOR_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

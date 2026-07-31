@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mythicalcreatures:item/eggtoughguy"
-  }
+    "layer0": "mythicalcreatures:item/eggironwill"
+  },
+  "gui_light": "front"
 }

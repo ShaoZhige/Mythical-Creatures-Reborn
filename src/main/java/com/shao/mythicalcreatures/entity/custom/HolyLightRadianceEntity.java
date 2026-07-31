@@ -17,14 +17,55 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.PlayerRideable;
+import net.minecraft.world.entity.PlayerRideableJumping;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HolyLightRadianceEntity extends PonyEntity {
+public class HolyLightRadianceEntity extends NeutralPonyEntity implements PlayerRideableJumping, PlayerRideable {
     public HolyLightRadianceEntity(EntityType<HolyLightRadianceEntity> type, Level level) {
         super(type, level);
     }
 
+    /* ════════════════════════════════════════════════════════════════
+     * 地面骑乘 + 跳跃（与苹果嘉儿同一套标准，AbstractHorse 同款逻辑）
+     * ════════════════════════════════════════════════════════════════ */
+
+    @Override protected float getRiddenSpeed(@NotNull Player player) {
+        return GroundRideAPI.getRiddenSpeed(this);
+    }
+
+    @Override
+    protected @NotNull Vec3 getRiddenInput(Player player, @NotNull Vec3 v) {
+        return GroundRideAPI.getRiddenInput(this, player, v);
+    }
+
+    @Override
+    protected void tickRidden(@NotNull Player player, @NotNull Vec3 travelVector) {
+        super.tickRidden(player, travelVector);
+        GroundRideAPI.tickRidden(this, player, travelVector);
+    }
+
+    @Override public boolean canJump() { return GroundRideAPI.canJump(this); }
+
+    @Override
+    public void onPlayerJump(int jumpPower) {
+        GroundRideAPI.onPlayerJump(this, jumpPower);
+    }
+
+    @Override
+    public void handleStartJump(int jumpPower) {
+        GroundRideAPI.handleStartJump(this, jumpPower);
+    }
+
+    @Override public void handleStopJump() { GroundRideAPI.handleStopJump(this); }
+
     @Override protected void refreshConfigAttributes() {
+        cacheRideTuning("mythicalcreatures:holy_light_radiance");
         var h = this.getAttribute(Attributes.MAX_HEALTH);
         if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "max_health"));
         var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -34,7 +75,9 @@ public class HolyLightRadianceEntity extends PonyEntity {
         this.setHealth(this.getMaxHealth());
     }
     @Override protected boolean canFly() { return false; }
-    @Override protected Item getTamingItem() { return Items.APPLE; }
+    @Override protected Item getTamingItem() {
+        return resolveTamingItem(MythicalConfig.D.HL_TAMING, com.shao.mythicalcreatures.item.ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK.get());
+    }
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
     public static AttributeSupplier.Builder createAttributes() {

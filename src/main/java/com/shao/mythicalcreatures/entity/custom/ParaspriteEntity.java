@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ParaspriteEntity extends PonyEntity {
+public class ParaspriteEntity extends HostilePonyEntity {
 
     public ParaspriteEntity(EntityType<ParaspriteEntity> type, Level level) {
         super(type, level);

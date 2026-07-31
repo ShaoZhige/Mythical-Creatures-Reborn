@@ -28,6 +28,12 @@ public class ButterflyProjectileEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!this.level().isClientSide) {
+            if (result.getType() == HitResult.Type.ENTITY) {
+                net.minecraft.world.phys.EntityHitResult ehr = (net.minecraft.world.phys.EntityHitResult) result;
+                if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
+                    target.hurt(this.damageSources().thrown(this, this.getOwner()), 6.0F);
+                }
+            }
             ((net.minecraft.server.level.ServerLevel) this.level()).sendParticles(
                     ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY(), this.getZ(),
                     10, 0.5, 0.5, 0.5, 0.05);

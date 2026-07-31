@@ -6,19 +6,24 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class KingbowserEntityModel extends GeoModel<KingbowserEntity> {
+    private static final ResourceLocation MODEL = new ResourceLocation(MythicalCreaturesMod.MODID, "geo/kingbowser_9000.geo.json");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/kingbowser_9000.png");
+    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/kingbowser_9000.animation.json");
+
+
 
     @Override
     public ResourceLocation getModelResource(KingbowserEntity entity) {
-        return new ResourceLocation(MythicalCreaturesMod.MODID, "geo/kingbowser_9000.geo.json");
+        return MODEL;
     }
 
     @Override
     public ResourceLocation getTextureResource(KingbowserEntity entity) {
-        return new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/kingbowser_9000.png");
+        return TEXTURE;
     }
 
     @Override
     public ResourceLocation getAnimationResource(KingbowserEntity entity) {
-        return new ResourceLocation(MythicalCreaturesMod.MODID, "animations/kingbowser_9000.animation.json");
+        return ANIMATION;
     }
 }

@@ -1,0 +1,9 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": { "loop": true, "animation_length": 1.0, "bones": {} },
+		"walk": { "loop": true, "animation_length": 1.0, "bones": {} },
+		"run":  { "loop": true, "animation_length": 1.0, "bones": {} },
+		"fly":  { "loop": true, "animation_length": 1.0, "bones": {} }
+	}
+}

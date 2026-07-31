@@ -2,85 +2,29 @@
 	"parent": "mythicalcreatures:item/ursa_claws_3d",
 	"display": {
 		"thirdperson_righthand": {
-			"translation": [
-				-1.25,
-				1.5,
-				-1
-			],
-			"scale": [
-				1,
-				0.97,
-				1
-			]
+			"translation": [-1.25, 1.5, -1],
+			"scale": [1, 0.97, 1]
 		},
 		"thirdperson_lefthand": {
-			"translation": [
-				1,
-				1.5,
-				-1
-			]
+			"translation": [1, 1.5, -1]
 		},
 		"firstperson_righthand": {
-			"translation": [
-				0,
-				0,
-				-6
-			]
+			"translation": [0, 0, -6]
 		},
 		"firstperson_lefthand": {
-			"translation": [
-				0,
-				0,
-				-6
-			]
+			"translation": [0, 0, -6]
 		},
 		"ground": {
-			"translation": [
-				0,
-				4.25,
-				0
-			]
+			"translation": [0, 4.25, 0]
 		},
 		"gui": {
-			"rotation": [
-				0,
-				0,
-				-45
-			],
-			"translation": [
-				4,
-				0.75,
-				0
-			],
-			"scale": [
-				0.75,
-				0.75,
-				0.75
-			]
+			"rotation": [-108.08, -61.24, -135.75],
+			"translation": [4, 0.75, 0],
+			"scale": [0.75, 0.75, 0.75]
 		},
 		"fixed": {
-			"rotation": [
-				0,
-				0,
-				45
-			],
-			"translation": [
-				-5.75,
-				0.25,
-				0
-			]
-		},
-		"on_shelf": {
-			"rotation": [
-				45,
-				0,
-				0
-			],
-			"translation": [
-				1,
-				0,
-				9.5
-			]
+			"rotation": [-87, 59.94, 87.41],
+			"translation": [-5.75, 0.25, 0]
 		}
 	}
 }

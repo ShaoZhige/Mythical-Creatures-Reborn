@@ -1,0 +1,18 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:sunflower_plains",
+    "minecraft:meadow",
+    "minecraft:forest",
+    "minecraft:taiga",
+    "minecraft:desert",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:snowy_plains"
+  ],
+  "spawners": [
+    { "type": "mythicalcreatures:tough_guy", "weight": 3, "minCount": 1, "maxCount": 3 },
+    { "type": "mythicalcreatures:mavis", "weight": 1, "minCount": 1, "maxCount": 1 }
+  ]
+}

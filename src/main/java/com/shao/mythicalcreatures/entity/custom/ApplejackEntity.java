@@ -19,15 +19,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ApplejackEntity extends PonyEntity implements PlayerRideableJumping, PlayerRideable {
-
-    private float playerJumpPendingScale;
+public class ApplejackEntity extends NeutralPonyEntity implements PlayerRideableJumping, PlayerRideable {
 
     public ApplejackEntity(EntityType<ApplejackEntity> type, Level level) {
         super(type, level);
     }
 
     @Override protected void refreshConfigAttributes() {
+        cacheRideTuning("mythicalcreatures:applejack");
         var h = this.getAttribute(Attributes.MAX_HEALTH);
         if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:applejack", "max_health"));
         var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -62,72 +61,33 @@ public class ApplejackEntity extends PonyEntity implements PlayerRideableJumping
     }
 
     @Override protected float getRiddenSpeed(@NotNull Player player) {
-        return (float)(this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.15);
+        return GroundRideAPI.getRiddenSpeed(this);
     }
 
     @Override
     protected @NotNull Vec3 getRiddenInput(Player player, @NotNull Vec3 v) {
-        float fwd = player.zza;
-        float str = player.xxa * 0.5F;
-        if (fwd <= 0) fwd *= 0.25F;
-        return new Vec3(str, v.y, fwd);
+        return GroundRideAPI.getRiddenInput(this, player, v);
     }
 
     @Override
     protected void tickRidden(@NotNull Player player, @NotNull Vec3 travelVector) {
         super.tickRidden(player, travelVector);
-        Vec2 rot = new Vec2(player.getXRot() * 0.5F, player.getYRot());
-        this.setRot(rot.y, rot.x);
-        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
-
-        if (this.isControlledByLocalInstance() && this.onGround()) {
-            this.setJumping(false);
-            if (this.playerJumpPendingScale > 0.0F && !this.jumping) {
-                executeRidersJump(this.playerJumpPendingScale, travelVector);
-            }
-            this.playerJumpPendingScale = 0.0F;
-        }
+        GroundRideAPI.tickRidden(this, player, travelVector);
     }
 
-    private void executeRidersJump(float scale, Vec3 travelVector) {
-        double jumpY = (double)(0.63F * scale) + (double)this.getJumpBoostPower();
-        Vec3 delta = this.getDeltaMovement();
-        this.setDeltaMovement(delta.x, jumpY, delta.z);
-        this.setJumping(true); // LivingEntity.setJumping(boolean)
-        this.hasImpulse = true;
-        if (travelVector.z > 0.0D) {
-            float f = Mth.sin(this.getYRot() * Mth.DEG_TO_RAD);
-            float f1 = Mth.cos(this.getYRot() * Mth.DEG_TO_RAD);
-            this.setDeltaMovement(this.getDeltaMovement().add(-0.4F * f * scale, 0.0D, 0.4F * f1 * scale));
-        }
-    }
-
-    /* ── PlayerRideableJumping：
-       onPlayerJump 只跑客户端（发包前的本地回调，不做事）
-       handleStartJump 跑服务端（客户端松空格→sendRidingJump→服务端收包调这个） ── */
-    @Override public boolean canJump() { return this.isTame(); }
+    @Override public boolean canJump() { return GroundRideAPI.canJump(this); }
 
     @Override
     public void onPlayerJump(int jumpPower) {
-        if (jumpPower > 10) setJumpScale(jumpPower);
+        GroundRideAPI.onPlayerJump(this, jumpPower);
     }
 
     @Override
     public void handleStartJump(int jumpPower) {
-        // 服务端不重复设跳跃——客户端 onPlayerJump→tickRidden 执行的跳跃
-        // 通过 ServerboundMoveVehiclePacket 同步到服务端
+        GroundRideAPI.handleStartJump(this, jumpPower);
     }
 
-    private void setJumpScale(int jumpPower) {
-        if (jumpPower < 0) jumpPower = 0;
-        if (jumpPower >= 90) {
-            this.playerJumpPendingScale = 1.0F;
-        } else {
-            this.playerJumpPendingScale = 0.4F + 0.4F * (float)jumpPower / 90.0F;
-        }
-    }
-
-    @Override public void handleStopJump() {}
+    @Override public void handleStopJump() { GroundRideAPI.handleStopJump(this); }
 
     /* ── 攻击 ── */
     @Nullable @Override

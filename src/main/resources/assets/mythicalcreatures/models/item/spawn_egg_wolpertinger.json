@@ -2,5 +2,6 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "mythicalcreatures:item/eggwolpertinger"
-  }
+  },
+  "gui_light": "front"
 }

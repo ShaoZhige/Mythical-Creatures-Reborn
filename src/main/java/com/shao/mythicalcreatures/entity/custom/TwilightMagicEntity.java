@@ -13,23 +13,32 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-public class TwilightMagicEntity extends Mob {
+public class TwilightMagicEntity extends Mob implements GeoEntity {
 
     private static final int MAX_LIFE = 600;
     private static final double SEARCH_RANGE = 16.0;
-    private static final float DAMAGE = 8.0F;
     private static final double CHASE_SPEED = 0.45;
     private static final int HIT_COOLDOWN = 8;
+
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Nullable
     private LivingEntity target;
@@ -41,6 +50,19 @@ public class TwilightMagicEntity extends Mob {
         this.moveControl = new FlyingMoveControl(this, 15, true);
         this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
     }
+
+    /* ── GeckoLib 动画 ── */
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "main", 5, this::predicate));
+    }
+
+    private <T extends TwilightMagicEntity> PlayState predicate(software.bernie.geckolib.core.animation.AnimationState<T> state) {
+        state.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+        return PlayState.CONTINUE;
+    }
+
+    @Override public AnimatableInstanceCache getAnimatableInstanceCache() { return this.cache; }
 
     /* ── 基础 ── */
     @Override protected PathNavigation createNavigation(Level level) {
@@ -71,8 +93,14 @@ public class TwilightMagicEntity extends Mob {
     }
 
     /* ── Owner ── */
-    public void setOwner(Player player) { this.ownerUUID = player.getUUID(); }
-    @Nullable public Player getOwner() { return this.level().getPlayerByUUID(this.ownerUUID); }
+    public void setOwner(LivingEntity owner) { this.ownerUUID = owner.getUUID(); }
+    @Nullable public LivingEntity getOwner() {
+        if (this.level() instanceof ServerLevel sl) {
+            Entity e = sl.getEntity(this.ownerUUID);
+            return e instanceof LivingEntity ? (LivingEntity) e : null;
+        }
+        return null;
+    }
 
     /* ── AI ── */
     @Override protected void registerGoals() {
@@ -98,7 +126,8 @@ public class TwilightMagicEntity extends Mob {
         if (!this.level().isClientSide && this.target != null && this.target.isAlive()
                 && this.tickCount - lastHitTick >= HIT_COOLDOWN) {
             if (this.getBoundingBox().inflate(0.6).intersects(this.target.getBoundingBox())) {
-                this.target.hurt(this.damageSources().magic(), DAMAGE);
+                this.target.hurt(this.damageSources().magic(),
+                        (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_magic", "attack_damage"));
                 this.target.invulnerableTime = 0;
                 lastHitTick = this.tickCount;
                 Vec3 away = this.position().subtract(this.target.position()).normalize().scale(0.8);
@@ -119,12 +148,12 @@ public class TwilightMagicEntity extends Mob {
         @Override public void tick() {
             if (e.tickCount % 10 != 0) return;
 
-            // 1. 优先：主人正在攻击的生物
-            Player owner = e.getOwner();
-            if (owner != null && owner.getLastHurtMob() != null
-                    && owner.getLastHurtMob().isAlive()
-                    && owner.getLastHurtMob() != e) {
-                e.target = owner.getLastHurtMob();
+            // 1. 优先：主人（若为玩家）正在攻击的生物
+            LivingEntity owner = e.getOwner();
+            if (owner instanceof Player p && p.getLastHurtMob() != null
+                    && p.getLastHurtMob().isAlive()
+                    && p.getLastHurtMob() != e) {
+                e.target = p.getLastHurtMob();
                 return;
             }
 
@@ -180,7 +209,7 @@ public class TwilightMagicEntity extends Mob {
         @Override public boolean canUse() { return e.target == null || !e.target.isAlive(); }
 
         @Override public void tick() {
-            Player owner = e.getOwner();
+            LivingEntity owner = e.getOwner();
             if (owner == null) {
                 // 没主人就随机飘
                 if (e.tickCount % 15 == 0) randomMove();

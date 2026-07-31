@@ -39,10 +39,10 @@ public class MythicalConfig {
         public static final String RD_TAMING = "mythicalcreatures:rainbow_dash_cutiemark";
         public static final String TS_TAMING = "mythicalcreatures:twilight_cutiemark";
         public static final String AJ_TAMING = "mythicalcreatures:applejack_cutiemark";
-        public static final String FS_TAMING = "minecraft:apple";
-        public static final String PP_TAMING = "minecraft:apple";
-        public static final String RY_TAMING = "minecraft:apple";
-        public static final String HL_TAMING = "minecraft:apple";
+        public static final String FS_TAMING = "mythicalcreatures:fluttershy_cutiemark";
+        public static final String PP_TAMING = "mythicalcreatures:pinkie_pie_cutiemark";
+        public static final String RY_TAMING = "mythicalcreatures:rarity_cutiemark";
+        public static final String HL_TAMING = "mythicalcreatures:holy_light_radiance_cutiemark";
 
         // 紫悦之杖召唤列表
         public static final List<String> TWILICANE_SPAWN = List.of(
@@ -64,25 +64,79 @@ public class MythicalConfig {
         }
 
         static {
-            entity("mythicalcreatures:rainbow_dash",      40.0, 0.35, 5.0);
-            entity("mythicalcreatures:twilight_sparkle",  40.0, 0.30, 4.0);
-            entity("mythicalcreatures:applejack",         50.0, 0.40, 6.0);
-            entity("mythicalcreatures:fluttershy",        30.0, 0.25, 4.0);
-            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|fly_speed", 0.6);
-            entity("mythicalcreatures:pinkie_pie",        30.0, 0.25, 4.0);
-            entity("mythicalcreatures:rarity",            30.0, 0.25, 4.0);
-            entity("mythicalcreatures:holy_light_radiance",30.0, 0.25, 4.0);
+            entity("mythicalcreatures:rainbow_dash",      220, 0.35, 9);
+            entity("mythicalcreatures:twilight_sparkle",  280, 0.3, 12);
+            entity("mythicalcreatures:applejack",         220, 0.4, 9);
+            entity("mythicalcreatures:fluttershy",        220, 0.25, 9);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|fly_speed", 0.15);
+            entity("mythicalcreatures:pinkie_pie",        220, 0.25, 9);
+            entity("mythicalcreatures:rarity",            220, 0.25, 9);
+            entity("mythicalcreatures:holy_light_radiance",220.0, 0.25, 9.0);
             entity("mythicalcreatures:bear",              40.0, 0.25, 6.0);
             entity("mythicalcreatures:cockatrice",        40.0, 0.25, 6.0);
-            entity("mythicalcreatures:garble",            50.0, 0.28, 8.0);
+            entity("mythicalcreatures:garble",            420, 0.28, 18);
             entity("mythicalcreatures:kingbowser_9000",   40.0, 0.25, 6.0);
             entity("mythicalcreatures:parasprite",        40.0, 0.25, 6.0);
-            entity("mythicalcreatures:phoenix",           40.0, 0.25, 6.0);
-            entity("mythicalcreatures:ursa_major",        40.0, 0.25, 6.0);
-            entity("mythicalcreatures:twilight_magic",    20.0, 0.50, 0.0);
-            ENTITY_DEFAULTS.put("mythicalcreatures:twilight_magic|fly_speed", 0.55);
-            ENTITY_DEFAULTS.put("mythicalcreatures:rainbow_dash|fly_speed", 1.0);
-            ENTITY_DEFAULTS.put("mythicalcreatures:twilight_sparkle|fly_speed", 0.8);
+            entity("mythicalcreatures:phoenix",           520, 0.25, 22);
+            entity("mythicalcreatures:ursa_major",        520, 0.25, 22);
+            entity("mythicalcreatures:buffalo", 100, 0.25, 9);
+            entity("mythicalcreatures:chief_thunderhooves", 420, 0.28, 18);
+            entity("mythicalcreatures:black_widow", 35, 0.3, 5);
+            entity("mythicalcreatures:leviathan", 60.0, 0.2, 8.0);
+            entity("mythicalcreatures:centipede", 35, 0.3, 5);
+            entity("mythicalcreatures:hydra", 650, 0.22, 28);
+            entity("mythicalcreatures:windigo", 520, 0.3, 22);
+            entity("mythicalcreatures:baby_moose", 20.0, 0.3, 2.0);
+            entity("mythicalcreatures:adult_moose", 45.0, 0.22, 6.0);
+            entity("mythicalcreatures:tough_guy", 50, 0.25, 7);
+            entity("mythicalcreatures:mavis", 35, 0.35, 5);
+            entity("mythicalcreatures:manticore", 520, 0.3, 22);
+            entity("mythicalcreatures:rainbow_centipede", 45, 0.32, 6);
+            entity("mythicalcreatures:arctic_scorpion", 420, 0.28, 18);
+            entity("mythicalcreatures:timber_wolf", 40, 0.35, 6);
+            entity("mythicalcreatures:crabzilla", 650, 0.18, 28);
+            entity("mythicalcreatures:iron_will", 420, 0.22, 18);
+            entity("mythicalcreatures:skull_of_doom", 50, 0.1, 7);
+            entity("mythicalcreatures:prince_rutherford", 420, 0.25, 18);
+            entity("mythicalcreatures:spikezilla", 650, 0.2, 28);
+            entity("mythicalcreatures:rhinoceros", 60.0, 0.2, 7.0);
+            entity("mythicalcreatures:robot_sombra", 55, 0.28, 7);
+            entity("mythicalcreatures:cragadile", 50.0, 0.28, 7.0);
+            entity("mythicalcreatures:twilight_magic",    20.0, 0.50, 8.0);
+            ENTITY_DEFAULTS.put("mythicalcreatures:twilight_magic|fly_speed", 0.183);
+            ENTITY_DEFAULTS.put("mythicalcreatures:rainbow_dash|fly_speed", 0.333);
+            ENTITY_DEFAULTS.put("mythicalcreatures:twilight_sparkle|fly_speed", 0.267);
+            // 自主飞行生物（接 fly_speed 配置）：凤凰 / 雪魔 / 蝎尾狮 / 穗龙斯拉 / 盖伯
+            ENTITY_DEFAULTS.put("mythicalcreatures:phoenix|fly_speed", 0.40);
+            ENTITY_DEFAULTS.put("mythicalcreatures:windigo|fly_speed", 0.20);
+            ENTITY_DEFAULTS.put("mythicalcreatures:manticore|fly_speed", 0.30);
+            ENTITY_DEFAULTS.put("mythicalcreatures:spikezilla|fly_speed", 0.25);
+            ENTITY_DEFAULTS.put("mythicalcreatures:garble|fly_speed", 0.30);
+
+            // 飞行坐骑骑乘调参默认值（空配置 = 小马手感；玩家可在 overrides 覆盖）
+            for (String id : new String[]{"mythicalcreatures:twilight_sparkle", "mythicalcreatures:rainbow_dash"}) {
+                ENTITY_DEFAULTS.put(id + "|ridden_speed_factor", 1.0);
+                ENTITY_DEFAULTS.put(id + "|vertical_up", 0.3);
+                ENTITY_DEFAULTS.put(id + "|vertical_down", -0.4);
+                ENTITY_DEFAULTS.put(id + "|vertical_hover", -0.04);
+                ENTITY_DEFAULTS.put(id + "|horizontal_factor", 1.0);
+                ENTITY_DEFAULTS.put(id + "|inertia_decay", 0.9);
+            }
+
+            // 柔柔：飞行坐骑，但默认比紫悦/云宝飞得更慢、更飘
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|ridden_speed_factor", 0.6);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|vertical_up", 0.18);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|vertical_down", -0.25);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|vertical_hover", -0.03);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|horizontal_factor", 0.6);
+            ENTITY_DEFAULTS.put("mythicalcreatures:fluttershy|inertia_decay", 0.92);
+
+            // 地面坐骑骑乘调参默认值（空配置 = 苹果嘉儿标准手感；玩家可在 overrides 覆盖）
+            for (String id : new String[]{"mythicalcreatures:applejack", "mythicalcreatures:holy_light_radiance",
+                                          "mythicalcreatures:pinkie_pie", "mythicalcreatures:rarity"}) {
+                ENTITY_DEFAULTS.put(id + "|ridden_speed_factor", 1.15); // 骑乘移动速度倍率（基于实体 move_speed）
+                ENTITY_DEFAULTS.put(id + "|jump_height", 0.63);         // 满蓄力跳跃初速度基数
+            }
         }
     }
 
@@ -100,41 +154,28 @@ public class MythicalConfig {
         @SuppressWarnings({"rawtypes", "unchecked"})
         Data(ForgeConfigSpec.Builder b) {
             b.comment(
-                "属性覆盖 | Attribute Overrides",
-                "格式: [\"注册名\", \"属性\", 数值] | Format: [\"registry_name\", \"attribute\", value]",
+                "格式: [\"注册名\", \"属性\", 数值]  |  Format: [\"name\", \"attr\", value]",
+                "详细教程见  |  Full guide: https://github.com/ShaoZhige/Mythical-Creatures-Reborn/wiki",
                 "",
-                "--- 实体属性 | Entity attributes ---",
-                "  注册名 = 完整 Entity ID | Full Entity ID",
-                "  属性   = max_health / move_speed / attack_damage / fly_speed",
-                "  示例 | Example:  [\"mythicalcreatures:bear\", \"max_health\", 80.0]",
-                "  示例 | Example:  [\"mythicalcreatures:rainbow_dash\", \"fly_speed\", 0.6]",
+                "--- 实体  |  Entity ---",
+                "  属性: max_health / move_speed / attack_damage / fly_speed",
+"  飞行坐骑骑乘调参(可覆盖): ridden_speed_factor / vertical_up / vertical_down / vertical_hover / horizontal_factor / inertia_decay",
+"  地面坐骑骑乘调参(可覆盖): ridden_speed_factor / jump_height",
+"  紫悦/云宝 自主飞行(可覆盖): flight_chance / fly_cooldown_min / fly_cooldown_max / fly_duration_min / fly_duration_max",
+"  示例: [\"mythicalcreatures:bear\", \"max_health\", 80.0]",
                 "",
-                "--- 物品属性 | Item attributes ---",
-                "  注册名 = 完整 Item ID（每件物品单独覆盖）| Full Item ID (per-item override)",
-                "  属性   = 武器 Weapon: attack_damage",
-                "          护甲 Armor:  armor / armor_toughness / armor_kb_resist",
-                "          通用 Any:   max_damage (有耐久物品的耐久上限)",
-                "  注: max_damage 需 Mixin 支持，仅重启后生效 | max_damage requires restart",
-                "  示例 | Example:  [\"mythicalcreatures:bowsers_sword\", \"attack_damage\", 12.0]",
-                "  示例 | Example:  [\"mythicalcreatures:bowsers_helmet\", \"armor\", 5]",
+                "--- 物品  |  Item ---",
+                "  武器: attack_damage  |  护甲: armor / armor_toughness / armor_kb_resist  |  耐久: max_damage",
+                "  示例: [\"mythicalcreatures:twilight_sword\", \"attack_damage\", 12.0]",
+                "  示例: [\"mythicalcreatures:twilight_sword\", \"max_damage\", 9999]",
                 "",
-                "--- 全局参数 | Global params ---",
-                "  注册名 = global_params",
-                "  sword_cooldown    = 紫悦之剑技能冷却 (tick) | Twilight sword cooldown",
-                "  repair_interval   = 修补触发间隔 (tick) | Repair trigger interval",
-                "  repair_amount     = 每次修补恢复耐久 | Durability restored per repair",
-                "  bleeding_base     = 流血基础伤害 | Bleeding base damage",
-                "  bleeding_amp      = 流血每级额外伤害 | Bleeding damage per level",
-                "  wing_flap_speed   = 翅膀扇动速度 | Wing flap animation speed",
-                "  wing_decay_speed  = 翅膀收起衰减速度 | Wing decay speed",
-                "  follow_range      = 生物跟随范围 (方块) | Entity follow range",
-                "  示例 | Example:  [\"global_params\", \"sword_cooldown\", 10]",
-                "  示例 | Example:  [\"global_params\", \"bleeding_base\", 2.0]",
+                "--- 全局  |  Global ---",
+                "  注册名: global_params",
+                "  可用: sword_cooldown(40) repair_interval(60) repair_amount(1) bleeding_base(1.0) bleeding_amp(0.5)",
+                "        wing_flap_speed(0.4) wing_decay_speed(0.15) follow_range(16) cutie_mark_slots(1)",
+                "  示例: [\"global_params\", \"sword_cooldown\", 5]",
                 "",
-                "--- 其他 | Other ---",
-                "  global_params.cutie_mark_slots = 可爱标志栏位数 (默认1) | Cutie mark slot count",
-                "",
-                "留空则不覆盖任何属性 | Leave empty to use all defaults"
+                "留空 = 全部默认  |  Empty = all defaults"
             );
             overrides = b.defineList("overrides", ArrayList::new,
                 o -> o instanceof List<?> list && list.size() == 3
@@ -159,7 +200,14 @@ public class MythicalConfig {
             }
         }
 
-        /** 获取实体属性值（优先覆盖，否则取默认） */
+        /**
+         * 获取实体属性值：优先取玩家 override，否则取内置默认。
+         * 注意：默认缺失时静默返回 0.0（可能让实体数值归零），调用方务必保证 D.ENTITY_DEFAULTS 已含该键。
+         *
+         * Gets an entity attribute: player overrides win, then the built-in default.
+         * Warning: a missing default silently returns 0.0 (which can zero out a stat),
+         * so callers must ensure the key exists in D.ENTITY_DEFAULTS.
+         */
         public double entityAttr(String entityId, String attr) {
             var m = parsed != null ? parsed.get(entityId) : null;
             if (m != null && m.containsKey(attr))
@@ -167,7 +215,13 @@ public class MythicalConfig {
             return D.ENTITY_DEFAULTS.getOrDefault(entityId + "|" + attr, 0.0);
         }
 
-        /** 获取全局参数值（items/animation 等） */
+        /**
+         * 获取全局参数（item/animation 等）：优先取覆盖，否则用调用方传入的 fallback。
+         * 与 entityAttr 不同，此方法不会静默返回 0.0——缺失时一定回退到 fallback。
+         *
+         * Global params (items/animation/etc.): override wins, otherwise the supplied fallback.
+         * Unlike entityAttr(), a missing key returns the fallback, never a silent 0.0.
+         */
         public double get(String key, String attr, double fallback) {
             var m = parsed != null ? parsed.get(key) : null;
             if (m != null && m.containsKey(attr))

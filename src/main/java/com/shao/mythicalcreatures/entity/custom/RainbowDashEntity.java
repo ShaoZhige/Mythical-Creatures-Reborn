@@ -3,7 +3,6 @@ package com.shao.mythicalcreatures.entity.custom;
 import com.shao.mythicalcreatures.config.MythicalConfig;
 import com.shao.mythicalcreatures.item.ModItems;
 import com.shao.mythicalcreatures.sound.ModSounds;
-import com.shao.mythicalcreatures.util.KeyStateHelper;
 import com.shao.mythicalcreatures.entity.RainbowCloudEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -17,13 +16,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RainbowDashEntity extends PonyEntity {
+public class RainbowDashEntity extends NeutralPonyEntity {
 
     public RainbowDashEntity(EntityType<RainbowDashEntity> type, Level level) {
         super(type, level);
     }
 
     @Override protected void refreshConfigAttributes() {
+        cacheRideTuning("mythicalcreatures:rainbow_dash");
         var h = this.getAttribute(Attributes.MAX_HEALTH);
         if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "max_health"));
         var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -74,52 +74,34 @@ public class RainbowDashEntity extends PonyEntity {
         return super.hurt(source, amount);
     }
 
-    /* ── 骑乘飞行控制 ── */
+    /* ── 骑乘飞行：逻辑统一在 FlightRideAPI，实体只做委托调用（默认值见 MythicalConfig.D.ENTITY_DEFAULTS） ── */
+    // 飞行小马骑手定位以紫悦为标准（见 PonyEntity.FLYING_RIDER_*）
+    @Override protected double getRiderBackOffset()    { return FLYING_RIDER_BACK; }
+    @Override protected float  getRiderVerticalOffset() { return FLYING_RIDER_Y; }
+
     @Override protected @NotNull Vec3 getRiddenInput(Player player, @NotNull Vec3 v) {
-        float fwd = player.zza;
-        float str = (float)(player.xxa * (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "ridden_speed_factor"));
-        if (fwd <= 0) fwd *= 0.25F;
-        return new Vec3(str, v.y, fwd);
+        return FlightRideAPI.getRiddenInput(this, player, v);
     }
 
     @Override protected float getRiddenSpeed(@NotNull Player player) {
-        return (float) this.getAttributeValue(Attributes.FLYING_SPEED);
+        return FlightRideAPI.getRiddenSpeed(this);
     }
 
     @Override protected void tickRidden(@NotNull Player player, @NotNull Vec3 v) {
         super.tickRidden(player, v);
-        this.setYRot(player.getYRot()); this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
-        if (this.isFlying() || this.isHovering()) {
-            float vert = KeyStateHelper.isJumpKeyDown(player)
-                    ? (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "vertical_up")
-                    : KeyStateHelper.isMountDescendDown(player)
-                    ? (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "vertical_down")
-                    : (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "vertical_hover");
-            this.setDeltaMovement(this.getDeltaMovement().add(0, vert, 0));
-        }
+        FlightRideAPI.tickRidden(this, player, v);
     }
 
     @Override public void travel(@NotNull Vec3 v) {
-        if (this.isVehicle() && this.getControllingPassenger() instanceof Player) {
-            this.setNoGravity(true); this.fallDistance = 0;
-            if (this.isFlying() || this.isHovering()) {
-                float s = (float)(getRiddenSpeed((Player)this.getControllingPassenger())
-                        * (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "horizontal_factor"));
-                this.moveRelative(s, new Vec3(v.x, 0, v.z));
-                this.move(MoverType.SELF, this.getDeltaMovement());
-                this.setDeltaMovement(this.getDeltaMovement().scale((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "inertia_decay")));
-            } else { super.travel(v); }
-        } else { this.setNoGravity(false); super.travel(v); }
+        if (!FlightRideAPI.flyingRideTravel(this, v)) {
+            this.setNoGravity(false);
+            super.travel(v);
+        }
     }
 
     @Override public void tick() {
         super.tick();
-        if (this.isVehicle()) {
-            this.setFlying(true);
-            this.wingFlapTicks = (float)((this.wingFlapTicks + MythicalConfig.DATA.get("global_params", "wing_flap_speed", 0.4)) % 360.0);
-            return;
-        }
-        tickFlight();
+        if (!FlightRideAPI.tickRiddenFlight(this)) tickFlight();
     }
 
     @Override
