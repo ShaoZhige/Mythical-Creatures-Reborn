@@ -5,7 +5,7 @@
 *A modernized 1.20.1 Forge port of the MLP Mythical Creatures mod.*
 
 ## 基本信息 / Basic Info
-| 信息 / Info | 详细/ detailed |
+| 信息 / Info | 详细 / detailed |
 |---|---|
 | 加载器 / Loader | Forge 47.2.0+ |
 | 必需前置 / Required | [GeckoLib](https://github.com/bernie-g/geckolib) 4.2+ |
