@@ -155,7 +155,10 @@ public class SetBonusManager {
                                     -1, 0, false, false, true));
                         }
                     } else {
-                        player.removeEffect(net.minecraft.world.effect.MobEffects.ABSORPTION);
+                        // 仅移除套装自身授予的无限时长吸收（duration<0），避免误删金苹果等外源 buff
+                        var cur = player.getEffect(net.minecraft.world.effect.MobEffects.ABSORPTION);
+                        if (cur != null && cur.getDuration() < 0)
+                            player.removeEffect(net.minecraft.world.effect.MobEffects.ABSORPTION);
                     }
                 });
 
@@ -176,7 +179,10 @@ public class SetBonusManager {
                                     -1, 0, false, false, true));
                         }
                     } else {
-                        player.removeEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
+                        // 仅移除套装自身授予的无限时长防火（duration<0），避免误删抗火药水的外源 buff
+                        var cur = player.getEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
+                        if (cur != null && cur.getDuration() < 0)
+                            player.removeEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
                     }
                 });
 

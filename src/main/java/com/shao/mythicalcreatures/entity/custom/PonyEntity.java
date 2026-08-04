@@ -10,7 +10,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -46,7 +46,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     protected int flyCooldown = 0;
     protected int flyDuration = 0;
     protected double flyStartY = 0;
-    protected byte flyPhase = 0; // 0=上升 1=悬停 2=降落
+    protected FlightPhase flyPhase = FlightPhase.ASCENT; // 自主飞行状态机阶段
     protected boolean angryFlight = false;
     public float wingFlapTicks = 0;
 
@@ -99,6 +99,26 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     /** 从配置文件刷新属性值（子类重写调用各自的配置项） */
     protected void refreshConfigAttributes() {}
 
+    /** 统一的实体注册名（如 mythicalcreatures:rainbow_dash），避免各子类硬编码字符串 */
+    protected final String entityId() {
+        return net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getKey(this.getType()).toString();
+    }
+
+    /** 应用核心属性：MAX_HEALTH / MOVEMENT_SPEED / FLYING_SPEED(仅飞行) / ATTACK_DAMAGE，并回满血 */
+    protected final void applyCoreStats(String id, boolean flying) {
+        var h = this.getAttribute(Attributes.MAX_HEALTH);
+        if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "max_health"));
+        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (s != null) s.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "move_speed"));
+        if (flying) {
+            var f = this.getAttribute(Attributes.FLYING_SPEED);
+            if (f != null) f.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "fly_speed"));
+        }
+        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "attack_damage"));
+        this.setHealth(this.getMaxHealth());
+    }
+
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
@@ -142,7 +162,11 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         if (this.isVehicle() && source.getEntity() != null
             && this.getControllingPassenger() != null && source.getEntity() == this.getControllingPassenger())
             return false;
-        if (source.is(net.minecraft.world.damagesource.DamageTypes.EXPLOSION)
+        // 防御魔法/火焰/爆炸/雷电免疫：仅保护“已驯服的友方”（坐骑/宠物），让它们不被友军魔法与
+        // 环境火焰误伤。敌对生物与未驯服个体正常受伤 —— 否则厄运之颅（亡灵）无法像原版骷髅那样
+        // 在白天被晒燃烧，且更符合“这些免疫是保护我方而非敌方”的语义。
+        if (this.isTame() && (
+            source.is(net.minecraft.world.damagesource.DamageTypes.EXPLOSION)
          || source.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_EXPLOSION)
          || source.is(net.minecraft.world.damagesource.DamageTypes.MAGIC)
          || source.is(net.minecraft.world.damagesource.DamageTypes.IN_FIRE)
@@ -150,7 +174,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
          || source.is(net.minecraft.world.damagesource.DamageTypes.LAVA)
          || source.is(net.minecraft.world.damagesource.DamageTypes.HOT_FLOOR)
          || source.is(net.minecraft.world.damagesource.DamageTypes.FIREBALL)
-         || source.is(net.minecraft.world.damagesource.DamageTypes.LIGHTNING_BOLT)) {
+         || source.is(net.minecraft.world.damagesource.DamageTypes.LIGHTNING_BOLT))) {
             return false;
         }
         return super.hurt(source, amount);
@@ -188,8 +212,10 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false,
-                e -> e instanceof net.minecraft.world.entity.monster.Enemy));
+        // 注意：主动索敌“敌对目标”由子类决定 ——
+        //   · 中立小马(NeutralPonyEntity) 会主动打模组敌对生物 + 原版 Enemy（防御）
+        //   · 直接继承 PonyEntity 的中立生物（壮汉/梅菲斯）默认只反击、不主动狩猎（同原版中立）
+        // 基类不再统一挂 NearestAttackableTargetGoal(Enemy)，避免中立生物行为比原版中立更激进。
     }
 
     /* ================================================================
@@ -318,27 +344,34 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
      * 自主飞行状态机（canFly() 子类使用，被子类 tick() 调用）
      * ================================================================ */
 
-    protected double getFlightAscentSpeed()     { return 0.05D; }
-    protected double getFlightDescendSpeed()    { return -0.03D; }
-    protected double getFlightMaxHeight()       { return 3.0D; }
-    protected int    getFlightHoverDuration()   { return 80; }
-    protected int    getFlightChance()          { return 1000; }
-    protected int    getFlightCooldownMin()     { return 200; }
-    protected int    getFlightCooldownMax()     { return 400; }
-    protected int    getFlightDurationMin()     { return 60; }
-    protected int    getFlightDurationMax()     { return 100; }
-    protected int    getAngryFlightChance()     { return 30; }
-    protected int    getAngryFlightAscentDuration() { return 40; }
+    // ── 自主飞行参数（全部硬编码、非配置驱动；改飞行手感必须改这里）────────
+    // 单位：速度=方块/tick；时长=tick（20 tick=1 秒）。属平衡基线，【意图未知·沿用原模组手感】，非代码派生。
+    protected double getFlightAscentSpeed()     { return 0.05D; }  // 平静上升速度(方块/tick)
+    protected double getFlightDescendSpeed()    { return -0.03D; } // 降落速度(负=下落)
+    protected double getFlightMaxHeight()       { return 3.0D; }   // 单次观光起飞最大升限(方块)
+    protected int    getFlightHoverDuration()   { return 80; }     // 平静悬停时长(tick,≈4s);被 tickFlight 调用
+    protected int    getFlightChance()          { return 1000; }   // 平静起飞概率分母;被 tickFlight 调用(子类读配置覆盖)
+    protected int    getFlightCooldownMin()     { return 200; }    // 落地后再起飞冷却下限(tick)
+    protected int    getFlightCooldownMax()     { return 400; }    // 落地后再起飞冷却上限(tick)
+    protected int    getFlightDurationMin()     { return 60; }     // 平静观光时长下限(tick)
+    protected int    getFlightDurationMax()     { return 100; }    // 平静观光时长上限(tick)
+
+    /** 自主飞行状态机阶段（原 byte 0/1/2 改为可读枚举） */
+    protected enum FlightPhase { ASCENT, HOVER, DESCENT }
+
+    // ── 自主飞行魔法数字（单位/含义见各常量注释；全部硬编码、非配置驱动，改飞行手感改这里）──
+    private static final int ANGRY_HOVER_DURATION = 300;            // 愤怒悬停时长(tick,≈15s)
+    private static final int ANGRY_HOVER_REFRESH_THRESHOLD = 60;     // 愤怒悬停剩余≤此值时续命
+    private static final int ANGRY_HOVER_REFRESH_DURATION = 200;     // 续命到的悬停时长(tick,≈10s)
+    private static final int ANGRY_TAKEOFF_ASCENT = 30;              // 愤怒起飞初始上升时长(tick)
+    private static final double TAKEOFF_IMPULSE = 0.45;             // 起飞瞬间向上初速度(方块/tick)
+    private static final int ANGRY_FLIGHT_PROB_DENOM = 4;            // 有仇恨时起飞概率分母(≈25%/tick)
 
     protected void tickFlight() {
         if (!canFly()) return;
         // 死亡后立即停止驱动飞行：避免尸体继续跑状态机/翅膀动画，造成“假死抽搐”。
-        // Stop all flight logic once dead; otherwise the corpse keeps moving and looks like it's
-        // faking death.
         if (!this.isAlive()) return;
-        // 自主飞行状态机：0=上升 1=悬停 2=降落；有仇恨时优先悬停追击，无仇恨按 flight_chance 偶尔起飞观光。
-        // Autonomous flight FSM: 0=ascent, 1=hover, 2=descent. When angry it hovers to chase;
-        // when calm it only occasionally takes off (governed by flight_chance) for a short hop.
+        // 自主飞行状态机：ASCENT→HOVER→DESCENT；有仇恨时优先悬停追击，无仇恨按 flight_chance 偶尔起飞观光。
 
         // 翅膀动画（客户端 + 服务端）
         if ((this.isFlying() || this.isHovering()) && !this.isVehicle())
@@ -351,36 +384,36 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         boolean hasTarget = this.getTarget() != null && this.getTarget().isAlive();
         boolean aiBusy = this.getNavigation().isInProgress();
         if (this.isFlying() || this.isHovering()) {
-            switch (flyPhase) {
-                case 0: // 上升
+            switch (this.flyPhase) {
+                case ASCENT:
                     this.flyDuration--;
                     this.setDeltaMovement(this.getDeltaMovement().add(0, this.angryFlight ? 0.05D : getFlightAscentSpeed(), 0));
                     if (this.flyDuration <= 0 || this.getY() >= this.flyStartY + getFlightMaxHeight() || aiBusy) {
-                        flyPhase = 1;
-                        this.flyDuration = this.angryFlight ? 300 : getFlightHoverDuration();
+                        this.flyPhase = FlightPhase.HOVER;
+                        this.flyDuration = this.angryFlight ? ANGRY_HOVER_DURATION : getFlightHoverDuration();
                         this.setDeltaMovement(Vec3.ZERO);
                     }
                     break;
-                case 1: // 悬停
+                case HOVER:
                     this.flyDuration--;
                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1.0, 0.5));
                     // 有仇恨时刷新悬停时间，基本不下落
-                    if (this.angryFlight && hasTarget && this.flyDuration <= 60)
-                        this.flyDuration = 200;
-                    if (this.flyDuration <= 0) flyPhase = 2;
+                    if (this.angryFlight && hasTarget && this.flyDuration <= ANGRY_HOVER_REFRESH_THRESHOLD)
+                        this.flyDuration = ANGRY_HOVER_REFRESH_DURATION;
+                    if (this.flyDuration <= 0) this.flyPhase = FlightPhase.DESCENT;
                     break;
-                case 2: // 降落
+                case DESCENT:
                     // 有仇恨时不下落，回到悬停
                     if (this.angryFlight && hasTarget) {
-                        flyPhase = 1;
-                        this.flyDuration = 200;
+                        this.flyPhase = FlightPhase.HOVER;
+                        this.flyDuration = ANGRY_HOVER_REFRESH_DURATION;
                         this.setDeltaMovement(Vec3.ZERO);
                         break;
                     }
                     this.setDeltaMovement(this.getDeltaMovement().add(0, this.angryFlight ? -0.03D : getFlightDescendSpeed(), 0));
                     if (this.onGround()) {
                         this.setFlying(false); this.setHovering(false);
-                        flyPhase = 0;
+                        this.flyPhase = FlightPhase.ASCENT;
                         this.angryFlight = false;
                         this.flyCooldown = getFlightCooldownMin() + this.random.nextInt(Math.max(1, getFlightCooldownMax() - getFlightCooldownMin()));
                     }
@@ -389,16 +422,16 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         } else {
             if (this.onGround() && this.flyCooldown > 0) this.flyCooldown--;
             // 有仇恨时高概率起飞
-            boolean isAngry = hasTarget && this.onGround() && this.flyCooldown <= 0 && this.random.nextInt(4) == 0;
+            boolean isAngry = hasTarget && this.onGround() && this.flyCooldown <= 0 && this.random.nextInt(ANGRY_FLIGHT_PROB_DENOM) == 0;
             if (!aiBusy && this.onGround() && this.flyCooldown <= 0 && this.getPassengers().isEmpty() && !this.isOrderedToSit()
-                && (isAngry || this.random.nextInt(getFlightChance()) == 0)) {
+                && (isAngry || this.random.nextInt(Math.max(1, getFlightChance())) == 0)) {
                 this.angryFlight = isAngry || (hasTarget && !isAngry && this.random.nextBoolean());
                 this.setHovering(true);
-                flyPhase = 0;
+                this.flyPhase = FlightPhase.ASCENT;
                 flyStartY = this.getY();
-                flyDuration = isAngry ? 30
+                flyDuration = isAngry ? ANGRY_TAKEOFF_ASCENT
                     : getFlightDurationMin() + this.random.nextInt(Math.max(1, getFlightDurationMax() - getFlightDurationMin()));
-                this.setDeltaMovement(this.getDeltaMovement().add(0, 0.45, 0));
+                this.setDeltaMovement(this.getDeltaMovement().add(0, TAKEOFF_IMPULSE, 0));
             }
         }
     }

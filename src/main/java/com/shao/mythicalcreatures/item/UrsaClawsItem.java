@@ -17,9 +17,9 @@ import net.minecraft.world.item.Tier;
 
 /**
  * 大熊座之爪（Ursa Claws）
- * 单次挥击 100 点伤害（基础值由 Tier 攻击加成 + 构造函数参数决定），
+ * 单次挥击 100 点伤害（基础值 = 空手基准1.0 + 构造attackDamage87 + URSA Tier加成12），
  * 走 SwordItem 默认逻辑 → 可正常附魔「锋利」且受护甲减免；
- * 攻速修正 -3.3F → 实际 0.7 次/秒，比最慢的斧头(0.8)还慢。
+ * 攻速修正 -3.65F → 实际 0.35 次/秒（原 -3.3F 的 0.7 对半砍更慢）。
  * 命中时对周围敌人追加 AOE 伤害（同样含锋利加成），半径见 AOE_RANGE。
  * 双持时副手会延迟补一次完整斩击（动画+粒子+音效+伤害），见 UrsaClawsDualWieldHandler。
  */

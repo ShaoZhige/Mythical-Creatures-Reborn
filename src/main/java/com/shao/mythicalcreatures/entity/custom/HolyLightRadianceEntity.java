@@ -65,14 +65,8 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
     @Override public void handleStopJump() { GroundRideAPI.handleStopJump(this); }
 
     @Override protected void refreshConfigAttributes() {
-        cacheRideTuning("mythicalcreatures:holy_light_radiance");
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "move_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "attack_damage"));
-        this.setHealth(this.getMaxHealth());
+        cacheRideTuning(entityId());
+        applyCoreStats(entityId(), canFly());
     }
     @Override protected boolean canFly() { return false; }
     @Override protected Item getTamingItem() {
@@ -85,7 +79,6 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "max_health")).add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "attack_damage")).add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
-    @Override protected void defineSynchedData() { super.defineSynchedData();  }
     @Override public void performRangedAttack(LivingEntity target, float power) {
         ThrowableItemProjectile projectile;
         int roll = this.random.nextInt(6);

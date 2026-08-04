@@ -33,13 +33,11 @@ public class CutieMarkCurioRenderer implements ICurioRenderer {
         if (!(parent.getModel() instanceof HumanoidModel<?> humanoid)) return;
         int idx = slotContext.index();
 
-        ResourceLocation regName = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        if (regName == null) return;
-        ResourceLocation texture = new ResourceLocation(regName.getNamespace(),
-                "textures/item/" + regName.getPath() + ".png");
+        ResourceLocation texture = textureFor(stack.getItem());
+        if (texture == null) return;
 
-        // 是否只有一个可爱标志
-        boolean hasSecond = hasSlotFilled(slotContext, 1);
+        // 是否只有一个可爱标志（仅在第一个槽位需要判断第二个槽，避免每个槽位都查一次 Curios）
+        boolean hasSecond = (idx == 0) && hasSlotFilled(slotContext, 1);
 
         if (idx == 0) {
             // 第一个：永远渲染左腿
@@ -52,6 +50,16 @@ public class CutieMarkCurioRenderer implements ICurioRenderer {
             renderSide(humanoid, poseStack, buffer, light, texture, "right");
         }
         // idx >= 2：不渲染
+    }
+
+    // 按物品缓存可爱标志纹理（物品为常量，避免每帧 new ResourceLocation + 字符串拼接）
+    private static final java.util.Map<net.minecraft.world.item.Item, ResourceLocation> TEXTURE_CACHE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+    private static ResourceLocation textureFor(net.minecraft.world.item.Item item) {
+        ResourceLocation regName = ForgeRegistries.ITEMS.getKey(item);
+        if (regName == null) return null;
+        return TEXTURE_CACHE.computeIfAbsent(item, k -> new ResourceLocation(
+                regName.getNamespace(), "textures/item/" + regName.getPath() + ".png"));
     }
 
     private static boolean hasSlotFilled(SlotContext ctx, int index) {

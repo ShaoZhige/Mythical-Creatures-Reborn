@@ -23,16 +23,8 @@ public class RainbowDashEntity extends NeutralPonyEntity {
     }
 
     @Override protected void refreshConfigAttributes() {
-        cacheRideTuning("mythicalcreatures:rainbow_dash");
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "move_speed"));
-        var f = this.getAttribute(Attributes.FLYING_SPEED);
-        if (f != null) f.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "fly_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:rainbow_dash", "attack_damage"));
-        this.setHealth(this.getMaxHealth());
+        cacheRideTuning(entityId());
+        applyCoreStats(entityId(), canFly());
     }
 
     @Override protected boolean canFly() { return true; }
@@ -52,8 +44,6 @@ public class RainbowDashEntity extends NeutralPonyEntity {
     @Override protected int    getFlightCooldownMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:rainbow_dash", "fly_cooldown_max", 300); }
     @Override protected int    getFlightDurationMin()   { return MythicalConfig.DATA.getInt("mythicalcreatures:rainbow_dash", "fly_duration_min", 150); }
     @Override protected int    getFlightDurationMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:rainbow_dash", "fly_duration_max", 250); }
-    @Override protected int    getAngryFlightChance()   { return 25; }
-    @Override protected int    getAngryFlightAscentDuration() { return 30; }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

@@ -22,16 +22,8 @@ public class FluttershyEntity extends NeutralPonyEntity {
     }
 
     @Override protected void refreshConfigAttributes() {
-        cacheRideTuning("mythicalcreatures:fluttershy");
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "move_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "attack_damage"));
-        var f = this.getAttribute(Attributes.FLYING_SPEED);
-        if (f != null) f.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "fly_speed"));
-        this.setHealth(this.getMaxHealth());
+        cacheRideTuning(entityId());
+        applyCoreStats(entityId(), canFly());
     }
     @Override protected boolean canFly() { return true; }
     @Override protected Item getTamingItem() {

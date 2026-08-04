@@ -26,14 +26,8 @@ public class ApplejackEntity extends NeutralPonyEntity implements PlayerRideable
     }
 
     @Override protected void refreshConfigAttributes() {
-        cacheRideTuning("mythicalcreatures:applejack");
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:applejack", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:applejack", "move_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:applejack", "attack_damage"));
-        this.setHealth(this.getMaxHealth());
+        cacheRideTuning(entityId());
+        applyCoreStats(entityId(), canFly());
     }
 
     @Override protected boolean canFly() { return false; }

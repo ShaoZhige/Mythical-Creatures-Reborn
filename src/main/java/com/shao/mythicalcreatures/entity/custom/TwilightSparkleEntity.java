@@ -2,6 +2,7 @@ package com.shao.mythicalcreatures.entity.custom;
 
 import com.shao.mythicalcreatures.config.MythicalConfig;
 import com.shao.mythicalcreatures.entity.ModEntities;
+import com.shao.mythicalcreatures.entity.MagicBurstEntity;
 import com.shao.mythicalcreatures.entity.TwilightStarEntity;
 import com.shao.mythicalcreatures.entity.custom.TwilightMagicEntity;
 import com.shao.mythicalcreatures.item.ModItems;
@@ -15,6 +16,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,16 +31,8 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
     private int magicSummonCooldown = 0;
 
     @Override protected void refreshConfigAttributes() {
-        cacheRideTuning("mythicalcreatures:twilight_sparkle");
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "move_speed"));
-        var f = this.getAttribute(Attributes.FLYING_SPEED);
-        if (f != null) f.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "fly_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr("mythicalcreatures:twilight_sparkle", "attack_damage"));
-        this.setHealth(this.getMaxHealth());
+        cacheRideTuning(entityId());
+        applyCoreStats(entityId(), canFly());
     }
 
     @Override protected boolean canFly() { return true; }
@@ -53,8 +48,6 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
     @Override protected int    getFlightCooldownMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_cooldown_max", 400); }
     @Override protected int    getFlightDurationMin()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_duration_min", 100); }
     @Override protected int    getFlightDurationMax()   { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "fly_duration_max", 150); }
-    @Override protected int    getAngryFlightChance()   { return 30; }
-    @Override protected int    getAngryFlightAscentDuration() { return 40; }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
@@ -114,6 +107,9 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
         this.playSound(SoundEvents.LLAMA_SPIT, 1.0F, 1.0F);
         this.level().addFreshEntity(projectile);
 
+        // 紫悦魔法爆发：冲击波 + 紫色魔法粒子四散（服务端 spawn，自动同步到客户端）
+        this.castMagicBurst(this.level(), this.getX(), this.getY(0.7), this.getZ());
+
         // 概率召唤紫悦的魔法团（以紫悦为主人，会自动环绕并攻击敌对生物）
         if (!this.level().isClientSide() && this.magicSummonCooldown <= 0 && this.random.nextFloat() < 0.35F) {
             TwilightMagicEntity magic = new TwilightMagicEntity(ModEntities.TWILIGHT_MAGIC.get(), this.level());
@@ -121,6 +117,20 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
             magic.setOwner(this);
             this.level().addFreshEntity(magic);
             this.magicSummonCooldown = 120; // 约 6 秒冷却
+        }
+    }
+
+    /** 在 (x,y,z) 处生成一次紫悦魔法爆发：冲击波实体 + 向外四散的紫色魔法粒子。 */
+    private void castMagicBurst(Level level, double x, double y, double z) {
+        level.addFreshEntity(new MagicBurstEntity(level, x, y, z));
+        for (int i = 0; i < 28; i++) {
+            Vec3 dir = new Vec3(level.random.nextDouble() - 0.5,
+                                level.random.nextDouble() - 0.5,
+                                level.random.nextDouble() - 0.5)
+                    .normalize().scale(0.2 + level.random.nextDouble() * 0.4);
+            ParticleOptions p = (i % 3 == 0) ? ParticleTypes.END_ROD
+                    : (i % 3 == 1) ? ParticleTypes.REVERSE_PORTAL : ParticleTypes.PORTAL;
+            level.addParticle(p, x, y, z, dir.x, dir.y, dir.z);
         }
     }
 }

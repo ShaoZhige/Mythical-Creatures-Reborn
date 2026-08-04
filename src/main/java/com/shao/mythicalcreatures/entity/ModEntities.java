@@ -118,6 +118,15 @@ public class ModEntities {
                             .updateInterval(10)
                             .build("rainbow_beam"));
 
+    // ── 紫悦施法视觉特效：短暂存在的冲击波实体（仅渲染，无碰撞/无 AI） ──
+    public static final RegistryObject<EntityType<MagicBurstEntity>> MAGIC_BURST =
+            ENTITY_TYPES.register("magic_burst", () ->
+                    EntityType.Builder.<MagicBurstEntity>of(MagicBurstEntity::new, MobCategory.MISC)
+                            .sized(3.0F, 3.0F)   // 包围盒略大，避免扩散环被视锥过早剔除
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("magic_burst"));
+
     public static final RegistryObject<EntityType<PhoenixFeatherEntity>> PHOENIX_FEATHER =
             ENTITY_TYPES.register("phoenix_feather", () ->
                     EntityType.Builder.<PhoenixFeatherEntity>of(PhoenixFeatherEntity::new, MobCategory.MISC)

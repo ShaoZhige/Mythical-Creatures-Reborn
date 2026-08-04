@@ -22,13 +22,7 @@ public class CockatriceEntity extends HostilePonyEntity {
     }
 
     @Override protected void refreshConfigAttributes() {
-        var h = this.getAttribute(Attributes.MAX_HEALTH);
-        if (h != null) h.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:cockatrice", "max_health"));
-        var s = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (s != null) s.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:cockatrice", "move_speed"));
-        var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (d != null) d.setBaseValue(MythicalConfig.DATA.entityAttr("mythicalcreatures:cockatrice", "attack_damage"));
-        this.setHealth(this.getMaxHealth());
+        applyCoreStats(entityId(), canFly());
     }
 
     @Override protected boolean canFly() { return false; }

@@ -18,8 +18,8 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.UUID;
 
 /**
- * All items ported from MLP Mythical Creatures 1.7.10.
- * No special behaviors - pure items only.
+ * 全物品注册表（移植自 MLP Mythical Creatures 1.7.10）。
+ * 含纯物品与带自定义行为的物品（武器/盔甲/可爱标志/套装等）。
  */
 @SuppressWarnings("unused")
 public class ModItems {
@@ -168,8 +168,8 @@ public class ModItems {
     public static final RegistryObject<SwordItem> DAGGER = ITEMS.register("dagger",
             () -> new SwordItem(ModTiers.RANDOM2, 3, -1.0F, new Item.Properties()));
     public static final RegistryObject<UrsaClawsItem> URSA_CLAWS = ITEMS.register("ursa_claws",
-            // 攻速修正 -3.3F：原版基础 4.0 + (-3.3) = 0.7 次/秒，比最慢的斧头(0.8)还慢一点
-            () -> new UrsaClawsItem(ModTiers.URSA, 88, -3.3F, new Item.Properties().fireResistant()));
+            // 攻击伤害 = 空手基准1.0 + (87 + URSA Tier加成12) = 100；攻速修正 -3.65F：原版基础4.0+(-3.65)=0.35 次/秒（比原 -3.3F 的 0.7 对半砍更慢）
+            () -> new UrsaClawsItem(ModTiers.URSA, 87, -3.65F, new Item.Properties().fireResistant()));
     public static final RegistryObject<SwordItem> DIRT_SWORD = ITEMS.register("dirt_sword",
             () -> new SwordItem(ModTiers.DIRT, 3, -2.4F, new Item.Properties()));
 

@@ -87,14 +87,20 @@ public class CutieMarkHandler {
             if (inv.getItem(i).is(item)) return true;
         }
         if (ModList.get().isLoaded("curios")) {
-            var handler = CuriosApi.getCuriosInventory(player).resolve();
-            if (handler.isPresent()) {
-                var curios = handler.get();
-                for (var slotEntry : curios.getCurios().entrySet()) {
-                    for (int i = 0; i < slotEntry.getValue().getStacks().getSlots(); i++) {
-                        if (slotEntry.getValue().getStacks().getStackInSlot(i).is(item)) return true;
+            try {
+                var handler = CuriosApi.getCuriosInventory(player).resolve();
+                if (handler.isPresent()) {
+                    var curios = handler.get();
+                    for (var slotEntry : curios.getCurios().entrySet()) {
+                        for (int i = 0; i < slotEntry.getValue().getStacks().getSlots(); i++) {
+                            if (slotEntry.getValue().getStacks().getStackInSlot(i).is(item)) return true;
+                        }
                     }
                 }
+            } catch (Exception e) {
+                // Curios 的 inventory future 异常完成时会抛 CompletionException；此处仅跳过本次检查，避免每 30 tick 崩游戏。
+                org.apache.logging.log4j.LogManager.getLogger(CutieMarkHandler.class)
+                        .warn("Curios 库存查询失败，已跳过本次可爱标志检查", e);
             }
         }
         return false;

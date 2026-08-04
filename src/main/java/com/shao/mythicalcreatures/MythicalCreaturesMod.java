@@ -93,6 +93,9 @@ public class MythicalCreaturesMod {
 
     public static final String MODID = "mythicalcreatures";
 
+    private static final org.apache.logging.log4j.Logger LOGGER =
+            org.apache.logging.log4j.LogManager.getLogger(MythicalCreaturesMod.class);
+
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -246,12 +249,16 @@ public class MythicalCreaturesMod {
     public static class ModBusEvents {
         @SubscribeEvent
         public static void onConfigLoaded(ModConfigEvent event) {
-            if (event.getConfig().getSpec() == MythicalConfig.SPEC) {
+            if (event.getConfig().getSpec() != MythicalConfig.SPEC) return;
+
+            if (event instanceof ModConfigEvent.Loading) {
+                // 仅在配置**首次加载**（进入世界时）解析一次；物品/实体属性不是热加载的，
+                // reload 后再解析会误导玩家以为改完就生效（实际已生成的物品修饰器不会重算）。
                 MythicalConfig.DATA.bake();
-                // 配置重载后，max_damage 覆盖值可能变化，失效 MaxDamageCache 的缓存
-                MaxDamageCache.clear();
-                // 配置重载后，全局翅膀动画参数可能变化，刷新 PonyEntity 的静态缓存
-                PonyEntity.refreshGlobalRideTuning();
+            } else if (event instanceof ModConfigEvent.Reloading) {
+                // 热重载：明确告知玩家属性需重启游戏才生效，不做重解析，避免误导。
+                LOGGER.warn("[MythicalCreatures] common.toml 已热重载，但物品/实体属性（攻击、护甲、血量、移速等）"
+                        + "不是热加载项——需【重启游戏/重新进入世界】后新配置才会生效。");
             }
         }
 

@@ -13,6 +13,7 @@ import com.shao.mythicalcreatures.client.renderer.ParaspriteEntityRenderer;
 import com.shao.mythicalcreatures.client.renderer.PhoenixEntityRenderer;
 import com.shao.mythicalcreatures.client.renderer.PinkiePieEntityRenderer;
 import com.shao.mythicalcreatures.client.renderer.RainbowBeamRenderer;
+import com.shao.mythicalcreatures.client.renderer.MagicBurstRenderer;
 import com.shao.mythicalcreatures.client.renderer.RainbowDashRenderer;
 import com.shao.mythicalcreatures.client.renderer.RarityEntityRenderer;
 import com.shao.mythicalcreatures.client.renderer.TwilightMagicRenderer;
@@ -65,6 +66,7 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.APPLEJACK.get(), ApplejackRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_DASH_SLASH.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_BEAM.get(), RainbowBeamRenderer::new);
+        event.registerEntityRenderer(ModEntities.MAGIC_BURST.get(), MagicBurstRenderer::new);
         event.registerEntityRenderer(ModEntities.PHOENIX_FEATHER.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.METEOR_FIREBALL.get(),
                 ctx -> new ScaledThrownItemRenderer<>(ctx, 2.0F));

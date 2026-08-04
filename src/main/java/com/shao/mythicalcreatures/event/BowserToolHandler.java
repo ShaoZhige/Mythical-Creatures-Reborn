@@ -5,6 +5,7 @@ import com.shao.mythicalcreatures.util.KeyStateHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -53,24 +54,18 @@ public class BowserToolHandler {
         event.setCanceled(true);
     }
 
+    // 有 GUI 的常见交互方块（潜行才替换）；有方块实体的（箱子/熔炉等）在 isInteractive 内单独判断
+    private static final Set<Block> INTERACTIVE_BLOCKS = Set.of(
+            Blocks.CRAFTING_TABLE, Blocks.ENCHANTING_TABLE, Blocks.ANVIL,
+            Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL, Blocks.NOTE_BLOCK,
+            Blocks.JUKEBOX, Blocks.BEACON, Blocks.LOOM, Blocks.CARTOGRAPHY_TABLE,
+            Blocks.GRINDSTONE, Blocks.STONECUTTER, Blocks.SMITHING_TABLE,
+            Blocks.FLETCHING_TABLE, Blocks.BELL
+    );
+
     private static boolean isInteractive(BlockState state) {
         // 有方块实体的（箱子、熔炉等）或有 GUI 的
         if (state.hasBlockEntity()) return true;
-        // 常见无方块实体的交互方块
-        return state.is(net.minecraft.world.level.block.Blocks.CRAFTING_TABLE)
-                || state.is(net.minecraft.world.level.block.Blocks.ENCHANTING_TABLE)
-                || state.is(net.minecraft.world.level.block.Blocks.ANVIL)
-                || state.is(net.minecraft.world.level.block.Blocks.CHIPPED_ANVIL)
-                || state.is(net.minecraft.world.level.block.Blocks.DAMAGED_ANVIL)
-                || state.is(net.minecraft.world.level.block.Blocks.NOTE_BLOCK)
-                || state.is(net.minecraft.world.level.block.Blocks.JUKEBOX)
-                || state.is(net.minecraft.world.level.block.Blocks.BEACON)
-                || state.is(net.minecraft.world.level.block.Blocks.LOOM)
-                || state.is(net.minecraft.world.level.block.Blocks.CARTOGRAPHY_TABLE)
-                || state.is(net.minecraft.world.level.block.Blocks.GRINDSTONE)
-                || state.is(net.minecraft.world.level.block.Blocks.STONECUTTER)
-                || state.is(net.minecraft.world.level.block.Blocks.SMITHING_TABLE)
-                || state.is(net.minecraft.world.level.block.Blocks.FLETCHING_TABLE)
-                || state.is(net.minecraft.world.level.block.Blocks.BELL);
+        return INTERACTIVE_BLOCKS.contains(state.getBlock());
     }
 }

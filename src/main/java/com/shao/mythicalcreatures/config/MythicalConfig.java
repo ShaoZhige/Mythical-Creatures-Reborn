@@ -4,6 +4,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -55,7 +57,18 @@ public class MythicalConfig {
             "mythicalcreatures:pinkie_pie", "mythicalcreatures:rarity"
         );
 
-        // 默认实体属性 (用于没有覆盖时)
+        // 默认实体属性（用于没有覆盖时）
+        // ── 平衡基线说明（改之前必读）──────────────────────────────────────
+        // 以下数值为「原模组 MythicalC v1.2.7 的平衡基线」，属【可调参数】而非代码派生：
+        //   · 全部可通过 common.toml 的 [["mythicalcreatures:xxx","max_health",N]] 覆盖，无需改代码；
+        //   · 梯级约定（仅作一致性参考，非强制）：
+        //       顶级 Boss  ~650 血 / 28 伤（hydra、crabzilla、spikezilla）
+        //       次级 Boss  ~520 血 / 22 伤（phoenix、ursa_major、windigo、manticore）
+        //       中型精英  ~420 血 / 18 伤（garble、chief、arctic_scorpion、iron_will、prince）
+        //       小怪/坐骑 ~35–100 血 / 5–9 伤（bear、buffalo、普通敌对等）
+        //   · move_speed 为 MC 标准单位（≈0.25 步行，0.35 较快），非百分比。
+        //   · 每个具体数值的「设计理由」已随原模组遗失，标记为【意图未知·沿用原版】；
+        //     调整时按手感测试即可，不必追求还原某个理论值。改一个生物请参考上述梯级保持一致。
         static final Map<String, Double> ENTITY_DEFAULTS = new HashMap<>();
         static void entity(String id, double hp, double spd, double dmg) {
             ENTITY_DEFAULTS.put(id + "|max_health", hp);
@@ -64,6 +77,7 @@ public class MythicalConfig {
         }
 
         static {
+            // 实体基线属性（hp / move_speed / attack_damage）。数值梯级含义见上方块注释。
             entity("mythicalcreatures:rainbow_dash",      220, 0.35, 9);
             entity("mythicalcreatures:twilight_sparkle",  280, 0.3, 12);
             entity("mythicalcreatures:applejack",         220, 0.4, 9);
@@ -112,6 +126,8 @@ public class MythicalConfig {
             ENTITY_DEFAULTS.put("mythicalcreatures:manticore|fly_speed", 0.30);
             ENTITY_DEFAULTS.put("mythicalcreatures:spikezilla|fly_speed", 0.25);
             ENTITY_DEFAULTS.put("mythicalcreatures:garble|fly_speed", 0.30);
+            // 厄运之颅：会飞（蜜蜂式悬停）+ 白天燃烧（亡灵）；fly_speed 必填，否则 entityAttr 静默 0.0 飞不起来
+            ENTITY_DEFAULTS.put("mythicalcreatures:skull_of_doom|fly_speed", 0.22);
 
             // 飞行坐骑骑乘调参默认值（空配置 = 小马手感；玩家可在 overrides 覆盖）
             for (String id : new String[]{"mythicalcreatures:twilight_sparkle", "mythicalcreatures:rainbow_dash"}) {
@@ -150,6 +166,8 @@ public class MythicalConfig {
 
         /** 解析后的 {target -> {attr -> value}} 映射 */
         private Map<String, Map<String, Double>> parsed;
+
+        private static final Logger LOGGER = LogManager.getLogger(Data.class);
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         Data(ForgeConfigSpec.Builder b) {
@@ -190,13 +208,26 @@ public class MythicalConfig {
             @SuppressWarnings("unchecked")
             var entries = (List<?>) overrides.get();
             for (Object entry : entries) {
-                if (!(entry instanceof List<?> list) || list.size() != 3) continue;
+                if (!(entry instanceof List<?> list) || list.size() != 3) {
+                    LOGGER.warn("忽略格式错误的 override 条目（应为 [注册名, 属性, 数值] 三元组）: {}", entry);
+                    continue;
+                }
                 String target = String.valueOf(list.get(0)).trim();
                 String attr   = String.valueOf(list.get(1)).trim();
                 try {
                     double val = ((Number) list.get(2)).doubleValue();
                     parsed.computeIfAbsent(target, k -> new HashMap<>()).put(attr, val);
-                } catch (Exception ignored) {}
+                } catch (Exception e) {
+                    LOGGER.warn("override 解析失败，已忽略: {} -> {} ({})", target, attr, e.getMessage());
+                }
+            }
+            // 校验 override 目标是否为已知实体（捕获配置拼写错误，避免「静默无效」）
+            for (String target : parsed.keySet()) {
+                if (target.equals("global_params")) continue;
+                boolean knownEntity = D.ENTITY_DEFAULTS.keySet().stream()
+                        .anyMatch(k -> k.startsWith(target + "|"));
+                if (!knownEntity)
+                    LOGGER.warn("override 目标「{}」不在已知实体列表中，该条覆盖可能永久无效", target);
             }
         }
 
