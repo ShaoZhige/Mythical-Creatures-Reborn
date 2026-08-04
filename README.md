@@ -6,7 +6,7 @@
 
 ## 基本信息 / Basic Info
 
-| --- | --- |
+|---|---|
 | 加载器 / Loader | Forge 47.2.0+ |
 | 必需前置 / Required | [GeckoLib](https://github.com/bernie-g/geckolib) 4.2+ |
 | 可选联动 / Optional | [Curios](https://www.curseforge.com/minecraft/mc-mods/curios) |
