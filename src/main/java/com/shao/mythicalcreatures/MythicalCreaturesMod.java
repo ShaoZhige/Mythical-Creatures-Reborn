@@ -193,12 +193,12 @@ public class MythicalCreaturesMod {
     /**
      * 通用敌对生物生成判定（适用于任意 Entity 子类，本项目敌对生物继承自 PonyEntity/Animal 而非 Monster）：
      * 非和平难度 + 夜晚或足够暗（天空亮度 <= 8，即夜间 / 洞穴 / 阴影）。
-     * 原来写的是 天空亮度 <= 理论最大亮度，露天恒等成立，导致白天满地乱刷——已修正。
+     * 注意不能与理论最大亮度比较：露天恒等成立，白天会满地乱刷。
      *
      * Generic hostile spawn rule (any entity; our hostiles extend PonyEntity/Animal, not Monster):
-     * non-peaceful difficulty AND sky light <= 8 (night / cave / shadow). An earlier version
-     * compared against the *max* brightness, which is always true outdoors and caused daytime
-     * spawns everywhere — now fixed.
+     * non-peaceful difficulty AND sky light <= 8 (night / cave / shadow). Do NOT compare
+     * against the *max* brightness — outdoors it is always true and would spawn hostiles
+     * in broad daylight.
      */
     private static <T extends net.minecraft.world.entity.Entity> boolean checkHostileSpawnRules(
             EntityType<T> pEntityType, ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {

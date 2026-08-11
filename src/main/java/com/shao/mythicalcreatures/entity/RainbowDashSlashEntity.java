@@ -5,6 +5,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import com.shao.mythicalcreatures.entity.ModThrowableProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -13,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class RainbowDashSlashEntity extends ThrowableItemProjectile {
+public class RainbowDashSlashEntity extends ModThrowableProjectile {
 
     private static final double RANGE = 18.0;   // 最大射程
     private static final int AREA_X = 17;        // X 范围

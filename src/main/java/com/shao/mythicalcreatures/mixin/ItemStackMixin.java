@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * 读取配置文件中的 max_damage 覆盖物品耐久上限。
  * <p>
  * priority=800（低于默认1000），让 KubeJS、Tool Stats Tweaker 等第三方模组
- * 有机会在同一个注入点覆盖我们的结果。| Lower priority allows other mods to override our values.
+ * 有机会在同一注入点覆盖本模组的注入结果。| Lower priority allows other mods to override our values.
  * </p>
  * <p>
  * getMaxDamage 是高频路径（热栏每帧、物品栏/铁砧/创造标签搜索等都会调用），

@@ -129,7 +129,7 @@ public class ModItems {
     public static final RegistryObject<Item> ARCTIC_STINGER = ITEMS.register("arctic_stinger",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> UNSTABLE_ITEM = ITEMS.register("unstable_item",
-            () -> new Item(new Item.Properties()));
+            () -> new UnstableItemItem(new Item.Properties()));
     public static final RegistryObject<Item> CENTIPEDE_ANTENNA = ITEMS.register("centipede_antenna",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> CRYSTAL_GEM = ITEMS.register("crystal_gem",

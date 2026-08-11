@@ -58,6 +58,15 @@ public class ModEntities {
                             .updateInterval(10)
                             .build("twilight_star"));
 
+    // ── 不稳定物品：可投掷，命中给魔法伤害（无爆炸） ──
+    public static final RegistryObject<EntityType<UnstableItemEntity>> UNSTABLE_ITEM =
+            ENTITY_TYPES.register("unstable_item", () ->
+                    EntityType.Builder.<UnstableItemEntity>of(UnstableItemEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("unstable_item"));
+
     public static final RegistryObject<EntityType<RainbowCloudEntity>> RAINBOW_CLOUD =
             ENTITY_TYPES.register("rainbow_cloud", () ->
                     EntityType.Builder.<RainbowCloudEntity>of(RainbowCloudEntity::new, MobCategory.MISC)

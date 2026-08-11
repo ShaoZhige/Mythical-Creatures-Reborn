@@ -9,12 +9,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import com.shao.mythicalcreatures.entity.ModThrowableProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class AppleProjectileEntity extends ThrowableItemProjectile {
+public class AppleProjectileEntity extends ModThrowableProjectile {
 
     public AppleProjectileEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
@@ -86,6 +87,9 @@ public class AppleProjectileEntity extends ThrowableItemProjectile {
             }
             this.level().playSound(null, pos.x, pos.y, pos.z,
                     SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.4F, 2.0F);
+
+            // 一次性投掷物：命中后立即移除，避免实体残留堆积
+            this.discard();
         }
     }
 

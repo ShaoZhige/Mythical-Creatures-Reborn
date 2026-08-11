@@ -83,7 +83,7 @@ public class RainbowBeamEntity extends Projectile {
                     this.xRotO = this.getXRot();
                 }
             });
-            // super.tick() 放在旋转更新之后，避免 Projectile 覆盖我们的旋转
+            // super.tick() 放在旋转更新之后，避免 Projectile 覆盖已设置的旋转
             super.tick();
             return;
         }
@@ -124,7 +124,7 @@ public class RainbowBeamEntity extends Projectile {
                 }
             }
         }
-        // Projectile.tick() 放最后，避免覆盖我们设置的旋转/位置
+        // Projectile.tick() 放最后，避免覆盖已设置的旋转/位置
         super.tick();
     }
 

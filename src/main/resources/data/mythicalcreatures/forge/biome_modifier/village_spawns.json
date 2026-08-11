@@ -12,7 +12,17 @@
     "minecraft:snowy_plains"
   ],
   "spawners": [
-    { "type": "mythicalcreatures:tough_guy", "weight": 3, "minCount": 1, "maxCount": 3 },
-    { "type": "mythicalcreatures:mavis", "weight": 1, "minCount": 1, "maxCount": 1 }
+    {
+      "type": "mythicalcreatures:tough_guy",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 3
+    },
+    {
+      "type": "mythicalcreatures:mavis",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 1
+    }
   ]
 }

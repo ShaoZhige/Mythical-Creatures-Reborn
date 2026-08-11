@@ -190,7 +190,7 @@ public class MythicalConfig {
                 "--- 全局  |  Global ---",
                 "  注册名: global_params",
                 "  可用: sword_cooldown(40) repair_interval(60) repair_amount(1) bleeding_base(1.0) bleeding_amp(0.5)",
-                "        wing_flap_speed(0.4) wing_decay_speed(0.15) follow_range(16) cutie_mark_slots(1)",
+                "        wing_flap_speed(0.4) wing_decay_speed(0.15) follow_range(32) cutie_mark_slots(1)",
                 "  示例: [\"global_params\", \"sword_cooldown\", 5]",
                 "",
                 "留空 = 全部默认  |  Empty = all defaults"

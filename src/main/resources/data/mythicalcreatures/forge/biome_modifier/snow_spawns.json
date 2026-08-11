@@ -9,7 +9,17 @@
     "minecraft:snowy_slopes"
   ],
   "spawners": [
-    { "type": "mythicalcreatures:windigo", "weight": 1, "minCount": 1, "maxCount": 2 },
-    { "type": "mythicalcreatures:arctic_scorpion", "weight": 1, "minCount": 1, "maxCount": 3 }
+    {
+      "type": "mythicalcreatures:windigo",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "mythicalcreatures:arctic_scorpion",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 3
+    }
   ]
 }

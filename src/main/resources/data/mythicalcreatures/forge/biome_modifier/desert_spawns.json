@@ -10,8 +10,23 @@
     "minecraft:eroded_badlands"
   ],
   "spawners": [
-    { "type": "mythicalcreatures:manticore", "weight": 1, "minCount": 1, "maxCount": 2 },
-    { "type": "mythicalcreatures:spikezilla", "weight": 1, "minCount": 1, "maxCount": 2 },
-    { "type": "mythicalcreatures:skull_of_doom", "weight": 1, "minCount": 1, "maxCount": 1 }
+    {
+      "type": "mythicalcreatures:manticore",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "mythicalcreatures:spikezilla",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "mythicalcreatures:skull_of_doom",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 1
+    }
   ]
 }

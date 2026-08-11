@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "M M",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "mythicalcreatures:twilight_cutiemark"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:twilight_chestplate"
+  }
+}

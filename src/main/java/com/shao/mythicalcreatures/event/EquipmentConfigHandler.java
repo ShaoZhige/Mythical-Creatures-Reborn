@@ -30,9 +30,9 @@ public class EquipmentConfigHandler {
     // 判断 attrMod.getId() == Item.BASE_ATTACK_DAMAGE_UUID，只有命中才渲染成绿色「12 攻击伤害」；
     // 否则一律蓝字「+N」。但 Item.BASE_ATTACK_DAMAGE_UUID 在「生产构建」(SRG 重映射后) 字段名
     // 会变成 f_41374_，用反射按反混淆名 BASE_ATTACK_DAMAGE_UUID 取会在运行时 NoSuchFieldException
-    // 退回到 UUID.fromString（值相等但非同一实例）→ == 失败 → 仍然蓝字（这正是之前一直蓝的原因）。
+    // 退回到 UUID.fromString（值相等但非同一实例）→ == 失败 → 始终蓝字。
     //
-    // 因此这里**不依赖 UUID 引用相等**，而是仿照参考模组 JETT：在 ItemTooltipEvent 里把我们自己
+    // 因此这里**不依赖 UUID 引用相等**，而是仿照参考模组 JETT：在 ItemTooltipEvent 里把本模组
     // 配置的武器攻击/攻速行重新渲染成 DARK_GREEN 绿字，直接覆盖原版蓝字。这样与 UV/字段名无关，
     // 在任何构建下都稳定生效。
 

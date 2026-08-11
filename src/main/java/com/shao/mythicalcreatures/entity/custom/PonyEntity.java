@@ -1,6 +1,7 @@
 package com.shao.mythicalcreatures.entity.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -116,6 +117,15 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         }
         var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
         if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "attack_damage"));
+        // 索敌范围下限：统一至少 32 格（config global_params.follow_range 可调）。
+        // 原版 NearestAttackableTargetGoal 的索敌半径 = FOLLOW_RANGE 属性，小马默认 16 格太近，
+        // 大体型敌人（大熊座/九头蛇等）稍远就锁不到；提高后远距离也能锁定（该 goal 无视线限制，
+        // 与紫悦魔法用 AABB 扫实体的索敌一致）。Math.max 保留子类显式更大的值（如雪魔 48）。
+        var fr = this.getAttribute(Attributes.FOLLOW_RANGE);
+        if (fr != null) {
+            double minFollow = MythicalConfig.DATA.get("global_params", "follow_range", 32.0);
+            if (fr.getBaseValue() < minFollow) fr.setBaseValue(minFollow);
+        }
         this.setHealth(this.getMaxHealth());
     }
 
@@ -153,7 +163,17 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     }
 
     @Override public AnimatableInstanceCache getAnimatableInstanceCache() { return this.cache; }
+    /* ── 小马不继承繁殖逻辑：禁止繁殖 ──
+     * 原版继承链 TamableAnimal → Animal(AgeableMob) 自带繁殖体系（喂食进恋爱状态 → 配对 → 生幼崽）。
+     * 小马没有繁殖设定，显式封死全部繁殖入口：不能繁殖、喂食不算食物、永不进恋爱状态、
+     * 不产出幼崽（getBreedOffspring 返回 null 只是不产出，其余状态机入口亦全部封死）。
+     * 驯服食物走 getTamingItem()，与 isFood 无关，不受影响。 */
     @Nullable @Override public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob other) { return null; }
+    @Override public boolean canBreed() { return false; }
+    @Override public boolean isFood(ItemStack stack) { return false; }
+    @Override public boolean canFallInLove() { return false; }
+    @Override public void setInLove(@Nullable Player player) { } // 永不进入恋爱状态，繁殖 tick 永不触发
+    @Override public void spawnChildFromBreeding(ServerLevel level, net.minecraft.world.entity.animal.Animal mate) { } // 防御：即使误入也不产崽
 
     /** 主人/骑手保护 + 爆炸魔法火焰闪电免疫 */
     @Override
@@ -228,7 +248,17 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
 
         if (this.isTame() && this.isOwnedBy(player) && stack.isEmpty()) {
             if (player.isShiftKeyDown()) {
-                super.mobInteract(player, hand);
+                // shift+右键：原地坐下 / 站起。
+                // 注意：1.20.1 的 TamableAnimal 并不内置坐下切换（原版狼/猫/鹦鹉是各自在自己的
+                // mobInteract 里实现的），所以这里参照 Wolf 的写法显式 setOrderedToSit + 停导航 + 清目标。
+                if (!this.level().isClientSide) {
+                    this.setOrderedToSit(!this.isOrderedToSit());
+                    this.jumping = false;
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    // 若正在空中飞行/悬停，坐下时强制落地，避免“空中悬停”
+                    if (canFly()) { this.setFlying(false); this.setHovering(false); }
+                }
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
             if (!this.isVehicle() && !this.isOrderedToSit()) {
@@ -348,7 +378,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     // 单位：速度=方块/tick；时长=tick（20 tick=1 秒）。属平衡基线，【意图未知·沿用原模组手感】，非代码派生。
     protected double getFlightAscentSpeed()     { return 0.05D; }  // 平静上升速度(方块/tick)
     protected double getFlightDescendSpeed()    { return -0.03D; } // 降落速度(负=下落)
-    protected double getFlightMaxHeight()       { return 3.0D; }   // 单次观光起飞最大升限(方块)
+    protected double getFlightMaxHeight()       { return 8.0D; }   // 单次观光起飞最大升限(方块)
     protected int    getFlightHoverDuration()   { return 80; }     // 平静悬停时长(tick,≈4s);被 tickFlight 调用
     protected int    getFlightChance()          { return 1000; }   // 平静起飞概率分母;被 tickFlight 调用(子类读配置覆盖)
     protected int    getFlightCooldownMin()     { return 200; }    // 落地后再起飞冷却下限(tick)
@@ -356,14 +386,14 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     protected int    getFlightDurationMin()     { return 60; }     // 平静观光时长下限(tick)
     protected int    getFlightDurationMax()     { return 100; }    // 平静观光时长上限(tick)
 
-    /** 自主飞行状态机阶段（原 byte 0/1/2 改为可读枚举） */
+    /** 自主飞行状态机阶段 */
     protected enum FlightPhase { ASCENT, HOVER, DESCENT }
 
     // ── 自主飞行魔法数字（单位/含义见各常量注释；全部硬编码、非配置驱动，改飞行手感改这里）──
     private static final int ANGRY_HOVER_DURATION = 300;            // 愤怒悬停时长(tick,≈15s)
     private static final int ANGRY_HOVER_REFRESH_THRESHOLD = 60;     // 愤怒悬停剩余≤此值时续命
     private static final int ANGRY_HOVER_REFRESH_DURATION = 200;     // 续命到的悬停时长(tick,≈10s)
-    private static final int ANGRY_TAKEOFF_ASCENT = 30;              // 愤怒起飞初始上升时长(tick)
+    private static final int ANGRY_TAKEOFF_ASCENT = 70;              // 愤怒起飞初始上升时长(tick)，约 3.5 格升限
     private static final double TAKEOFF_IMPULSE = 0.45;             // 起飞瞬间向上初速度(方块/tick)
     private static final int ANGRY_FLIGHT_PROB_DENOM = 4;            // 有仇恨时起飞概率分母(≈25%/tick)
 
@@ -381,6 +411,46 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
 
         if (this.level().isClientSide()) return;
 
+        // 飞行/悬停状态绑定无重力：否则重力与悬停/水面逻辑互相拉扯（水面“蹦跶”、悬停下坠振荡）。
+        // 走路/落地时 isFlying/isHovering=false → setNoGravity(false)，恢复重力。
+        this.setNoGravity(this.isFlying() || this.isHovering());
+
+        // —— 水面悬停：会飞的小马脚下是水（或正泡在水里）时，保持飞行/悬停在水面上方约 1 格，
+        //    不落水；漂离水面（脚下变为实体地面）后走下方正常逻辑下降落地 → 恢复走路状态。 ——
+        if (!this.isVehicle()) {
+            boolean overWater = this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER)
+                    || this.level().getFluidState(this.blockPosition()).is(FluidTags.WATER);
+            if (overWater) {
+                // 进入水面悬停状态（保持飞行感，不下落；立即无重力避免本 tick 重力拉扯）
+                if (!(this.isFlying() || this.isHovering())) {
+                    this.setHovering(true);
+                    this.setFlying(false);
+                    this.flyPhase = FlightPhase.HOVER;
+                    this.setNoGravity(true);
+                }
+                // 找脚下水顶，维持 y = 水面顶 + 1：太低抬升、太高缓降、到位稳住
+                double waterTop = this.getY();
+                BlockPos.MutableBlockPos bp = new BlockPos.MutableBlockPos();
+                bp.set(this.blockPosition());
+                for (int i = 0; i < 12 && bp.getY() >= this.level().getMinBuildHeight(); i++) {
+                    if (this.level().getFluidState(bp).is(FluidTags.WATER)) {
+                        waterTop = bp.getY() + 1.0D; // 水方块顶面（水面）
+                        break;
+                    }
+                    bp.move(0, -1, 0);
+                }
+                double dy = (waterTop + 1.0D) - this.getY();
+                if (dy > 0.05D) {
+                    this.setDeltaMovement(this.getDeltaMovement().add(0, 0.05D, 0));
+                } else if (dy < -0.4D) {
+                    this.setDeltaMovement(this.getDeltaMovement().add(0, -0.03D, 0));
+                } else {
+                    this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.5D, 1.0D)); // 稳住垂直
+                }
+                return;
+            }
+        }
+
         boolean hasTarget = this.getTarget() != null && this.getTarget().isAlive();
         boolean aiBusy = this.getNavigation().isInProgress();
         if (this.isFlying() || this.isHovering()) {
@@ -396,7 +466,8 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
                     break;
                 case HOVER:
                     this.flyDuration--;
-                    this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1.0, 0.5));
+                    // 抵消重力：y 速度清零，保持悬停（否则重力每 tick -0.08 会把实体拉回地面）
+                    this.setDeltaMovement(new Vec3(this.getDeltaMovement().x * 0.5, 0.0D, this.getDeltaMovement().z * 0.5));
                     // 有仇恨时刷新悬停时间，基本不下落
                     if (this.angryFlight && hasTarget && this.flyDuration <= ANGRY_HOVER_REFRESH_THRESHOLD)
                         this.flyDuration = ANGRY_HOVER_REFRESH_DURATION;

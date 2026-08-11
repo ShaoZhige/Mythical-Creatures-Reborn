@@ -6,12 +6,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import com.shao.mythicalcreatures.entity.ModThrowableProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class RainbowCloudEntity extends ThrowableItemProjectile {
+public class RainbowCloudEntity extends ModThrowableProjectile {
 
     public RainbowCloudEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
@@ -62,6 +63,9 @@ public class RainbowCloudEntity extends ThrowableItemProjectile {
                         pos.x + dx, pos.y + dy, pos.z + dz,
                         1, 0, 0, 0, 0.03);
             }
+
+            // 一次性投掷物：命中后立即移除，避免实体残留堆积
+            this.discard();
         }
     }
 }

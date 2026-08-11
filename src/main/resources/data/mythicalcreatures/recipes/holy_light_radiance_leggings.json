@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "mythicalcreatures:holy_light_radiance_cutiemark"
+    }
+  },
+  "result": {
+    "item": "mythicalcreatures:holy_light_radiance_leggings"
+  }
+}

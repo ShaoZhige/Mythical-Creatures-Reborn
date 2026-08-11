@@ -6,9 +6,29 @@
     "minecraft:dark_forest"
   ],
   "spawners": [
-    { "type": "mythicalcreatures:hydra", "weight": 1, "minCount": 1, "maxCount": 2 },
-    { "type": "mythicalcreatures:cragadile", "weight": 1, "minCount": 1, "maxCount": 2 },
-    { "type": "mythicalcreatures:black_widow", "weight": 3, "minCount": 1, "maxCount": 3 },
-    { "type": "mythicalcreatures:robot_sombra", "weight": 2, "minCount": 1, "maxCount": 2 }
+    {
+      "type": "mythicalcreatures:hydra",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "mythicalcreatures:cragadile",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "mythicalcreatures:black_widow",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 3
+    },
+    {
+      "type": "mythicalcreatures:robot_sombra",
+      "weight": 4,
+      "minCount": 1,
+      "maxCount": 2
+    }
   ]
 }

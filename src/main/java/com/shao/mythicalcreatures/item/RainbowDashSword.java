@@ -26,7 +26,7 @@ public class RainbowDashSword extends SwordItem {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
-        // 手持此剑时，右键实体不触发实体交互（交易、骑乘等），改为触发光束/彩虹云
+        // 右键实体不触发实体交互（交易、骑乘等），直接触发光束/彩虹云
         use(player.level(), player, hand);
         return InteractionResult.CONSUME;
     }

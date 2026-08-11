@@ -100,7 +100,7 @@ public final class FlightRideAPI {
         boolean inFlight = self.isFlying() || self.isHovering();
         if (inFlight) {
             if (KeyStateHelper.isJumpKeyDown(player)) {
-                // 按跳跃键：持续上升（起飞后第一帧即使仍贴地也不退出，避免被误杀）
+                // 按跳跃键：持续上升（起飞后第一帧即使仍贴地也不退出，避免误判为落地）
                 // Keep ascending while jump held; don't drop out on the first takeoff frame just
                 // because we're still touching the ground (avoids a false "landed" reset).
                 self.setFlying(true);

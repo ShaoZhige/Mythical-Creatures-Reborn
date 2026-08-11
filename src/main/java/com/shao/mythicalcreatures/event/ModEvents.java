@@ -25,7 +25,7 @@ public class ModEvents {
         }
     }
 
-    /** 兜底：每20tick检查一次，处理登录/重生等边缘情况 */
+    /** 定期检查：每 20 tick 一次，覆盖登录/重生等未触发装备变更事件的边缘情况 */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;

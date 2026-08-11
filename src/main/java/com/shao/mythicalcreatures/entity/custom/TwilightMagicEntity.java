@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -83,6 +84,25 @@ public class TwilightMagicEntity extends Mob implements GeoEntity {
     @Override public boolean isPushable() { return false; }
     @Override public boolean canBeCollidedWith() { return false; }
     @Override public boolean isNoGravity() { return true; }
+
+    /** 免疫来自主人（含主人投掷物及其爆炸等附加效果）的所有伤害，避免友伤。 */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        LivingEntity owner = this.getOwner();
+        if (owner != null) {
+            Entity trueSource = source.getEntity();        // 伤害最终来源（投掷者 / 攻击者）
+            Entity directSource = source.getDirectEntity(); // 直接实体（投掷物 / 爆炸物 / 攻击者本体）
+            if (trueSource == owner || directSource == owner) return false;
+            // 主人投掷的弹射物（星光弹 / 不稳定物品 / 流星火球等）：直接实体是该投掷物、其 owner 是主人；
+            // 其爆炸伤害的 source 实体 = 爆炸物本体，同样被这条拦截。
+            if (directSource instanceof Projectile pj && pj.getOwner() == owner) return false;
+        }
+        return super.hurt(source, amount);
+    }
+
+    /** 免疫着火：主人投掷物的点燃附加效果（凤凰羽毛 / 流星火球）对魔法团不生效。 */
+    @Override
+    public void setRemainingFireTicks(int ticks) { /* 免疫着火 */ }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
