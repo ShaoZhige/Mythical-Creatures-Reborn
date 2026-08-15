@@ -10,31 +10,19 @@
   "spawners": [
     {
       "type": "mythicalcreatures:buffalo",
-      "weight": 6,
+      "weight": 3,
       "minCount": 2,
       "maxCount": 3
     },
     {
-      "type": "mythicalcreatures:chief_thunderhooves",
-      "weight": 2,
-      "minCount": 1,
-      "maxCount": 2
-    },
-    {
-      "type": "mythicalcreatures:iron_will",
-      "weight": 2,
-      "minCount": 1,
-      "maxCount": 2
-    },
-    {
       "type": "mythicalcreatures:prince_rutherford",
-      "weight": 2,
+      "weight": 1,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythicalcreatures:rhinoceros",
-      "weight": 6,
+      "weight": 3,
       "minCount": 2,
       "maxCount": 3
     }

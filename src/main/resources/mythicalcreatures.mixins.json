@@ -4,7 +4,8 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "mythicalcreatures.refmap.json",
     "mixins": [
-        "ItemStackMixin"
+        "ItemStackMixin",
+        "LivingEntityJumpAccessor"
     ],
     "client": [],
     "server": []

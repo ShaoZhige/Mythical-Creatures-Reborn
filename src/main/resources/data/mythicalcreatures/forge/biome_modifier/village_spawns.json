@@ -14,13 +14,13 @@
   "spawners": [
     {
       "type": "mythicalcreatures:tough_guy",
-      "weight": 6,
+      "weight": 12,
       "minCount": 1,
       "maxCount": 3
     },
     {
       "type": "mythicalcreatures:mavis",
-      "weight": 2,
+      "weight": 4,
       "minCount": 1,
       "maxCount": 1
     }

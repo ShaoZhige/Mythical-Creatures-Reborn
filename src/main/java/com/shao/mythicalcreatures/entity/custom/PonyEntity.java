@@ -105,6 +105,14 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         return net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getKey(this.getType()).toString();
     }
 
+    /** 数据驱动掉落表：data/mythicalcreatures/loot_tables/entities/<实体id>.json。
+     *  getLootTable() 是 final，实际生效的钩子是 getDefaultLootTable()。 */
+    @Override
+    protected ResourceLocation getDefaultLootTable() {
+        String id = entityId();
+        return new ResourceLocation("mythicalcreatures", "entities/" + id.substring(id.indexOf(':') + 1));
+    }
+
     /** 应用核心属性：MAX_HEALTH / MOVEMENT_SPEED / FLYING_SPEED(仅飞行) / ATTACK_DAMAGE，并回满血 */
     protected final void applyCoreStats(String id, boolean flying) {
         var h = this.getAttribute(Attributes.MAX_HEALTH);
@@ -183,7 +191,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
             && this.getControllingPassenger() != null && source.getEntity() == this.getControllingPassenger())
             return false;
         // 防御魔法/火焰/爆炸/雷电免疫：仅保护“已驯服的友方”（坐骑/宠物），让它们不被友军魔法与
-        // 环境火焰误伤。敌对生物与未驯服个体正常受伤 —— 否则厄运之颅（亡灵）无法像原版骷髅那样
+        // 环境火焰误伤。敌对生物与未驯服个体正常受伤 —— 否则末日颅骨（亡灵）无法像原版骷髅那样
         // 在白天被晒燃烧，且更符合“这些免疫是保护我方而非敌方”的语义。
         if (this.isTame() && (
             source.is(net.minecraft.world.damagesource.DamageTypes.EXPLOSION)
@@ -234,7 +242,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
         // 注意：主动索敌“敌对目标”由子类决定 ——
         //   · 中立小马(NeutralPonyEntity) 会主动打模组敌对生物 + 原版 Enemy（防御）
-        //   · 直接继承 PonyEntity 的中立生物（壮汉/梅菲斯）默认只反击、不主动狩猎（同原版中立）
+        //   · 直接继承 PonyEntity 的中立生物（硬汉/梅菲斯）默认只反击、不主动狩猎（同原版中立）
         // 基类不再统一挂 NearestAttackableTargetGoal(Enemy)，避免中立生物行为比原版中立更激进。
     }
 
@@ -325,7 +333,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         if (this.isTame()) {
             LivingEntity owner = this.getOwner();
             if (entity == owner) return true;
-            if (entity instanceof TamableAnimal ta && ta.isOwnedBy(owner)) return true;
+            if (entity instanceof TamableAnimal ta && owner != null && ta.isOwnedBy(owner)) return true;
             if (owner != null) return owner.isAlliedTo(entity);
         }
         return super.isAlliedTo(entity);

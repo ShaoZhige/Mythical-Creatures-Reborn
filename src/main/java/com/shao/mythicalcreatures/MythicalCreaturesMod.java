@@ -72,19 +72,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
-import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import static com.shao.mythicalcreatures.MythicalCreaturesMod.MODID;
 
@@ -141,6 +138,8 @@ public class MythicalCreaturesMod {
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(SetBonusManager::registerAllSets);
         event.enqueueWork(MythicalCreaturesMod::registerSpawnPlacements);
+        // 注册自定义网络通道（坐骑下降键等自定义按键同步）
+        com.shao.mythicalcreatures.network.ModNetwork.register();
     }
 
     /**
@@ -167,7 +166,7 @@ public class MythicalCreaturesMod {
         // 因此不能直接用 Monster::checkMonsterSpawnRules（其泛型上界为 Monster）。
         // 通用谓词 checkHostileSpawnRules = 非和平 + 天空亮度<=8（夜晚/洞穴/阴影）；
         // 蜈蚣用 checkCaveSpawnRules（需完全无天光=地下），螃蟹斯拉用 checkRiverbankSpawnRules（河边群系），
-        // 壮汉与梅菲斯用 checkVillageSpawnRules（村庄结构范围内）。
+        // 硬汉与梅菲斯用 checkVillageSpawnRules（村庄结构范围内）。
         // 注册顺序坑：SpawnPlacements.register 第2参是 SpawnPlacements.Type，第3参才是 Heightmap.Types。
         // Registration order pitfall: in SpawnPlacements.register the 2nd arg is SpawnPlacements.Type
         // and the 3rd is Heightmap.Types (NOT the other way around).
@@ -219,7 +218,7 @@ public class MythicalCreaturesMod {
         return pLevel.getDifficulty() != Difficulty.PEACEFUL;
     }
 
-    /** 村庄结构（平原/沙漠/热带草原/雪原/针叶林五种）的 ResourceKey 列表，用于"壮汉生成在村庄附近"判定。 */
+    /** 村庄结构（平原/沙漠/热带草原/雪原/针叶林五种）的 ResourceKey 列表，用于"硬汉生成在村庄附近"判定。 */
     private static final List<ResourceKey<Structure>> VILLAGE_STRUCTURES = List.of(
             BuiltinStructures.VILLAGE_PLAINS, BuiltinStructures.VILLAGE_DESERT,
             BuiltinStructures.VILLAGE_SAVANNA, BuiltinStructures.VILLAGE_SNOWY,
@@ -255,22 +254,13 @@ public class MythicalCreaturesMod {
                 // 仅在配置**首次加载**（进入世界时）解析一次；物品/实体属性不是热加载的，
                 // reload 后再解析会误导玩家以为改完就生效（实际已生成的物品修饰器不会重算）。
                 MythicalConfig.DATA.bake();
+                // 配置重新解析后，物品耐久覆盖缓存需失效（MaxDamageCache.clear() 接线）
+                MaxDamageCache.clear();
             } else if (event instanceof ModConfigEvent.Reloading) {
                 // 热重载：明确告知玩家属性需重启游戏才生效，不做重解析，避免误导。
                 LOGGER.warn("[MythicalCreatures] common.toml 已热重载，但物品/实体属性（攻击、护甲、血量、移速等）"
                         + "不是热加载项——需【重启游戏/重新进入世界】后新配置才会生效。");
             }
-        }
-
-        @SubscribeEvent
-        public static void enqueueIMC(InterModEnqueueEvent event) {
-            if (!ModList.get().isLoaded("curios")) return;
-            int slots = Math.max(1, (int) MythicalConfig.DATA.get("global_params", "cutie_mark_slots", 1.0));
-            InterModComms.sendTo("mythicalcreatures", "curios", () ->
-                new SlotTypeMessage.Builder("cutie_mark")
-                    .size(slots)
-                    .icon(new net.minecraft.resources.ResourceLocation("mythicalcreatures", "slot/empty_cutie_mark_slot"))
-                    .build());
         }
 
         @SubscribeEvent

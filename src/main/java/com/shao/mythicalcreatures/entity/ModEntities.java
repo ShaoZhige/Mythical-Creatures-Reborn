@@ -172,7 +172,7 @@ public class ModEntities {
     // ── 新实体（从旧模型转换而来） ──
     public static final RegistryObject<EntityType<BearEntity>> BEAR =
             ENTITY_TYPES.register("bear", () ->
-                    EntityType.Builder.of(BearEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(BearEntity::new, MobCategory.CREATURE)
                             .sized(5.5F, 8.0F).clientTrackingRange(10).build("bear"));
     public static final RegistryObject<EntityType<CockatriceEntity>> COCKATRICE =
             ENTITY_TYPES.register("cockatrice", () ->
@@ -188,11 +188,11 @@ public class ModEntities {
                             .sized(1.7F, 2.3F).clientTrackingRange(10).build("kingbowser_9000"));
     public static final RegistryObject<EntityType<ParaspriteEntity>> PARASPRITE =
             ENTITY_TYPES.register("parasprite", () ->
-                    EntityType.Builder.of(ParaspriteEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(ParaspriteEntity::new, MobCategory.CREATURE)
                             .sized(2.0F, 1.4F).clientTrackingRange(8).build("parasprite"));
     public static final RegistryObject<EntityType<PhoenixEntity>> PHOENIX =
             ENTITY_TYPES.register("phoenix", () ->
-                    EntityType.Builder.of(PhoenixEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(PhoenixEntity::new, MobCategory.CREATURE)
                             .sized(3.5F, 2.0F).clientTrackingRange(10).build("phoenix"));
     public static final RegistryObject<EntityType<UrsamajorEntity>> URSA_MAJOR =
             ENTITY_TYPES.register("ursa_major", () ->
@@ -219,11 +219,11 @@ public class ModEntities {
     // ── 新导出生物（geo 模型注册） ──
     public static final RegistryObject<EntityType<BuffaloEntity>> BUFFALO =
             ENTITY_TYPES.register("buffalo", () ->
-                    EntityType.Builder.of(BuffaloEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(BuffaloEntity::new, MobCategory.CREATURE)
                             .sized(3.0F, 3.3F).clientTrackingRange(10).build("buffalo"));
     public static final RegistryObject<EntityType<ChiefThunderhoovesEntity>> CHIEF_THUNDERHOOVES =
             ENTITY_TYPES.register("chief_thunderhooves", () ->
-                    EntityType.Builder.of(ChiefThunderhoovesEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(ChiefThunderhoovesEntity::new, MobCategory.CREATURE)
                             .sized(3.2F, 3.5F).clientTrackingRange(10).build("chief_thunderhooves"));
     public static final RegistryObject<EntityType<BlackWidowEntity>> BLACK_WIDOW_SPIDER =
             ENTITY_TYPES.register("black_widow", () ->
@@ -247,11 +247,11 @@ public class ModEntities {
                             .sized(20.0F, 8.0F).clientTrackingRange(64).build("windigo"));
     public static final RegistryObject<EntityType<BabyMooseEntity>> BABY_MOOSE =
             ENTITY_TYPES.register("baby_moose", () ->
-                    EntityType.Builder.of(BabyMooseEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(BabyMooseEntity::new, MobCategory.CREATURE)
                             .sized(2.0F, 1.8F).clientTrackingRange(10).build("baby_moose"));
     public static final RegistryObject<EntityType<AdultMooseEntity>> ADULT_MOOSE =
             ENTITY_TYPES.register("adult_moose", () ->
-                    EntityType.Builder.of(AdultMooseEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(AdultMooseEntity::new, MobCategory.CREATURE)
                             .sized(2.5F, 3.3F).clientTrackingRange(10).build("adult_moose"));
     public static final RegistryObject<EntityType<ToughGuyEntity>> TOUGH_GUY =
             ENTITY_TYPES.register("tough_guy", () ->
@@ -283,7 +283,7 @@ public class ModEntities {
                             .sized(9.0F, 12.0F).clientTrackingRange(10).build("crabzilla"));
     public static final RegistryObject<EntityType<IronWillEntity>> IRON_WILL =
             ENTITY_TYPES.register("iron_will", () ->
-                    EntityType.Builder.of(IronWillEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(IronWillEntity::new, MobCategory.CREATURE)
                             .sized(3.5F, 5.5F).clientTrackingRange(10).build("iron_will"));
     public static final RegistryObject<EntityType<SkullOfDoomEntity>> SKULL_OF_DOOM =
             ENTITY_TYPES.register("skull_of_doom", () ->
@@ -291,7 +291,7 @@ public class ModEntities {
                             .sized(3.5F, 5.0F).clientTrackingRange(10).build("skull_of_doom"));
     public static final RegistryObject<EntityType<PrinceRutherfordEntity>> PRINCE_RUTHERFORD =
             ENTITY_TYPES.register("prince_rutherford", () ->
-                    EntityType.Builder.of(PrinceRutherfordEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(PrinceRutherfordEntity::new, MobCategory.CREATURE)
                             .sized(5.5F, 7.5F).clientTrackingRange(10).build("prince_rutherford"));
     public static final RegistryObject<EntityType<SpikezillaEntity>> SPIKEZILLA =
             ENTITY_TYPES.register("spikezilla", () ->
@@ -299,7 +299,7 @@ public class ModEntities {
                             .sized(12.0F, 18.0F).clientTrackingRange(10).build("spikezilla"));
     public static final RegistryObject<EntityType<RhinocerosEntity>> RHINOCEROS =
             ENTITY_TYPES.register("rhinoceros", () ->
-                    EntityType.Builder.of(RhinocerosEntity::new, MobCategory.MONSTER)
+                    EntityType.Builder.of(RhinocerosEntity::new, MobCategory.CREATURE)
                             .sized(4.0F, 4.8F).clientTrackingRange(10).build("rhinoceros"));
     public static final RegistryObject<EntityType<RobotSombraEntity>> ROBOT_SOMBRA =
             ENTITY_TYPES.register("robot_sombra", () ->

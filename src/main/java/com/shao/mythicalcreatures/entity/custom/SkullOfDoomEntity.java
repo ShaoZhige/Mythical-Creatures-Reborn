@@ -40,7 +40,7 @@ public class SkullOfDoomEntity extends HostilePonyEntity {
 
     /**
      * 亡灵生物：让原版机制（亡灵伤害、亡灵药水、亡灵治疗/伤害反转、铁傀儡仇恨等）
-     * 把厄运之颅当作亡灵对待。对应原版 Skeleton 的判定方式：
+     * 把末日颅骨当作亡灵对待。对应原版 Skeleton 的判定方式：
      *   1) 实体类型登记到 EntityTypeTags.UNDEAD（isUndead() 走此标签）
      *   2) mobType() 返回 MobType.UNDEAD（伤害/药水逻辑走此）
      */

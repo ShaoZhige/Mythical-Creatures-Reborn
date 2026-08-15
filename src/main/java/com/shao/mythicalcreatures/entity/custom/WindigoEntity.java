@@ -4,6 +4,7 @@ import com.shao.mythicalcreatures.entity.UnstableItemEntity;
 import com.shao.mythicalcreatures.sound.ModSounds;
 
 import com.shao.mythicalcreatures.config.MythicalConfig;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -34,11 +35,25 @@ public class WindigoEntity extends HostilePonyEntity {
 
     public WindigoEntity(EntityType<WindigoEntity> type, Level level) {
         super(type, level);
+        // 大碰撞箱翻越地形：可"走上"2 格高台阶（原版 0.6 只够跨半格）。
+        this.setMaxUpStep(2.0F);
+    }
+
+    /** 跳跃力（0.42 为原版约 1.25 格）。提到 0.6 ≈ 跳 2.2 格，配合 maxUpStep 可跨 2~3 格矮墙/坑。 */
+    @Override
+    protected float getJumpPower() {
+        return 0.6F;
     }
 
     @Override
     public EntityDimensions getDimensions(Pose pose) {
-        return EntityDimensions.scalable(Math.max(BB_WIDTH, BB_DEPTH), BB_HEIGHT);
+        // 逻辑宽度调大：getBbWidth() 来自 getDimensions().width（final，无法直接覆写），
+        // 而原版近战攻击半径 getAttackReachSqr = 4×攻击者宽² + 目标getBbWidth()（线性近似）——
+        // 对半深 16.5 的碰撞箱，该公式给出的攻击半径只有约 6 格，近战生物被箱子挡在中心距
+        // 17 格外，永远进不了攻击范围（"撞到也打不到"）。把逻辑宽度撑到等效大值，
+        // 攻击者攻击半径 ≈ 碰撞箱半深+1，贴到身体边缘即可挥击命中。
+        // 物理碰撞仍走 makeBoundingBox 的常量框（20×33×8），不受此影响。
+        return EntityDimensions.scalable(400.0F, BB_HEIGHT);
     }
 
     @Override
@@ -67,8 +82,11 @@ public class WindigoEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:windigo", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:windigo", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythicalcreatures:windigo", "attack_damage"))
-                .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythicalcreatures:windigo", "fly_speed"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 48.0));
+                // 索敌距离 = 射程(40)的两倍，与飞行小马的比例一致（射程16/索敌32）；
+                // 用雪魔专属键，避免被 global_params.follow_range 的默认值(32)拉低。
+                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("mythicalcreatures:windigo", "follow_range", 80.0))
+                // 满击退抗性：不被爆炸/击退/近战连击推走，防止被"控距"风筝致死或炸得下不来。
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
     @Override protected void defineSynchedData() {
@@ -79,6 +97,13 @@ public class WindigoEntity extends HostilePonyEntity {
     @Override public void tick() {
         super.tick();
         // 雪魔不飞行：不调用 tickFlight（无起飞-悬停-落地循环），地面行为。
+        // 少量冰雪环绕粒子（客户端）：每 4 tick 在身体周围飘 1 片雪花，营造冰雪气场而不卡顿。
+        if (this.level().isClientSide && this.tickCount % 4 == 0) {
+            this.level().addParticle(ParticleTypes.SNOWFLAKE,
+                    this.getRandomX(3.0D), this.getY() + this.random.nextDouble() * this.getBbHeight(),
+                    this.getRandomZ(3.0D),
+                    0.0D, -0.02D, 0.0D);
+        }
     }
 
     @Override
@@ -99,7 +124,7 @@ public class WindigoEntity extends HostilePonyEntity {
     }
 
     /**
-     * 雪魔远程攻击（霰弹枪式）：一次随机发射 10~20 颗「不稳定物品」投掷物，
+     * 雪魔远程攻击（霰弹枪式）：一次随机发射 15~25 颗「不稳定物品」投掷物，
      * 随机散布但都瞄准同一目标；发射节奏由 RangedAttackGoal 控制（见 registerGoals）。
      * 投掷物命中造成 15 点魔法伤害（见 UnstableItemEntity）。
      */
@@ -107,7 +132,7 @@ public class WindigoEntity extends HostilePonyEntity {
     public void performRangedAttack(LivingEntity target, float power) {
         if (this.level().isClientSide() || target == null || !target.isAlive()) return;
 
-        int count = 10 + this.random.nextInt(11); // 10..20
+        int count = 15 + this.random.nextInt(11); // 15..25
         double sx = this.getX();
         double sy = this.getY(0.5D);
         double sz = this.getZ();
@@ -120,7 +145,7 @@ public class WindigoEntity extends HostilePonyEntity {
         aim = aim.normalize();
 
         double speed = 1.5D;
-        double spread = 0.15D; // 随机分布幅度（弧度级，决定散布锥半角）
+        double spread = 0.1D; // 随机分布幅度（弧度级，决定散布锥半角）
 
         this.level().playSound(null, sx, sy, sz,
                 SoundEvents.ENDER_PEARL_THROW, net.minecraft.sounds.SoundSource.NEUTRAL, 0.3F,

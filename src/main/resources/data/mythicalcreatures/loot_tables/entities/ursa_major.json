@@ -1,20 +1,44 @@
 {
-	"type": "minecraft:entity",
-	"random_sequence": "mythicalcreatures:entities/ursa_major",
-	"pools": [
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"type": "minecraft:item",
-					"name": "mythicalcreatures:ursa_claws"
-				}
-			],
-			"conditions": [
-				{
-					"condition": "minecraft:killed_by_player"
-				}
-			]
-		}
-	]
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mythicalcreatures:bear_fur",
+          "weight": 8,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2,
+                "max": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mythicalcreatures:bear_claw",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mythicalcreatures:ursa_claws",
+          "weight": 1
+        }
+      ]
+    }
+  ]
 }

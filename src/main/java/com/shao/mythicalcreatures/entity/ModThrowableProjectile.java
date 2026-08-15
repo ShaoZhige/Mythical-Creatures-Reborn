@@ -114,4 +114,12 @@ public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
         }
         this.setDeltaMovement(vel);
     }
+
+    /** 重力（方块/tick²）。原版 ThrowableProjectile 默认 0.03（雪球级下坠），
+     *  生物远程攻击按直线瞄准发射、不会像玩家那样手动抬枪口，下坠太大会打空；
+     *  降到约 1/3 后弹道明显更平直，直线瞄准即可命中，仍保留轻微弧线观感。 */
+    @Override
+    protected float getGravity() {
+        return 0.01F;
+    }
 }

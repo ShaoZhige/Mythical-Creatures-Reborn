@@ -99,7 +99,7 @@ public class MythicalConfig {
             entity("mythicalcreatures:leviathan", 60.0, 0.2, 8.0);
             entity("mythicalcreatures:centipede", 35, 0.3, 5);
             entity("mythicalcreatures:hydra", 650, 0.22, 28);
-            entity("mythicalcreatures:windigo", 520, 0.3, 22);
+            entity("mythicalcreatures:windigo", 520, 0.4, 22);
             entity("mythicalcreatures:baby_moose", 20.0, 0.3, 2.0);
             entity("mythicalcreatures:adult_moose", 45.0, 0.22, 6.0);
             entity("mythicalcreatures:tough_guy", 50, 0.25, 7);
@@ -120,13 +120,12 @@ public class MythicalConfig {
             ENTITY_DEFAULTS.put("mythicalcreatures:twilight_magic|fly_speed", 0.183);
             ENTITY_DEFAULTS.put("mythicalcreatures:rainbow_dash|fly_speed", 0.333);
             ENTITY_DEFAULTS.put("mythicalcreatures:twilight_sparkle|fly_speed", 0.267);
-            // 自主飞行生物（接 fly_speed 配置）：凤凰 / 雪魔 / 蝎尾狮 / 穗龙斯拉 / 盖伯
+            // 自主飞行生物（接 fly_speed 配置）：凤凰 / 蝎尾狮 / 穗龙斯拉 / 盖伯
             ENTITY_DEFAULTS.put("mythicalcreatures:phoenix|fly_speed", 0.40);
-            ENTITY_DEFAULTS.put("mythicalcreatures:windigo|fly_speed", 0.20);
             ENTITY_DEFAULTS.put("mythicalcreatures:manticore|fly_speed", 0.30);
             ENTITY_DEFAULTS.put("mythicalcreatures:spikezilla|fly_speed", 0.25);
             ENTITY_DEFAULTS.put("mythicalcreatures:garble|fly_speed", 0.30);
-            // 厄运之颅：会飞（蜜蜂式悬停）+ 白天燃烧（亡灵）；fly_speed 必填，否则 entityAttr 静默 0.0 飞不起来
+            // 末日颅骨：会飞（蜜蜂式悬停）+ 白天燃烧（亡灵）；fly_speed 必填，否则 entityAttr 静默 0.0 飞不起来
             ENTITY_DEFAULTS.put("mythicalcreatures:skull_of_doom|fly_speed", 0.22);
 
             // 飞行坐骑骑乘调参默认值（空配置 = 小马手感；玩家可在 overrides 覆盖）

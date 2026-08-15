@@ -78,9 +78,12 @@ public final class FlightRideAPI {
             if (self.isFlying() || self.isHovering()) {
                 self.setNoGravity(true);
                 self.fallDistance = 0;
-                float s = (float)(getRiddenSpeed(self) * self.rideHorizontalFactor);
-                self.moveRelative(s, new Vec3(v.x, 0, v.z));
-                self.move(MoverType.SELF, self.getDeltaMovement());
+                // 只在权威端（服务端 AI）或本地控制端移动，避免旁观客户端本地移动坐骑造成抖动
+                if (self.isEffectiveAi() || self.isControlledByLocalInstance()) {
+                    float s = (float)(getRiddenSpeed(self) * self.rideHorizontalFactor);
+                    self.moveRelative(s, new Vec3(v.x, 0, v.z));
+                    self.move(MoverType.SELF, self.getDeltaMovement());
+                }
                 self.setDeltaMovement(self.getDeltaMovement().scale((float) self.rideInertiaDecay));
                 if (self.getY() > self.level().getMaxBuildHeight() + 4)
                     self.setDeltaMovement(self.getDeltaMovement().add(0, -0.5, 0));

@@ -36,7 +36,9 @@ public class AppleProjectileEntity extends ModThrowableProjectile {
         if (result.getType() == HitResult.Type.ENTITY) {
             net.minecraft.world.phys.EntityHitResult entityHit = (net.minecraft.world.phys.EntityHitResult) result;
             if (entityHit.getEntity() instanceof PonyEntity pony) {
-                pony.heal(8.0F);
+                if (!this.level().isClientSide) {
+                    pony.heal(8.0F);
+                }
                 if (this.level() instanceof ServerLevel sl) {
                     for (int i = 0; i < 10; i++) {
                         sl.sendParticles(ParticleTypes.HEART, pony.getRandomX(0.5), pony.getY() + pony.getBbHeight() * 0.5, pony.getRandomZ(0.5),

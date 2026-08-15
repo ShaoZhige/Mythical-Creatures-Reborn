@@ -146,15 +146,15 @@ public class ModItems {
     // ==================== 二、武器 (13) ====================
 
     public static final RegistryObject<BowserSword> BOWSERS_SWORD = ITEMS.register("bowsers_sword",
-            () -> new BowserSword(ModTiers.REINFORCED, 3, -2.4F, new Item.Properties()));
+            () -> new BowserSword(ModTiers.REINFORCED, 3, -2.4F, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final RegistryObject<SwordItem> TWILIGHT_SWORD = ITEMS.register("twilight_sword",
-            () -> new TwilightSword(ModTiers.TWILIGHT, 3, -2.4F, new Item.Properties()));
+            () -> new TwilightSword(ModTiers.TWILIGHT, 3, -2.4F, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final RegistryObject<SwordItem> EXPLOSIVE_SWORD = ITEMS.register("explosive_sword",
             () -> new SwordItem(ModTiers.EXPLOSIVE, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> APPLE_SWORD = ITEMS.register("apple_sword",
             () -> new SwordItem(ModTiers.APPLE, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> RAINBOW_DASH_SWORD = ITEMS.register("rainbow_dash_sword",
-            () -> new RainbowDashSword(ModTiers.DASH, 3, -2.4F, new Item.Properties()));
+            () -> new RainbowDashSword(ModTiers.DASH, 3, -2.4F, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final RegistryObject<BearClawSword> BEAR_CLAW_SWORD = ITEMS.register("bear_claw_sword",
             () -> new BearClawSword(ModTiers.BEAR, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> CRAG_HAMMER = ITEMS.register("crag_hammer",
@@ -162,14 +162,15 @@ public class ModItems {
     public static final RegistryObject<SwordItem> APPLEJACK_SWORD = ITEMS.register("applejack_sword",
             () -> new SwordItem(ModTiers.APPLEJACK, 3, -2.4F, new Item.Properties()));
     public static final RegistryObject<SwordItem> CRYSTAL_SWORD = ITEMS.register("crystal_sword",
-            () -> new SwordItem(ModTiers.CRYSTAL, 3, -2.4F, new Item.Properties()));
+            () -> new SwordItem(ModTiers.CRYSTAL, 3, -2.4F, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final RegistryObject<SwordItem> ALICORN_SWORD = ITEMS.register("alicorn_sword",
-            () -> new SwordItem(ModTiers.ALICORN, 10, -2.4F, new Item.Properties()));
+            () -> new SwordItem(ModTiers.ALICORN, 10, -2.4F, new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final RegistryObject<SwordItem> DAGGER = ITEMS.register("dagger",
             () -> new SwordItem(ModTiers.RANDOM2, 3, -1.0F, new Item.Properties()));
     public static final RegistryObject<UrsaClawsItem> URSA_CLAWS = ITEMS.register("ursa_claws",
             // 攻击伤害 = 空手基准1.0 + (87 + URSA Tier加成12) = 100；攻速修正 -3.65F：原版基础4.0+(-3.65)=0.35 次/秒（比原 -3.3F 的 0.7 对半砍更慢）
-            () -> new UrsaClawsItem(ModTiers.URSA, 87, -3.65F, new Item.Properties().fireResistant()));
+            () -> new UrsaClawsItem(ModTiers.URSA, 87, -3.65F,
+                    new Item.Properties().fireResistant().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<SwordItem> DIRT_SWORD = ITEMS.register("dirt_sword",
             () -> new SwordItem(ModTiers.DIRT, 3, -2.4F, new Item.Properties()));
 

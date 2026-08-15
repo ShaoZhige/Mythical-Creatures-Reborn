@@ -2,6 +2,7 @@ package com.shao.mythicalcreatures.event;
 
 import com.shao.mythicalcreatures.MythicalCreaturesMod;
 import com.shao.mythicalcreatures.item.SetBonusManager;
+import com.shao.mythicalcreatures.util.KeyStateHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -37,10 +38,11 @@ public class ModEvents {
         }
     }
 
-    /** 退出时清理计数器，避免 WeakHashMap 暂留 */
+    /** 退出时清理计数器与下降键状态，避免 WeakHashMap / Map 暂留 */
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         tickCounter.remove(event.getEntity());
+        KeyStateHelper.clearDescendState(event.getEntity().getUUID());
     }
 
     /** 云宝套装：免疫摔落伤害 */

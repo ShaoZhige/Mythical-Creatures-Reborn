@@ -41,8 +41,9 @@ public class RainbowDashSlashEntity extends ModThrowableProjectile {
     @Override
     public void tick() {
         super.tick();
-        // 超出 18 格自动消失
-        if (this.tickCount > 20 * 3 || this.distanceToSqr(this.getOwner()) > RANGE * RANGE) {
+        // 超出 18 格自动消失（owner 可能已死亡/离场/从存档加载后为 null，需判空防 NPE）
+        net.minecraft.world.entity.Entity owner = this.getOwner();
+        if (this.tickCount > 20 * 3 || (owner != null && this.distanceToSqr(owner) > RANGE * RANGE)) {
             this.discard();
             return;
         }

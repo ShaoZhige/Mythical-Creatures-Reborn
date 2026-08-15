@@ -11,15 +11,15 @@
   "spawners": [
     {
       "type": "mythicalcreatures:windigo",
-      "weight": 2,
+      "weight": 1,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythicalcreatures:arctic_scorpion",
-      "weight": 2,
+      "weight": 1,
       "minCount": 1,
-      "maxCount": 3
+      "maxCount": 1
     }
   ]
 }

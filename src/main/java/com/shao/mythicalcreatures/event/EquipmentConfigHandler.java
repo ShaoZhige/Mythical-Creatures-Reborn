@@ -79,14 +79,14 @@ public class EquipmentConfigHandler {
         if (tough > 0) {
             event.removeAttribute(Attributes.ARMOR_TOUGHNESS);
             event.addModifier(Attributes.ARMOR_TOUGHNESS,
-                new AttributeModifier(UUID.randomUUID(), "config",
+                new AttributeModifier(ARMOR_UUIDS[slot.getIndex()], "config",
                     tough, AttributeModifier.Operation.ADDITION));
         }
 
         if (kb > 0) {
             event.removeAttribute(Attributes.KNOCKBACK_RESISTANCE);
             event.addModifier(Attributes.KNOCKBACK_RESISTANCE,
-                new AttributeModifier(UUID.randomUUID(), "config",
+                new AttributeModifier(ARMOR_UUIDS[slot.getIndex()], "config",
                     kb, AttributeModifier.Operation.ADDITION));
         }
     }
