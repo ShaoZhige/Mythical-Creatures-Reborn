@@ -66,8 +66,8 @@ public class PinkiePieEntity extends NeutralPonyEntity implements PlayerRideable
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.PP_TAMING, com.shao.mythicalcreatures.item.ModItems.PINKIE_PIE_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:pinkie_pie", "max_health")).add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:pinkie_pie", "move_speed"))

@@ -7,36 +7,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mythicalcreatures:bear_fur",
-          "weight": 8,
+          "name": "mythicalcreatures:ursa_claws",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "min": 2,
-                "max": 3
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "mythicalcreatures:bear_claw",
-          "weight": 5,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1,
                 "max": 2
               }
             }
           ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "mythicalcreatures:ursa_claws",
-          "weight": 1
         }
       ]
     }

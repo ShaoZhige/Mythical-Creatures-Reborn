@@ -1,9 +1,13 @@
 package com.shao.mythicalcreatures.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -37,16 +41,40 @@ public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
     /** 命中粗化半径（方块）。原版等效约 0.3，这里放大到 1.0，命中容易很多。 */
     private static final double HIT_RADIUS = 1.0D;
 
+    /** 是否由生物（AI）发射（而非玩家）。用 synched data 保证双端一致 ——
+     *  客户端投掷物走一参构造器、且 Projectile.getOwner() 在客户端返回 null，无法实时判断。 */
+    private static final EntityDataAccessor<Boolean> DATA_MOB_SHOT =
+            SynchedEntityData.defineId(ModThrowableProjectile.class, EntityDataSerializers.BOOLEAN);
+
+    /** 生物发射的投掷物寿命（tick）。10 秒后自动消失，避免飞出加载范围长期残留占用内存。 */
+    private static final int MOB_SHOT_LIFETIME = 200; // 20 tick/s × 10s
+
     public ModThrowableProjectile(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
     }
 
     public ModThrowableProjectile(EntityType<? extends ThrowableItemProjectile> type, LivingEntity owner, Level level) {
         super(type, owner, level);
+        this.entityData.set(DATA_MOB_SHOT, !(owner instanceof Player));
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_MOB_SHOT, false);
+    }
+
+    private boolean isMobShot() {
+        return this.entityData.get(DATA_MOB_SHOT);
     }
 
     @Override
     public void tick() {
+        // 生物发射的投掷物：寿命到期直接消失，避免长期残留占用内存（玩家发射的保持原行为）
+        if (this.isMobShot() && this.tickCount > MOB_SHOT_LIFETIME) {
+            this.discard();
+            return;
+        }
         // 本类（ThrowableProjectile 的直接子类）必须自带移动 ——
         // 原版 ThrowableProjectile.tick() 通过 this.setPos(start+deltaMovement) 移动
         // （并处理重力、摩擦），而 Entity.baseTick() 本身不移动。因此不调 super.tick()，
@@ -115,11 +143,11 @@ public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
         this.setDeltaMovement(vel);
     }
 
-    /** 重力（方块/tick²）。原版 ThrowableProjectile 默认 0.03（雪球级下坠），
-     *  生物远程攻击按直线瞄准发射、不会像玩家那样手动抬枪口，下坠太大会打空；
-     *  降到约 1/3 后弹道明显更平直，直线瞄准即可命中，仍保留轻微弧线观感。 */
+    /** 重力（方块/tick²）。
+     *  生物（AI）发射：无重力（返回 0），按初速度方向直线飞行；
+     *  玩家发射：轻微抛物线（0.005，比原版雪球级 0.03 平缓得多，也低于之前的 0.01）。 */
     @Override
     protected float getGravity() {
-        return 0.01F;
+        return this.isMobShot() ? 0.0F : 0.005F;
     }
 }

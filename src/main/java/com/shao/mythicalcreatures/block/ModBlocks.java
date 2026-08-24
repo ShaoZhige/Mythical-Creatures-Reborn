@@ -51,7 +51,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> CRYSTAL = register("crystal_ore",
             () -> new CrystalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIAMOND)
-                    .strength(30.0F, 45.0F).sound(SoundType.GLASS).lightLevel(s -> 8)));
+                    .strength(3.0F, 3.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS).lightLevel(s -> 8)));
 
     public static final RegistryObject<Block> DARK_CRYSTAL = register("dark_crystal_block",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)

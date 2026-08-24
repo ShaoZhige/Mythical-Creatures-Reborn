@@ -169,6 +169,13 @@ public class ModEntities {
                             .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
                             .build("cupcake_projectile"));
 
+    // ── 珍贵宝石（珍奇专属）：可投掷，命中上流血+修补 buff ──
+    public static final RegistryObject<EntityType<PreciousGemEntity>> PRECIOUS_GEM_PROJECTILE =
+            ENTITY_TYPES.register("precious_gem_projectile", () ->
+                    EntityType.Builder.<PreciousGemEntity>of(PreciousGemEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .build("precious_gem_projectile"));
+
     // ── 新实体（从旧模型转换而来） ──
     public static final RegistryObject<EntityType<BearEntity>> BEAR =
             ENTITY_TYPES.register("bear", () ->

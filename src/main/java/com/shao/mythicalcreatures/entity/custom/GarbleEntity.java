@@ -27,9 +27,9 @@ public class GarbleEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.GARBLE_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.GARBLE_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.GARBLE_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.GARBLE_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

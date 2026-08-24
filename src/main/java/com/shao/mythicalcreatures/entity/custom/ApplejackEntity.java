@@ -34,8 +34,8 @@ public class ApplejackEntity extends NeutralPonyEntity implements PlayerRideable
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.AJ_TAMING, ModItems.APPLEJACK_CUTIEMARK.get());
     }
-    @Override @Nullable protected SoundEvent getAmbientSoundEvent() { return ModSounds.APPLEJACK_AMBIENT.get(); }
-    @Override @Nullable protected SoundEvent getHurtSoundEvent() { return ModSounds.APPLEJACK_HURT.get(); }
+    @Override @Nullable protected SoundEvent getAmbientSound() { return ModSounds.APPLEJACK_AMBIENT.get(); }
+    @Override @Nullable protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.APPLEJACK_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

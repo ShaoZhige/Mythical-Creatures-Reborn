@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import com.shao.mythicalcreatures.config.MythicalConfig;
+import com.shao.mythicalcreatures.entity.BossBarManager;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.Vec3;
@@ -125,6 +125,13 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         }
         var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
         if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "attack_damage"));
+        // boss 近战击退增强：原版近战击退 = 基础 0.4（LivingEntity.hurt 内硬编码）
+        // + ATTACK_KNOCKBACK × 0.5（Mob.doHurtTarget）。给 boss 设 1.0 → 额外 0.5，
+        // 总击退约 0.9（≈原版 2 倍），让 boss 的挥击有明显「击飞」压迫感。非 boss 保持默认 0。
+        var kb = this.getAttribute(Attributes.ATTACK_KNOCKBACK);
+        if (kb != null && BossBarManager.isBoss(this.getClass())) {
+            kb.setBaseValue(1.0F);
+        }
         // 索敌范围下限：统一至少 32 格（config global_params.follow_range 可调）。
         // 原版 NearestAttackableTargetGoal 的索敌半径 = FOLLOW_RANGE 属性，小马默认 16 格太近，
         // 大体型敌人（大熊座/九头蛇等）稍远就锁不到；提高后远距离也能锁定（该 goal 无视线限制，
@@ -220,8 +227,6 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(configId));
         return item != null ? item : fallback;
     }
-    @Nullable protected abstract SoundEvent getAmbientSoundEvent();
-    @Nullable protected abstract SoundEvent getHurtSoundEvent();
 
     /* ================================================================
      * AI（所有小马共用）
@@ -345,8 +350,6 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
 
     @Override public boolean causeFallDamage(float distance, float multiplier, net.minecraft.world.damagesource.DamageSource source) { return false; }
     @Override protected void playStepSound(BlockPos pos, BlockState state) {}
-    @Nullable @Override protected SoundEvent getAmbientSound() { return getAmbientSoundEvent(); }
-    @Nullable @Override protected SoundEvent getHurtSound(@NotNull net.minecraft.world.damagesource.DamageSource s) { return getHurtSoundEvent(); }
     @Override public int getAmbientSoundInterval() { return 200; }
 
     /* ================================================================

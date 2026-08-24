@@ -40,8 +40,8 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.TS_TAMING, ModItems.TWILIGHT_CUTIEMARK.get());
     }
-    @Override @Nullable protected SoundEvent getAmbientSoundEvent() { return ModSounds.TWILIGHT_SPARKLE_AMBIENT.get(); }
-    @Override @Nullable protected SoundEvent getHurtSoundEvent() { return ModSounds.TWILIGHT_SPARKLE_HURT.get(); }
+    @Override @Nullable protected SoundEvent getAmbientSound() { return ModSounds.TWILIGHT_SPARKLE_AMBIENT.get(); }
+    @Override @Nullable protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.TWILIGHT_SPARKLE_HURT.get(); }
 
     /* ── 飞行参数（慢速平稳，默认值即紫悦的风格） ── */
     @Override protected int    getFlightChance()        { return MythicalConfig.DATA.getInt("mythicalcreatures:twilight_sparkle", "flight_chance", 200); }

@@ -13,12 +13,6 @@
       "maxCount": 1
     },
     {
-      "type": "mythicalcreatures:cragadile",
-      "weight": 1,
-      "minCount": 1,
-      "maxCount": 1
-    },
-    {
       "type": "mythicalcreatures:black_widow",
       "weight": 6,
       "minCount": 1,

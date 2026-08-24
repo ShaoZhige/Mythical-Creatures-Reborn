@@ -27,9 +27,9 @@ public class CrabzillaEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.CRABZILLA_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.CRABZILLA_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.CRABZILLA_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.CRABZILLA_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

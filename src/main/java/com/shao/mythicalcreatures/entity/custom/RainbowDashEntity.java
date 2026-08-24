@@ -31,8 +31,8 @@ public class RainbowDashEntity extends NeutralPonyEntity {
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.RD_TAMING, ModItems.RAINBOW_DASH_CUTIEMARK.get());
     }
-    @Override @Nullable protected SoundEvent getAmbientSoundEvent() { return ModSounds.RAINBOW_DASH_AMBIENT.get(); }
-    @Override @Nullable protected SoundEvent getHurtSoundEvent() { return ModSounds.RAINBOW_DASH_HURT.get(); }
+    @Override @Nullable protected SoundEvent getAmbientSound() { return ModSounds.RAINBOW_DASH_AMBIENT.get(); }
+    @Override @Nullable protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.RAINBOW_DASH_HURT.get(); }
 
     /* ── 飞行参数（快于紫悦） ── */
     @Override protected double getFlightAscentSpeed()   { return 0.15D; }

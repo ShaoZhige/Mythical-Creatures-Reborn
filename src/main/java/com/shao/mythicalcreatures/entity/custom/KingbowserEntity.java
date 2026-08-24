@@ -29,9 +29,9 @@ public class KingbowserEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.KINGBOWSER_9000_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.KINGBOWSER_9000_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.KINGBOWSER_9000_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.KINGBOWSER_9000_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

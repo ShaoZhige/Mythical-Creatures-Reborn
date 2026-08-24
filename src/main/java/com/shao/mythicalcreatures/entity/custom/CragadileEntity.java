@@ -27,9 +27,9 @@ public class CragadileEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.CRAGADILE_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.CRAGADILE_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.CRAGADILE_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.CRAGADILE_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()

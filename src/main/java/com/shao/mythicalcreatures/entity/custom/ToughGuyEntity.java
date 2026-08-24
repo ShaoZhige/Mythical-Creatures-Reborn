@@ -27,9 +27,9 @@ public class ToughGuyEntity extends PonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.TOUGH_GUY_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.TOUGH_GUY_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.TOUGH_GUY_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.TOUGH_GUY_HURT.get(); }
     @Override protected net.minecraft.sounds.SoundEvent getDeathSound() { return ModSounds.TOUGH_GUY_DEATH.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {

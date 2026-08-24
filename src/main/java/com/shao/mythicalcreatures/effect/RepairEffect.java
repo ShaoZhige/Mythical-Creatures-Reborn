@@ -16,18 +16,20 @@ public class RepairEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!(entity instanceof Player player)) return;
-
         int repairAmount = MythicalConfig.DATA.getInt("global_params", "repair_amount", 1) + amplifier;
 
-        // 遍历背包 36 格
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            repair(player.getInventory().getItem(i), repairAmount);
+        // 玩家额外修复背包 36 格（怪物没有背包，只有装备栏）
+        if (entity instanceof Player player) {
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                repair(player.getInventory().getItem(i), repairAmount);
+            }
         }
-        // 装备栏
+
+        // 通用：修复装备栏（护甲 + 主/副手），玩家与穿戴装备的怪物（僵尸/骷髅等）都适用。
+        // getItemBySlot 是 LivingEntity 的通用方法，怪物（Mob）同样能读到自己的护甲/武器。
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             if (slot.getType() == EquipmentSlot.Type.ARMOR || slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) {
-                repair(player.getItemBySlot(slot), repairAmount);
+                repair(entity.getItemBySlot(slot), repairAmount);
             }
         }
     }

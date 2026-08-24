@@ -34,9 +34,9 @@ public class SkullOfDoomEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.SKULL_OF_DOOM_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.SKULL_OF_DOOM_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.SKULL_OF_DOOM_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.SKULL_OF_DOOM_HURT.get(); }
 
     /**
      * 亡灵生物：让原版机制（亡灵伤害、亡灵药水、亡灵治疗/伤害反转、铁傀儡仇恨等）

@@ -27,9 +27,9 @@ public class SpikezillaEntity extends HostilePonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return ModSounds.SPIKEZILLA_AMBIENT.get(); }
+    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return ModSounds.SPIKEZILLA_AMBIENT.get(); }
     @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return ModSounds.SPIKEZILLA_HURT.get(); }
+    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.SPIKEZILLA_HURT.get(); }
     @Override protected net.minecraft.sounds.SoundEvent getDeathSound() { return ModSounds.SPIKEZILLA_DEATH.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {

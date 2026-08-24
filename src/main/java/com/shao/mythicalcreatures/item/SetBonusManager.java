@@ -157,10 +157,10 @@ public class SetBonusManager {
                 ModItems.TWILIGHT_LEGGINGS, ModItems.TWILIGHT_BOOTS,
                 bonuses().id("twilight").maxHealth(25.0).build(), null);
 
-        // === 库巴套装 — 全套 +30 最大生命 + 防火 ===
+        // === 库巴套装 — 全套 +15 最大生命 + 防火 ===
         registerSet("bowsers", "库巴套装", ModItems.BOWSERS_HELMET, ModItems.BOWSERS_CHESTPLATE,
                 ModItems.BOWSERS_LEGGINGS, ModItems.BOWSERS_BOOTS,
-                bonuses().id("bowsers").maxHealth(30.0).build(),
+                bonuses().id("bowsers").maxHealth(15.0).build(),
                 (player, wearing) -> {
                     if (wearing) {
                         if (!player.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) {

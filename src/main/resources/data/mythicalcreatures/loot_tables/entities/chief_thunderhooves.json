@@ -40,8 +40,22 @@
         },
         {
           "type": "minecraft:item",
-          "name": "mythicalcreatures:precious_gem",
+          "name": "mythicalcreatures:crystal_gem",
           "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:beef",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2,
+                "max": 4
+              }
+            }
+          ]
         }
       ]
     }

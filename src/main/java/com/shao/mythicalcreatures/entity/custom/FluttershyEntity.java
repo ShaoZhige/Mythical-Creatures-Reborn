@@ -29,8 +29,8 @@ public class FluttershyEntity extends NeutralPonyEntity {
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.FS_TAMING, com.shao.mythicalcreatures.item.ModItems.FLUTTERSHY_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "max_health")).add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:fluttershy", "move_speed"))

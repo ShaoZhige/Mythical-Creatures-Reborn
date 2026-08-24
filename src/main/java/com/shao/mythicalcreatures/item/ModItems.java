@@ -87,8 +87,9 @@ public class ModItems {
             () -> new TwilightStarItem(new Item.Properties()));
     public static final RegistryObject<RainbowCloudItem> RAINBOW_CLOUD_ITEM = ITEMS.register("rainbow_cloud",
             () -> new RainbowCloudItem(new Item.Properties()));
-    public static final RegistryObject<Item> PRECIOUS_GEM = ITEMS.register("precious_gem",
-            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<ThrowableFunItem> PRECIOUS_GEM = ITEMS.register("precious_gem",
+            () -> new ThrowableFunItem(new Item.Properties(),
+                    (level, shooter) -> new com.shao.mythicalcreatures.entity.PreciousGemEntity(level, shooter)));
     public static final RegistryObject<ThrowableFunItem> BUTTERFLIES = ITEMS.register("butterflies",
             () -> new ThrowableFunItem(new Item.Properties(),
                     (level, shooter) -> new com.shao.mythicalcreatures.entity.ButterflyProjectileEntity(level, shooter)));

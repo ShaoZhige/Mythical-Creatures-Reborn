@@ -43,6 +43,14 @@ public class BossBarManager {
             KingbowserEntity.class
     ));
 
+    /**
+     * 判断一个实体类是否属于「boss」（显示血条的大型 boss）。
+     * 供实体侧复用同一份 boss 清单（如近战击退增强），避免两处各自维护一份名单。
+     */
+    public static boolean isBoss(Class<? extends LivingEntity> cls) {
+        return BOSS_CLASSES.contains(cls);
+    }
+
     private static final Map<LivingEntity, ServerBossEvent> BARS = new WeakHashMap<>();
 
     @SubscribeEvent

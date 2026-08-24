@@ -88,34 +88,34 @@ public class MythicalConfig {
             entity("mythicalcreatures:holy_light_radiance",220.0, 0.25, 9.0);
             entity("mythicalcreatures:bear",              40.0, 0.25, 6.0);
             entity("mythicalcreatures:cockatrice",        40.0, 0.25, 6.0);
-            entity("mythicalcreatures:garble",            420, 0.28, 18);
-            entity("mythicalcreatures:kingbowser_9000",   40.0, 0.25, 6.0);
+            entity("mythicalcreatures:garble",            420, 0.28, 23);
+            entity("mythicalcreatures:kingbowser_9000",   40.0, 0.25, 8.0);
             entity("mythicalcreatures:parasprite",        40.0, 0.25, 6.0);
-            entity("mythicalcreatures:phoenix",           520, 0.25, 22);
-            entity("mythicalcreatures:ursa_major",        520, 0.25, 22);
+            entity("mythicalcreatures:phoenix",           520, 0.25, 29);
+            entity("mythicalcreatures:ursa_major",        520, 0.25, 29);
             entity("mythicalcreatures:buffalo", 100, 0.25, 9);
-            entity("mythicalcreatures:chief_thunderhooves", 420, 0.28, 18);
+            entity("mythicalcreatures:chief_thunderhooves", 420, 0.28, 23);
             entity("mythicalcreatures:black_widow", 35, 0.3, 5);
             entity("mythicalcreatures:leviathan", 60.0, 0.2, 8.0);
             entity("mythicalcreatures:centipede", 35, 0.3, 5);
-            entity("mythicalcreatures:hydra", 650, 0.22, 28);
-            entity("mythicalcreatures:windigo", 520, 0.4, 22);
+            entity("mythicalcreatures:hydra", 650, 0.22, 36);
+            entity("mythicalcreatures:windigo", 520, 0.4, 29);
             entity("mythicalcreatures:baby_moose", 20.0, 0.3, 2.0);
             entity("mythicalcreatures:adult_moose", 45.0, 0.22, 6.0);
             entity("mythicalcreatures:tough_guy", 50, 0.25, 7);
             entity("mythicalcreatures:mavis", 35, 0.35, 5);
-            entity("mythicalcreatures:manticore", 520, 0.3, 22);
+            entity("mythicalcreatures:manticore", 520, 0.3, 29);
             entity("mythicalcreatures:rainbow_centipede", 45, 0.32, 6);
-            entity("mythicalcreatures:arctic_scorpion", 420, 0.28, 18);
+            entity("mythicalcreatures:arctic_scorpion", 420, 0.28, 23);
             entity("mythicalcreatures:timber_wolf", 40, 0.35, 6);
             entity("mythicalcreatures:crabzilla", 650, 0.18, 28);
-            entity("mythicalcreatures:iron_will", 420, 0.22, 18);
+            entity("mythicalcreatures:iron_will", 420, 0.22, 23);
             entity("mythicalcreatures:skull_of_doom", 50, 0.1, 7);
-            entity("mythicalcreatures:prince_rutherford", 420, 0.25, 18);
-            entity("mythicalcreatures:spikezilla", 650, 0.2, 28);
+            entity("mythicalcreatures:prince_rutherford", 420, 0.25, 23);
+            entity("mythicalcreatures:spikezilla", 650, 0.2, 36);
             entity("mythicalcreatures:rhinoceros", 60.0, 0.2, 7.0);
             entity("mythicalcreatures:robot_sombra", 55, 0.28, 7);
-            entity("mythicalcreatures:cragadile", 50.0, 0.28, 7.0);
+            entity("mythicalcreatures:cragadile", 50.0, 0.28, 9.0);
             entity("mythicalcreatures:twilight_magic",    20.0, 0.50, 8.0);
             ENTITY_DEFAULTS.put("mythicalcreatures:twilight_magic|fly_speed", 0.183);
             ENTITY_DEFAULTS.put("mythicalcreatures:rainbow_dash|fly_speed", 0.333);
@@ -173,6 +173,19 @@ public class MythicalConfig {
             b.comment(
                 "格式: [\"注册名\", \"属性\", 数值]  |  Format: [\"name\", \"attr\", value]",
                 "详细教程见  |  Full guide: https://github.com/ShaoZhige/Mythical-Creatures-Reborn/wiki",
+                "",
+                "注释  |  Comments:",
+                "  支持 # 注释（含 overrides 数组内的分组注释），配置加载时会自动跳过、不参与解析。",
+                "  例：",
+                "  overrides = [",
+                "      # ===== 生物属性 ===== #",
+                "      [\"mythicalcreatures:ursa_major\", \"max_health\", 300.0],",
+                "      [\"mythicalcreatures:bear\", \"max_health\", 120.0],",
+                "      # ===== 装备属性 ===== #",
+                "      [\"mythicalcreatures:twilight_sword\", \"attack_damage\", 15.0],",
+                "      # ===== 全局参数 ===== #",
+                "      [\"global_params\", \"follow_range\", 32],",
+                "  ]",
                 "",
                 "--- 实体  |  Entity ---",
                 "  属性: max_health / move_speed / attack_damage / fly_speed",

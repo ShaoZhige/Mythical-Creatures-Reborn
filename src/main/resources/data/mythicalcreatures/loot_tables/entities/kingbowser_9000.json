@@ -37,6 +37,20 @@
           "type": "minecraft:item",
           "name": "mythicalcreatures:eye_of_bowser",
           "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mythicalcreatures:reinforced_bone",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 4,
+                "max": 6
+              }
+            }
+          ]
         }
       ]
     }

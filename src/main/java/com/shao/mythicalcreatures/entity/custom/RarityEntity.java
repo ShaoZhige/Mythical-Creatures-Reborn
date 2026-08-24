@@ -1,7 +1,7 @@
 package com.shao.mythicalcreatures.entity.custom;
 
 import com.shao.mythicalcreatures.config.MythicalConfig;
-import com.shao.mythicalcreatures.entity.CupcakeProjectileEntity;
+import com.shao.mythicalcreatures.entity.PreciousGemEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,8 +66,8 @@ public class RarityEntity extends NeutralPonyEntity implements PlayerRideableJum
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.RY_TAMING, com.shao.mythicalcreatures.item.ModItems.RARITY_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:rarity", "max_health")).add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:rarity", "move_speed"))
@@ -75,7 +75,7 @@ public class RarityEntity extends NeutralPonyEntity implements PlayerRideableJum
     }
     @Override protected void defineSynchedData() { super.defineSynchedData();  }
     @Override public void performRangedAttack(LivingEntity target, float power) {
-        CupcakeProjectileEntity projectile = new CupcakeProjectileEntity(this.level(), this);
+        PreciousGemEntity projectile = new PreciousGemEntity(this.level(), this);
         projectile.shoot(target.getX() - this.getX(), target.getY(0.5) - this.getY(0.5),
                 target.getZ() - this.getZ(), 1.0F, 1.0F);
         this.playSound(SoundEvents.EGG_THROW, 0.6F, 1.0F);

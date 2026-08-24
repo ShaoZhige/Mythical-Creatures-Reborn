@@ -5,6 +5,7 @@ import com.shao.mythicalcreatures.entity.AppleProjectileEntity;
 import com.shao.mythicalcreatures.entity.BalloonProjectileEntity;
 import com.shao.mythicalcreatures.entity.ButterflyProjectileEntity;
 import com.shao.mythicalcreatures.entity.CupcakeProjectileEntity;
+import com.shao.mythicalcreatures.entity.PreciousGemEntity;
 import com.shao.mythicalcreatures.entity.RainbowCloudEntity;
 import com.shao.mythicalcreatures.entity.TwilightStarEntity;
 import net.minecraft.sounds.SoundEvents;
@@ -72,8 +73,8 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.HL_TAMING, com.shao.mythicalcreatures.item.ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSoundEvent() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSoundEvent() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
+    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "max_health")).add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythicalcreatures:holy_light_radiance", "move_speed"))
@@ -81,13 +82,14 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
     }
     @Override public void performRangedAttack(LivingEntity target, float power) {
         ThrowableItemProjectile projectile;
-        int roll = this.random.nextInt(6);
+        int roll = this.random.nextInt(7);
         switch (roll) {
             case 0 -> projectile = new BalloonProjectileEntity(this.level(), this);
             case 1 -> projectile = new ButterflyProjectileEntity(this.level(), this);
             case 2 -> projectile = new CupcakeProjectileEntity(this.level(), this);
             case 3 -> projectile = new AppleProjectileEntity(this.level(), this);
             case 4 -> projectile = new TwilightStarEntity(this.level(), this);
+            case 5 -> projectile = new PreciousGemEntity(this.level(), this);
             default -> projectile = new RainbowCloudEntity(this.level(), this);
         }
         projectile.shoot(target.getX() - this.getX(), target.getY(0.5) - this.getY(0.5),
