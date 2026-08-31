@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "mythical_creatures_reborn:fluttershy_cutiemark"
+    }
+  },
+  "result": {
+    "item": "mythical_creatures_reborn:fluttershy_boots"
+  }
+}

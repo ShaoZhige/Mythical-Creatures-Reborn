@@ -1,12 +1,12 @@
 {
   "replace": false,
   "values": [
-    "mythicalcreatures:applejack_cutiemark",
-    "mythicalcreatures:pinkie_pie_cutiemark",
-    "mythicalcreatures:fluttershy_cutiemark",
-    "mythicalcreatures:rarity_cutiemark",
-    "mythicalcreatures:rainbow_dash_cutiemark",
-    "mythicalcreatures:twilight_cutiemark",
-    "mythicalcreatures:holy_light_radiance_cutiemark"
+    "mythical_creatures_reborn:applejack_cutiemark",
+    "mythical_creatures_reborn:pinkie_pie_cutiemark",
+    "mythical_creatures_reborn:fluttershy_cutiemark",
+    "mythical_creatures_reborn:rarity_cutiemark",
+    "mythical_creatures_reborn:rainbow_dash_cutiemark",
+    "mythical_creatures_reborn:twilight_cutiemark",
+    "mythical_creatures_reborn:holy_light_radiance_cutiemark"
   ]
 }

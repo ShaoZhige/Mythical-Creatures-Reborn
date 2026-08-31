@@ -40,4 +40,4 @@ logoBlur=false
     side="BOTH"
 
 [[mixins]]
-config="mythicalcreatures.mixins.json"
+config="mythical_creatures_reborn.mixins.json"

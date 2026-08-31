@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "mythicalcreatures:item/egguni"
-  },
-  "gui_light": "front"
-}

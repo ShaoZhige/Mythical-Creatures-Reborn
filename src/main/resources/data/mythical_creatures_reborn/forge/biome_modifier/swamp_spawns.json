@@ -1,0 +1,28 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "minecraft:dark_forest"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:hydra",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "mythical_creatures_reborn:black_widow",
+      "weight": 12,
+      "minCount": 2,
+      "maxCount": 4
+    },
+    {
+      "type": "mythical_creatures_reborn:robot_sombra",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

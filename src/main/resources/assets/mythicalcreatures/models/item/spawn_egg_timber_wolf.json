@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "mythicalcreatures:item/eggtimberwolf"
-  },
-  "gui_light": "front"
-}

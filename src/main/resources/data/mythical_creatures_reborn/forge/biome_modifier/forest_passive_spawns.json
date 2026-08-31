@@ -1,0 +1,33 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:forest",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:dark_forest",
+    "minecraft:grove",
+    "minecraft:taiga",
+    "minecraft:snowy_taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:jungle",
+    "minecraft:bamboo_jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:windswept_forest"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:baby_moose",
+      "weight": 10,
+      "minCount": 3,
+      "maxCount": 4
+    },
+    {
+      "type": "mythical_creatures_reborn:adult_moose",
+      "weight": 8,
+      "minCount": 1,
+      "maxCount": 2
+    }
+  ]
+}

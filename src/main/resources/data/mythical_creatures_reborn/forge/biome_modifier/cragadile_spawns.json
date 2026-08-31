@@ -1,0 +1,15 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:cragadile",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "mythical_creatures_reborn:apple_block"
+    }
+  ],
+  "result": {
+    "item": "mythical_creatures_reborn:apples"
+  }
+}

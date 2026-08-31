@@ -1,0 +1,18 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:nether_wastes",
+    "minecraft:basalt_deltas",
+    "minecraft:crimson_forest",
+    "minecraft:warped_forest",
+    "minecraft:soul_sand_valley"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:kingbowser_9000",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "package": "com.shao.mythical_creatures_reborn.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "mythical_creatures_reborn.refmap.json",
+    "mixins": [
+        "ItemStackMixin",
+        "LivingEntityJumpAccessor"
+    ],
+    "client": [],
+    "server": []
+}

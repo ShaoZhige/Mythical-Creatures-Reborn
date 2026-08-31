@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "mythical_creatures_reborn:item/bonesword"
+  }
+}

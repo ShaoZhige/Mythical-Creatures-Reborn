@@ -1,0 +1,324 @@
+{
+  "entity.twilight_sparkle.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.twilight_sparkle.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_ambient_1",
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_ambient_2",
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_ambient_3",
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_ambient_4"
+    ]
+  },
+  "entity.twilight_sparkle.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.twilight_sparkle.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  },
+  "entity.rainbow_dash.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.rainbow_dash.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/rainbow_dash/rainbow_dash_ambient_1",
+      "mythical_creatures_reborn:entity/rainbow_dash/rainbow_dash_ambient_3"
+    ]
+  },
+  "entity.rainbow_dash.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.rainbow_dash.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  },
+  "entity.applejack.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.applejack.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/applejack/applejack_ambient_1",
+      "mythical_creatures_reborn:entity/applejack/applejack_ambient_2",
+      "mythical_creatures_reborn:entity/applejack/applejack_ambient_3",
+      "mythical_creatures_reborn:entity/applejack/applejack_ambient_4"
+    ]
+  },
+  "entity.applejack.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.applejack.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/twilight_sparkle/twilight_sparkle_hurt"
+    ]
+  },
+  "entity.arctic_scorpion.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.arctic_scorpion.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/pincer_1",
+      "mythical_creatures_reborn:entity/shared/pincer_2",
+      "mythical_creatures_reborn:entity/shared/pincer_3",
+      "mythical_creatures_reborn:entity/shared/pincer_4"
+    ]
+  },
+  "entity.arctic_scorpion.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.arctic_scorpion.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.bear.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.bear.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.bear.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.bear.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.cockatrice.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.cockatrice.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.cockatrice.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.cockatrice.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.crabzilla.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.crabzilla.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/pincer_1",
+      "mythical_creatures_reborn:entity/shared/pincer_2",
+      "mythical_creatures_reborn:entity/shared/pincer_3",
+      "mythical_creatures_reborn:entity/shared/pincer_4"
+    ]
+  },
+  "entity.crabzilla.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.crabzilla.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.cragadile.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.cragadile.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/cragadile_ambient"
+    ]
+  },
+  "entity.cragadile.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.cragadile.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/cragadile_hurt"
+    ]
+  },
+  "entity.iron_will.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.iron_will.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.iron_will.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.iron_will.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.kingbowser_9000.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.kingbowser_9000.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.kingbowser_9000.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.kingbowser_9000.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.leviathan.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.leviathan.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/growl"
+    ]
+  },
+  "entity.leviathan.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.leviathan.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.rhinoceros.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.rhinoceros.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/growl"
+    ]
+  },
+  "entity.rhinoceros.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.rhinoceros.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.skull_of_doom.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.skull_of_doom.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/slap"
+    ]
+  },
+  "entity.skull_of_doom.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.skull_of_doom.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/slap"
+    ]
+  },
+  "entity.spikezilla.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.spikezilla.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/growl"
+    ]
+  },
+  "entity.spikezilla.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.spikezilla.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.spikezilla.death": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.spikezilla.death",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/fanfare"
+    ]
+  },
+  "entity.buffalo.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.buffalo.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.chief_thunderhooves.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.chief_thunderhooves.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.chief_thunderhooves.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.chief_thunderhooves.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.prince_rutherford.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.prince_rutherford.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.prince_rutherford.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.prince_rutherford.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.timber_wolf.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.timber_wolf.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/howl_1",
+      "mythical_creatures_reborn:entity/shared/howl_2"
+    ]
+  },
+  "entity.timber_wolf.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.timber_wolf.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/howl_1"
+    ]
+  },
+  "entity.tough_guy.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.tough_guy.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/toughpain"
+    ]
+  },
+  "entity.tough_guy.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.tough_guy.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/toughpain"
+    ]
+  },
+  "entity.tough_guy.death": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.tough_guy.death",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/toughdeath"
+    ]
+  },
+  "entity.ursa_major.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.ursa_major.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/ursaroar"
+    ]
+  },
+  "entity.ursa_major.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.ursa_major.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.windigo.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.windigo.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/windigo_1",
+      "mythical_creatures_reborn:entity/shared/windigo_2"
+    ]
+  },
+  "entity.windigo.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.windigo.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.hydra.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.hydra.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/growl"
+    ]
+  },
+  "entity.hydra.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.hydra.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.manticore.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.manticore.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.manticore.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.manticore.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.phoenix.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.phoenix.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/flap_1",
+      "mythical_creatures_reborn:entity/shared/flap_2"
+    ]
+  },
+  "entity.phoenix.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.phoenix.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.garble.ambient": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.garble.ambient",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.garble.hurt": {
+    "subtitle": "subtitles.mythical_creatures_reborn.entity.garble.hurt",
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  }
+}

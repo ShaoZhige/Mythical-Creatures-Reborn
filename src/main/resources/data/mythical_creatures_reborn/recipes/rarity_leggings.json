@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "mythical_creatures_reborn:rarity_cutiemark"
+    }
+  },
+  "result": {
+    "item": "mythical_creatures_reborn:rarity_leggings"
+  }
+}

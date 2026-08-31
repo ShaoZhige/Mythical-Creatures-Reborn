@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HBH",
+    "DRD",
+    "IRI"
+  ],
+  "key": {
+    "H": {
+      "item": "mythical_creatures_reborn:reinforced_bone"
+    },
+    "B": {
+      "item": "minecraft:diamond"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "R": {
+      "tag": "forge:rods/wooden"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "mythical_creatures_reborn:digger"
+  }
+}

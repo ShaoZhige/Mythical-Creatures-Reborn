@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "mythicalcreatures:item/eggkingbowser"
-  },
-  "gui_light": "front"
-}

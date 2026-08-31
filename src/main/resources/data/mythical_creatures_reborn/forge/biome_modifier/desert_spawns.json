@@ -1,0 +1,32 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:desert",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:windswept_savanna",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands",
+    "minecraft:eroded_badlands"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:manticore",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "mythical_creatures_reborn:spikezilla",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "mythical_creatures_reborn:skull_of_doom",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

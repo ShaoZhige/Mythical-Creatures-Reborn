@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BB ",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "B": {
+      "item": "mythical_creatures_reborn:bear_fur"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "result": {
+    "item": "mythical_creatures_reborn:bear_claw_hoe"
+  }
+}
