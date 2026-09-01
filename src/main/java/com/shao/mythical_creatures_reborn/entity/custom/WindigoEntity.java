@@ -13,9 +13,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.Item;
@@ -35,11 +33,11 @@ public class WindigoEntity extends HostilePonyEntity {
 
     public WindigoEntity(EntityType<WindigoEntity> type, Level level) {
         super(type, level);
-        // 大碰撞箱翻越地形：可"走上"2 格高台阶（原版 0.6 只够跨半格）。
+        // 大碰撞箱翻越地形：可"走上"2 格高台阶（原版 0.6 只够跨半格）。飞行单位下无影响，保留无害。
         this.setMaxUpStep(2.0F);
     }
 
-    /** 跳跃力（0.42 为原版约 1.25 格）。提到 0.6 ≈ 跳 2.2 格，配合 maxUpStep 可跨 2~3 格矮墙/坑。 */
+    /** 跳跃力（0.42 为原版约 1.25 格）。提到 0.6 ≈ 跳 2.2 格。飞行单位下无影响，保留无害。 */
     @Override
     protected float getJumpPower() {
         return 0.6F;
@@ -53,6 +51,7 @@ public class WindigoEntity extends HostilePonyEntity {
         // 17 格外，永远进不了攻击范围（"撞到也打不到"）。把逻辑宽度撑到等效大值，
         // 攻击者攻击半径 ≈ 碰撞箱半深+1，贴到身体边缘即可挥击命中。
         // 物理碰撞仍走 makeBoundingBox 的常量框（20×33×8），不受此影响。
+        // 雪魔为纯远程、无近战，此逻辑宽度不再影响攻击判定，保留以兼容同套碰撞箱体系。
         return EntityDimensions.scalable(400.0F, BB_HEIGHT);
     }
 
@@ -69,7 +68,7 @@ public class WindigoEntity extends HostilePonyEntity {
         applyCoreStats(entityId(), canFly());
     }
 
-    @Override protected boolean canFly() { return false; } // 雪魔不飞行（地面行为）
+    @Override protected boolean canFly() { return true; } // 雪魔飞行：常驻悬停追击（由 WindigoSkyChaseGoal 驱动）
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     @Nullable @Override
@@ -82,6 +81,9 @@ public class WindigoEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "attack_damage"))
+                // 飞行速度：canFly()=true 时由 applyCoreStats 注入 FLYING_SPEED 属性，这里也显式声明，
+                // 否则该属性不存在、雪魔静默 0 速飞不起来（与末日颅骨同理）。
+                .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "fly_speed"))
                 // 索敌距离 = 射程(40)的两倍，与飞行小马的比例一致（射程16/索敌32）；
                 // 用雪魔专属键，避免被 global_params.follow_range 的默认值(32)拉低。
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("mythical_creatures_reborn:windigo", "follow_range", 80.0))
@@ -96,7 +98,8 @@ public class WindigoEntity extends HostilePonyEntity {
 
     @Override public void tick() {
         super.tick();
-        // 雪魔不飞行：不调用 tickFlight（无起飞-悬停-落地循环），地面行为。
+        // 雪魔为飞行单位：每 tick 驱动飞行状态机（常驻悬停追击，由 WindigoSkyChaseGoal 设 angryFlight 维持）。
+        tickFlight();
         // 少量冰雪环绕粒子（客户端）：每 4 tick 在身体周围飘 1 片雪花，营造冰雪气场而不卡顿。
         if (this.level().isClientSide && this.tickCount % 4 == 0) {
             this.level().addParticle(ParticleTypes.SNOWFLAKE,
@@ -109,12 +112,12 @@ public class WindigoEntity extends HostilePonyEntity {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        // 雪魔攻击（纯远程霰弹）：用 RangedAttackGoal 控制节奏（同模组普通生物：
-        // 目标在射程内且有视线时射击，间隔 20 tick≈1 秒；射程外会自动靠近）。
-        // 雪魔为地面单位，地面寻路对大碰撞箱可用，故可直接使用 RangedAttackGoal。
+        // 雪魔攻击（纯远程霰弹）：用自定义飞行追击 Goal 控制移动与射击节奏。
+        // 该 Goal 接管水平靠拢 / 横向走位 / 后撤与高度跟随，并在进入射程且有视线时调用
+        // performRangedAttack 发射 15~25 颗「不稳定物品」；框架 tickFlight() 负责无重力与悬停维持。
         this.goalSelector.getAvailableGoals().removeIf(w ->
-                w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof RangedAttackGoal);
-        this.goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0D, 20, 40.0F));
+                w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof WindigoSkyChaseGoal);
+        this.goalSelector.addGoal(2, new WindigoSkyChaseGoal(this, 0.5D, 20, 40.0D));
         // 目标：攻击一切见到的生物（玩家 / 动物 / 村民 / 其它怪物都在内），
         // 不含盔甲架（ArmorStand 是 LivingEntity 需显式排除）与方块实体（本就不是 LivingEntity，天然不会被选）。
         // 已驯服的个体不攻击其主人。
@@ -125,7 +128,7 @@ public class WindigoEntity extends HostilePonyEntity {
 
     /**
      * 雪魔远程攻击（霰弹枪式）：一次随机发射 15~25 颗「不稳定物品」投掷物，
-     * 随机散布但都瞄准同一目标；发射节奏由 RangedAttackGoal 控制（见 registerGoals）。
+     * 随机散布但都瞄准同一目标；发射节奏由 WindigoSkyChaseGoal 控制（见 registerGoals）。
      * 投掷物命中造成 15 点魔法伤害（见 UnstableItemEntity）。
      */
     @Override
