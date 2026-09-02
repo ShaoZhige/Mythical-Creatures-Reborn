@@ -117,7 +117,7 @@ public class WindigoEntity extends HostilePonyEntity {
         // performRangedAttack 发射 15~25 颗「不稳定物品」；框架 tickFlight() 负责无重力与悬停维持。
         this.goalSelector.getAvailableGoals().removeIf(w ->
                 w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof WindigoSkyChaseGoal);
-        this.goalSelector.addGoal(2, new WindigoSkyChaseGoal(this, 0.5D, 20, 40.0D));
+        this.goalSelector.addGoal(2, new WindigoSkyChaseGoal(this, 0.5D, 12, 40.0D));
         // 目标：攻击一切见到的生物（玩家 / 动物 / 村民 / 其它怪物都在内），
         // 不含盔甲架（ArmorStand 是 LivingEntity 需显式排除）与方块实体（本就不是 LivingEntity，天然不会被选）。
         // 已驯服的个体不攻击其主人。

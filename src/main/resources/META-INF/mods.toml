@@ -32,10 +32,14 @@ logoBlur=false
     ordering="NONE"
     side="BOTH"
 
+# GeckoLib 声明为可选依赖，且不限制版本：
+# 允许由原生 Forge 版 GeckoLib 提供，也允许由经 Sinytra Connector 在 Forge 上运行的 Fabric 版提供。
+# 两版的公开 API 签名一致，因此实际可用性改由启动期的 GeckoLibCompat 自检把关，
+# 缺失时给出可读的中英文提示，而不是任由后续的实体 / 渲染器类随机抛出 NoClassDefFoundError。
 [[dependencies.${mod_id}]]
     modId="geckolib"
-    mandatory=true
-    versionRange="[4.4,)"
+    mandatory=false
+    versionRange="*"
     ordering="NONE"
     side="BOTH"
 

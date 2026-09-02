@@ -1,6 +1,9 @@
 package com.shao.mythical_creatures_reborn.item;
 
 import com.shao.mythical_creatures_reborn.entity.PhoenixFeatherEntity;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +14,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PhoenixFeatherBow extends BowItem {
 
@@ -82,5 +89,10 @@ public class PhoenixFeatherBow extends BowItem {
             }
         }
         return false;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        SpecialTooltip.appendSpecial("phoenix_bow", stack, tooltip);
     }
 }

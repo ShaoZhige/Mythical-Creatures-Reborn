@@ -18,43 +18,43 @@
   "spawners": [
     {
       "type": "mythical_creatures_reborn:twilight_sparkle",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:rainbow_dash",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:applejack",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:fluttershy",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:pinkie_pie",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:rarity",
-      "weight": 5,
+      "weight": 2,
       "minCount": 1,
-      "maxCount": 2
+      "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:holy_light_radiance",
-      "weight": 3,
+      "weight": 1,
       "minCount": 1,
       "maxCount": 1
     }

@@ -10,7 +10,7 @@
   "spawners": [
     {
       "type": "mythical_creatures_reborn:kingbowser_9000",
-      "weight": 5,
+      "weight": 3,
       "minCount": 1,
       "maxCount": 1
     }

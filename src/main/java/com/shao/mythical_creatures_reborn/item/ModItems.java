@@ -141,8 +141,6 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<TwilightMagicEggItem> TWILICORN_MAGIC_EGG = ITEMS.register("twilicorn_magic_egg",
             () -> new TwilightMagicEggItem(new Item.Properties()));
-    public static final RegistryObject<Item> MAGIC_SPAWN_EGG = ITEMS.register("magic_spawn_egg",
-            () -> new Item(new Item.Properties()));
 
     // ==================== 二、武器 (13) ====================
 
@@ -329,8 +327,8 @@ public class ModItems {
     public static final RegistryObject<Item> MUFFIN = ITEMS.register("muffin",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder()
                     .nutrition(4).saturationMod(0.2F).build())));
-    public static final RegistryObject<ThrowableFunItem> CUPCAKE = ITEMS.register("cupcake",
-            () -> new ThrowableFunItem(new Item.Properties().food(new FoodProperties.Builder()
+    public static final RegistryObject<CupcakeItem> CUPCAKE = ITEMS.register("cupcake",
+            () -> new CupcakeItem(new Item.Properties().food(new FoodProperties.Builder()
                     .nutrition(8).saturationMod(0.4F).build()),
                     (level, shooter) -> new com.shao.mythical_creatures_reborn.entity.CupcakeProjectileEntity(level, shooter)));
     public static final RegistryObject<Item> RAINBOW = ITEMS.register("rainbow",

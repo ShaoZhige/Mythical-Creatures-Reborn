@@ -12,13 +12,13 @@
   "spawners": [
     {
       "type": "mythical_creatures_reborn:manticore",
-      "weight": 6,
+      "weight": 3,
       "minCount": 1,
       "maxCount": 1
     },
     {
       "type": "mythical_creatures_reborn:spikezilla",
-      "weight": 5,
+      "weight": 3,
       "minCount": 1,
       "maxCount": 1
     },

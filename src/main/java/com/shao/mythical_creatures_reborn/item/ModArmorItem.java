@@ -2,8 +2,6 @@ package com.shao.mythical_creatures_reborn.item;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -64,13 +62,7 @@ public class ModArmorItem extends ArmorItem {
         super.appendHoverText(stack, level, tooltip, flag);
 
         if (setId != null) {
-            if (Screen.hasShiftDown()) {
-                tooltip.add(Component.translatable("tooltip.mythical_creatures_reborn.set." + setId + ".detail")
-                        .withStyle(ChatFormatting.GRAY));
-            } else {
-                tooltip.add(Component.translatable("tooltip.mythical_creatures_reborn.set." + setId + ".hint")
-                        .withStyle(ChatFormatting.DARK_GRAY));
-            }
+            SpecialTooltip.appendSet(stack, setId, tooltip);
         }
     }
 }

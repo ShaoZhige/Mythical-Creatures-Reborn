@@ -1,7 +1,5 @@
 package com.shao.mythical_creatures_reborn.item;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
@@ -23,13 +21,7 @@ public class ExcavatorItem extends PickaxeItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
-            tooltip.add(Component.translatable("tooltip.mythical_creatures_reborn.digger.detail")
-                    .withStyle(ChatFormatting.BLUE));
-        } else {
-            tooltip.add(Component.translatable("tooltip.mythical_creatures_reborn.digger.hint")
-                    .withStyle(ChatFormatting.DARK_GRAY));
-        }
+        SpecialTooltip.appendSpecial("digger", stack, tooltip);
         super.appendHoverText(stack, level, tooltip, flag);
     }
 }

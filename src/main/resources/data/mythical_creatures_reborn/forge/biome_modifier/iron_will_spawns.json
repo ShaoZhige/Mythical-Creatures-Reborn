@@ -7,7 +7,7 @@
   "spawners": [
     {
       "type": "mythical_creatures_reborn:iron_will",
-      "weight": 4,
+      "weight": 2,
       "minCount": 1,
       "maxCount": 1
     }

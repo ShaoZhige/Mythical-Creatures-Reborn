@@ -112,8 +112,9 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:windigo", 780, 0.4, 44);
             // 雪魔改为飞行单位：fly_speed 必填，否则 FLYING_SPEED 属性静默 0.0 飞不起来（同末日颅骨）
             ENTITY_DEFAULTS.put("mythical_creatures_reborn:windigo|fly_speed", 0.30);
-            entity("mythical_creatures_reborn:baby_moose", 20.0, 0.3, 2.0);
-            entity("mythical_creatures_reborn:adult_moose", 45.0, 0.22, 6.0);
+            // 麋鹿生态重构：小麋鹿削弱、大麋鹿略增强（0.8-beta）
+            entity("mythical_creatures_reborn:baby_moose", 14.0, 0.3, 1.0);
+            entity("mythical_creatures_reborn:adult_moose", 60.0, 0.22, 8.0);
             entity("mythical_creatures_reborn:tough_guy", 50, 0.25, 7);
             entity("mythical_creatures_reborn:mavis", 35, 0.35, 5);
             entity("mythical_creatures_reborn:manticore", 780, 0.3, 44);

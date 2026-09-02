@@ -4,7 +4,10 @@ import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 import com.shao.mythical_creatures_reborn.entity.ModEntities;
 import com.shao.mythical_creatures_reborn.entity.custom.TwilightMagicEntity;
 import com.shao.mythical_creatures_reborn.util.KeyStateHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,12 +19,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 import java.util.Optional;
 
 public class TwilightSword extends SwordItem {
@@ -142,5 +149,10 @@ public class TwilightSword extends SwordItem {
 
         player.awardStat(Stats.ITEM_USED.get(this));
         player.getCooldowns().addCooldown(this, MythicalConfig.DATA.getInt("global_params", "sword_cooldown", 40));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        SpecialTooltip.appendSpecial("twilight_sword", stack, tooltip);
     }
 }

@@ -19,13 +19,13 @@
   "spawners": [
     {
       "type": "mythical_creatures_reborn:timber_wolf",
-      "weight": 12,
+      "weight": 36,
       "minCount": 3,
       "maxCount": 5
     },
     {
       "type": "mythical_creatures_reborn:rainbow_centipede",
-      "weight": 8,
+      "weight": 16,
       "minCount": 2,
       "maxCount": 3
     }

@@ -49,8 +49,20 @@ public class UrsaClawsDualWieldHandler {
     /** 副手补击的最大有效距离（超过则只挥动画不结算伤害） */
     private static final double STRIKE_RANGE = 6.0;
 
-    /** 待补击信息：剩余延迟 + 目标 UUID */
-    private record Pending(int ticksLeft, UUID targetId) {}
+    /**
+     * 待补击信息：剩余延迟 + 目标 UUID。
+     * 注意：这里用普通 static 嵌套类，不要用 record —— Forge 事件订阅类里的嵌套 record
+     * 经 reobf / 事件总线 ASM 后，运行时按 Outer$Inner 解析会抛 NoClassDefFoundError 导致崩溃。
+     */
+    private static final class Pending {
+        final int ticksLeft;
+        final UUID targetId;
+
+        Pending(int ticksLeft, UUID targetId) {
+            this.ticksLeft = ticksLeft;
+            this.targetId = targetId;
+        }
+    }
 
     /** 待补击的玩家 → 补击信息 */
     private static final Map<UUID, Pending> PENDING_STRIKES = new ConcurrentHashMap<>();
@@ -87,9 +99,9 @@ public class UrsaClawsDualWieldHandler {
             return;
         }
 
-        if (pending.ticksLeft() > 1) {
+        if (pending.ticksLeft > 1) {
             PENDING_STRIKES.put(player.getUUID(),
-                    new Pending(pending.ticksLeft() - 1, pending.targetId()));
+                    new Pending(pending.ticksLeft - 1, pending.targetId));
             return;
         }
 
@@ -100,7 +112,7 @@ public class UrsaClawsDualWieldHandler {
 
         // 目标仍有效且在范围内 → 结算完整斩击（伤害+AOE+粒子+音效+耐久）
         if (player.level() instanceof ServerLevel serverLevel) {
-            Entity e = serverLevel.getEntity(pending.targetId());
+            Entity e = serverLevel.getEntity(pending.targetId);
             if (e instanceof LivingEntity target && target.isAlive()
                     && player.distanceTo(target) <= STRIKE_RANGE) {
                 UrsaClawsItem.offhandStrike(player, player.getOffhandItem(), target);

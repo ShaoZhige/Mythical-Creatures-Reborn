@@ -49,6 +49,7 @@ import com.shao.mythical_creatures_reborn.entity.custom.PonyEntity;
 import com.shao.mythical_creatures_reborn.item.ModItems;
 import com.shao.mythical_creatures_reborn.item.SetBonusManager;
 import com.shao.mythical_creatures_reborn.sound.ModSounds;
+import com.shao.mythical_creatures_reborn.util.GeckoLibCompat;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
@@ -107,6 +108,9 @@ public class MythicalCreaturesMod {
                     .build());
 
     public MythicalCreaturesMod() {
+        // GeckoLib 自检必须先于任何注册动作：一旦缺失，后续实体 / 渲染器类会随机抛出 NoClassDefFoundError
+        GeckoLibCompat.verifyOrThrow();
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModItems.ITEMS.register(modEventBus);

@@ -1,19 +1,29 @@
 package com.shao.mythical_creatures_reborn.item;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.level.Level;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * 大熊座之爪（Ursa Claws）
@@ -67,16 +77,56 @@ public class UrsaClawsItem extends SwordItem {
      * 副手完整斩击（仅服务端调用）：
      * 伤害（含锋利，受护甲减免）+ AOE + 扫击粒子 + 攻击音效 + 1 点耐久。
      * 与主手攻击效果对齐，用于双持连击的第二击。
+     * 副手武器自身的附魔（火焰附加 / 击退 / 抢夺）在此按玩家攻击管线逻辑应用，
+     * 使双持连击与主手一样正常受副手武器附魔影响。
      */
     public static void offhandStrike(Player player, ItemStack stack, LivingEntity target) {
         if (player.level().isClientSide()) return;
 
-        // 主目标伤害（玩家攻击伤害源，正常受护甲/保护附魔减免）
-        float dmg = effectiveDamage(stack);
-        target.hurt(player.damageSources().playerAttack(player), dmg);
+        // 主手命中会令目标进入约 10 tick 的受击无敌帧（i-frames）；副手补击在 5 tick 后触发，
+        // 仍落在该窗口内会被 hurt() 直接吞掉（但挥击动画/粒子/音效不受影响）。补击前清零无敌帧，
+        // 确保左右连击的副手这一下货真价实地结算伤害。
+        if (target.invulnerableTime > 0) {
+            target.invulnerableTime = 0;
+        }
 
-        // AOE（与主手一致）
-        aoeDamage(stack, target, player);
+        // 主目标伤害（玩家攻击伤害源，正常受护甲/保护附魔减免）。
+        // 主手挥击走玩家攻击管线天然含 +1.0 基础攻击力；副手手动结算需补上，使连击与主手伤害一致（99 + 1 = 100）。
+        float dmg = effectiveDamage(stack) + 1.0F;
+
+        // 抢夺：Vanilla 的 EnchantmentHelper.getMobLootingLevel 只读玩家主手武器。
+        // 为让副手武器的抢夺等级在击杀掉落时生效，伤害结算（含同步发生的击杀掉落）期间临时把主手替换为副手武器，
+        // 结束后再换回原主手。AOE 击杀一并纳入同一段作用域，保证掉落一致。
+        ItemStack mainhand = player.getMainHandItem();
+        boolean swapped = mainhand != stack;
+        if (swapped) {
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        }
+        try {
+            target.hurt(player.damageSources().playerAttack(player), dmg);
+            aoeDamage(stack, target, player);
+        } finally {
+            if (swapped) {
+                player.setItemInHand(InteractionHand.MAIN_HAND, mainhand);
+            }
+        }
+
+        // 火焰附加（读副手武器；与原版主手一致，仅作用于被直接斩中的主目标，不波及 AOE）
+        int fireAspect = stack.getEnchantmentLevel(Enchantments.FIRE_ASPECT);
+        if (fireAspect > 0 && !target.fireImmune()) {
+            target.setSecondsOnFire(fireAspect * 4);
+        }
+
+        // 击退（读副手武器；方向由玩家指向目标，把目标推开，与原版一致）
+        int knockback = stack.getEnchantmentLevel(Enchantments.KNOCKBACK);
+        if (knockback > 0) {
+            double dx = player.getX() - target.getX();
+            double dz = player.getZ() - target.getZ();
+            double len = Math.sqrt(dx * dx + dz * dz);
+            if (len > 0.0D) {
+                target.knockback(0.4D + (double) knockback * 0.5D, dx / len, dz / len);
+            }
+        }
 
         // 耐久消耗（副手槽位破坏播报）
         stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.OFFHAND));
@@ -92,5 +142,10 @@ public class UrsaClawsItem extends SwordItem {
         // 攻击音效（重击音，与满蓄力攻击一致）
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.PLAYERS, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        SpecialTooltip.appendSpecial("ursa_claws", stack, tooltip);
     }
 }

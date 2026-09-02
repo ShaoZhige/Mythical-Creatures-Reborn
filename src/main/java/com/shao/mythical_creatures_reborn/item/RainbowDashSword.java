@@ -3,6 +3,9 @@ package com.shao.mythical_creatures_reborn.item;
 import com.shao.mythical_creatures_reborn.entity.RainbowBeamEntity;
 import com.shao.mythical_creatures_reborn.entity.RainbowCloudEntity;
 import com.shao.mythical_creatures_reborn.util.KeyStateHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -13,10 +16,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 
-import net.minecraft.world.item.Tier;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class RainbowDashSword extends SwordItem {
 
@@ -79,5 +86,10 @@ public class RainbowDashSword extends SwordItem {
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         // 取消不需要音效
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        SpecialTooltip.appendSpecial("rainbow_dash_sword", stack, tooltip);
     }
 }
