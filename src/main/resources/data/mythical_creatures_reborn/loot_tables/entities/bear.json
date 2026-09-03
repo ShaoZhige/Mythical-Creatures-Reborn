@@ -8,32 +8,31 @@
         {
           "type": "minecraft:item",
           "name": "mythical_creatures_reborn:bear_fur",
-          "weight": 8,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1,
-                "max": 2
+                "min": 4,
+                "max": 6
               }
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
         {
           "type": "minecraft:item",
           "name": "mythical_creatures_reborn:bear_claw",
-          "weight": 3
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:beef",
-          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 1,
-                "max": 2
+                "min": 5,
+                "max": 6
               }
             }
           ]

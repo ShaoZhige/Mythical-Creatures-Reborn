@@ -99,7 +99,7 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:bear",              40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:cockatrice",        40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:garble",            630, 0.28, 35);
-            entity("mythical_creatures_reborn:kingbowser_9000",   99.0, 0.45, 10.0);
+            entity("mythical_creatures_reborn:kingbowser_9000",   199.0, 0.45, 20.0);
             ENTITY_DEFAULTS.put("mythical_creatures_reborn:kingbowser_9000|armor", 15.0);
             entity("mythical_creatures_reborn:parasprite",        40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:phoenix",           780, 0.25, 44);
