@@ -22,6 +22,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 import com.shao.mythical_creatures_reborn.entity.BossBarManager;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.Vec3;
@@ -118,7 +119,7 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         return new ResourceLocation("mythical_creatures_reborn", "entities/" + id.substring(id.indexOf(':') + 1));
     }
 
-    /** 应用核心属性：MAX_HEALTH / MOVEMENT_SPEED / FLYING_SPEED(仅飞行) / ATTACK_DAMAGE，并回满血 */
+    /** 应用核心属性：MAX_HEALTH / MOVEMENT_SPEED / FLYING_SPEED(仅飞行) / ATTACK_DAMAGE / ARMOR(仅注册实体)，并回满血 */
     protected final void applyCoreStats(String id, boolean flying) {
         var h = this.getAttribute(Attributes.MAX_HEALTH);
         if (h != null) h.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "max_health"));
@@ -130,6 +131,10 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         }
         var d = this.getAttribute(Attributes.ATTACK_DAMAGE);
         if (d != null) d.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "attack_damage"));
+        // 护甲：仅对注册了 ARMOR 属性的实体生效（其余实体 getAttribute 返回 null 自动跳过），
+        // 使 armor 与生命/移速/攻击一样可经 common.toml 覆盖并实时刷新。
+        var ar = this.getAttribute(Attributes.ARMOR);
+        if (ar != null) ar.setBaseValue((float) MythicalConfig.DATA.entityAttr(id, "armor"));
         // boss 近战击退增强：原版近战击退 = 基础 0.4（LivingEntity.hurt 内硬编码）
         // + ATTACK_KNOCKBACK × 0.5（Mob.doHurtTarget）。给 boss 设 1.0 → 额外 0.5，
         // 总击退约 0.9（≈原版 2 倍），让 boss 的挥击有明显「击飞」压迫感。非 boss 保持默认 0。
@@ -254,6 +259,27 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         //   · 中立小马(NeutralPonyEntity) 会主动打模组敌对生物 + 原版 Enemy（防御）
         //   · 直接继承 PonyEntity 的中立生物（硬汉/梅菲斯）默认只反击、不主动狩猎（同原版中立）
         // 基类不再统一挂 NearestAttackableTargetGoal(Enemy)，避免中立生物行为比原版中立更激进。
+    }
+
+    /* ================================================================
+     * 仇恨目标兜底过滤（所有小马共用）
+     * ================================================================ */
+
+    /**
+     * 统一拦截一切仇恨目标设置：被排除实体（DuMmmMmmy 假人 / 盔甲架 / 展示框）永不成为目标。
+     * 作为被动反击（HurtByTargetGoal / OwnerHurtByTargetGoal / OwnerHurtTargetGoal）与
+     * 麋鹿族群广播（MooseHerd.alert）的最终兜底；主动索敌另由 NearestAttackableTargetGoal 的
+     * 谓词在挑选阶段拦截，两者互补。若传入被排除实体而当前已有有效目标，则保留现有目标。
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        if (target != null && EntityHateFilter.shouldIgnore(target)) {
+            if (this.getTarget() == null || EntityHateFilter.shouldIgnore(this.getTarget())) {
+                super.setTarget(null);
+            }
+            return;
+        }
+        super.setTarget(target);
     }
 
     /* ================================================================

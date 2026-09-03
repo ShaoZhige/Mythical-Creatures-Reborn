@@ -11,6 +11,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.EnumSet;
 import org.jetbrains.annotations.Nullable;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 
 /**
  * 麋鹿主动索敌：任何进入「挑衅半径」内的非麋鹿生物都会被锁定为目标（族群有攻击性）。
@@ -67,6 +68,7 @@ public class MooseProximityTargetGoal extends TargetGoal {
             if (MooseHerd.isMoose(e)) continue;                       // 不攻击同类
             if (e instanceof Player p && p.isCreative()) continue;    // 不主动攻击创造模式玩家
             if (this.mob instanceof TamableAnimal ta && ta.isTame() && e == ta.getOwner()) continue; // 不攻击主人
+            if (EntityHateFilter.shouldIgnore(e)) continue;           // 不攻击假人 / 盔甲架 / 展示框
             double d = this.mob.distanceToSqr(e);
             if (d < bestDistSq) {
                 bestDistSq = d;

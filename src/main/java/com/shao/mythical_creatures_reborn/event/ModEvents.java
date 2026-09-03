@@ -38,11 +38,13 @@ public class ModEvents {
         }
     }
 
-    /** 退出时清理计数器与下降键状态，避免 WeakHashMap / Map 暂留 */
+    /** 退出时清理计数器与坐骑按键状态，避免 WeakHashMap / Map 暂留 */
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         tickCounter.remove(event.getEntity());
         KeyStateHelper.clearDescendState(event.getEntity().getUUID());
+        KeyStateHelper.clearJumpState(event.getEntity().getUUID());
+        CutieMarkHandler.clearPlayerState(event.getEntity().getUUID());
     }
 
     /** 云宝套装：免疫摔落伤害 */

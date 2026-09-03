@@ -33,6 +33,13 @@ public final class ModNetwork {
         );
         CHANNEL.registerMessage(
                 id++,
+                MountJumpPacket.class,
+                MountJumpPacket::encode,
+                MountJumpPacket::decode,
+                MountJumpPacket::handle
+        );
+        CHANNEL.registerMessage(
+                id++,
                 MobStatsOpenPacket.class,
                 MobStatsOpenPacket::encode,
                 MobStatsOpenPacket::decode,

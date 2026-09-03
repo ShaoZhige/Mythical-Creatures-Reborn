@@ -56,8 +56,8 @@ public final class MobStatsManager {
         GLOBAL_DEFAULTS.put("cutie_mark_slots", 1.0);
     }
 
-    /** 实体核心三件套（所有生物都消费：applyCoreStats / createAttributes） */
-    private static final List<String> CORE_KEYS = List.of("max_health", "move_speed", "attack_damage");
+    /** 实体核心属性（所有生物都消费：applyCoreStats / createAttributes）：生命 / 移速 / 攻击 / 护甲 */
+    private static final List<String> CORE_KEYS = List.of("max_health", "move_speed", "attack_damage", "armor");
 
     /** 骑乘/飞行调参键（仅当实体在 ENTITY_DEFAULTS 里有对应默认值时才暴露） */
     private static final List<String> TUNING_KEYS = List.of(

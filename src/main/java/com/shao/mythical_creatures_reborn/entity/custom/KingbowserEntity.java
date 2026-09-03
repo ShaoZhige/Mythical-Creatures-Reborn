@@ -38,6 +38,7 @@ public class KingbowserEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:kingbowser_9000", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:kingbowser_9000", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:kingbowser_9000", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:kingbowser_9000", "armor"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 

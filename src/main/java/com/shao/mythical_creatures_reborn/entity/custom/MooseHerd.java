@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 
 /**
  * 麋鹿族群联动工具：维系「成年 + 小麋鹿」组成的家族单位行为。
@@ -28,6 +29,8 @@ public final class MooseHerd {
      * 传入的 attacker 必须非麋鹿（调用方已保证），避免族群互相仇恨。
      */
     public static void alert(LivingEntity attacker, Level level, double x, double y, double z) {
+        // 被排除实体（假人 / 盔甲架 / 展示框）不触发族群仇恨广播
+        if (EntityHateFilter.shouldIgnore(attacker)) return;
         AABB box = new AABB(
                 x - ALERT_RADIUS, y - ALERT_RADIUS, z - ALERT_RADIUS,
                 x + ALERT_RADIUS, y + ALERT_RADIUS, z + ALERT_RADIUS);

@@ -56,6 +56,7 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
                 .add(Attributes.MOVEMENT_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "move_speed"))
                 .add(Attributes.FLYING_SPEED,   (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "fly_speed"))
                 .add(Attributes.ATTACK_DAMAGE,  (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "armor"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 

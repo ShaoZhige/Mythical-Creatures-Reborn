@@ -15,8 +15,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.Item;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -81,6 +81,7 @@ public class WindigoEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "armor"))
                 // 飞行速度：canFly()=true 时由 applyCoreStats 注入 FLYING_SPEED 属性，这里也显式声明，
                 // 否则该属性不存在、雪魔静默 0 速飞不起来（与末日颅骨同理）。
                 .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "fly_speed"))
@@ -119,11 +120,11 @@ public class WindigoEntity extends HostilePonyEntity {
                 w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof WindigoSkyChaseGoal);
         this.goalSelector.addGoal(2, new WindigoSkyChaseGoal(this, 0.5D, 12, 40.0D));
         // 目标：攻击一切见到的生物（玩家 / 动物 / 村民 / 其它怪物都在内），
-        // 不含盔甲架（ArmorStand 是 LivingEntity 需显式排除）与方块实体（本就不是 LivingEntity，天然不会被选）。
-        // 已驯服的个体不攻击其主人。
+        // 但排除 DuMmmMmmy 假人、原版盔甲架与展示框（统一由 EntityHateFilter 处理），
+        // 以及方块实体（本就不是 LivingEntity，天然不会被选）。已驯服的个体不攻击其主人。
         this.targetSelector.getAvailableGoals().removeIf(w -> w.getGoal() instanceof NearestAttackableTargetGoal);
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false,
-                p -> !(p instanceof ArmorStand) && !(this.isTame() && p == this.getOwner())));
+                p -> !EntityHateFilter.shouldIgnore(p) && !(this.isTame() && p == this.getOwner())));
     }
 
     /**

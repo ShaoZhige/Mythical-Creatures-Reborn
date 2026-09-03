@@ -99,7 +99,8 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:bear",              40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:cockatrice",        40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:garble",            630, 0.28, 35);
-            entity("mythical_creatures_reborn:kingbowser_9000",   60.0, 0.25, 12.0);
+            entity("mythical_creatures_reborn:kingbowser_9000",   99.0, 0.45, 10.0);
+            ENTITY_DEFAULTS.put("mythical_creatures_reborn:kingbowser_9000|armor", 15.0);
             entity("mythical_creatures_reborn:parasprite",        40.0, 0.25, 6.0);
             entity("mythical_creatures_reborn:phoenix",           780, 0.25, 44);
             entity("mythical_creatures_reborn:ursa_major",        780, 0.25, 44);
@@ -204,7 +205,7 @@ public class MythicalConfig {
                 "  ]",
                 "",
                 "--- 实体  |  Entity ---",
-                "  属性: max_health / move_speed / attack_damage / fly_speed",
+                "  属性: max_health / move_speed / attack_damage / fly_speed / armor",
 "  飞行坐骑骑乘调参(可覆盖): ridden_speed_factor / vertical_up / vertical_down / vertical_hover / horizontal_factor / inertia_decay",
 "  地面坐骑骑乘调参(可覆盖): ridden_speed_factor / jump_height",
 "  紫悦/云宝 自主飞行(可覆盖): flight_chance / fly_cooldown_min / fly_cooldown_max / fly_duration_min / fly_duration_max",

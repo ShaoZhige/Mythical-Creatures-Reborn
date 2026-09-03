@@ -20,6 +20,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -108,6 +109,7 @@ public class TwilightMagicEntity extends Mob implements GeoEntity {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "move_speed"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "armor"))
                 .add(Attributes.FLYING_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "fly_speed"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("mythical_creatures_reborn:twilight_magic", "follow_range", 20.0));
     }
@@ -172,18 +174,20 @@ public class TwilightMagicEntity extends Mob implements GeoEntity {
             LivingEntity owner = e.getOwner();
             if (owner instanceof Player p && p.getLastHurtMob() != null
                     && p.getLastHurtMob().isAlive()
-                    && p.getLastHurtMob() != e) {
+                    && p.getLastHurtMob() != e
+                    && !EntityHateFilter.shouldIgnore(p.getLastHurtMob())) {
                 e.target = p.getLastHurtMob();
                 return;
             }
 
-            // 2. 其次：范围内敌对生物（排除主人/同类）
+            // 2. 其次：范围内敌对生物（排除主人/同类/被排除实体：假人、盔甲架、展示框）
             List<LivingEntity> mobs = e.level().getEntitiesOfClass(LivingEntity.class,
                     new AABB(e.blockPosition()).inflate(SEARCH_RANGE),
                     m -> (m instanceof Enemy)
                          && m.isAlive()
                          && m != owner
-                         && !(m instanceof TwilightMagicEntity));
+                         && !(m instanceof TwilightMagicEntity)
+                         && !EntityHateFilter.shouldIgnore(m));
             if (!mobs.isEmpty()) {
                 LivingEntity closest = null;
                 double best = Double.MAX_VALUE;

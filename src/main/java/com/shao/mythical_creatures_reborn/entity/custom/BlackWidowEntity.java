@@ -34,6 +34,7 @@ public class BlackWidowEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:black_widow", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:black_widow", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:black_widow", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:black_widow", "armor"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 

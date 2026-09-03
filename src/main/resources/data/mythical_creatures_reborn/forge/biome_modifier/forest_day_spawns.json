@@ -26,8 +26,8 @@
     {
       "type": "mythical_creatures_reborn:bear",
       "weight": 30,
-      "minCount": 3,
-      "maxCount": 4
+      "minCount": 1,
+      "maxCount": 1
     }
   ]
 }

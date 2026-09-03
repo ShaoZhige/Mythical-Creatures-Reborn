@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 
 /**
  * 敌对型小马基类：在 PonyEntity 通用 AI 之外额外加近战攻击与“攻击玩家”目标。
@@ -29,7 +30,7 @@ public abstract class HostilePonyEntity extends PonyEntity implements Enemy {
         super.registerGoals();
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, false));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false,
-                p -> !(this.isTame() && p == this.getOwner())));
+                p -> !EntityHateFilter.shouldIgnore(p) && !(this.isTame() && p == this.getOwner())));
     }
 
     /**

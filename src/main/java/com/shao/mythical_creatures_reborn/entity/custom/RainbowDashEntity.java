@@ -51,6 +51,7 @@ public class RainbowDashEntity extends NeutralPonyEntity {
                 .add(Attributes.MOVEMENT_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "move_speed"))
                 .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "fly_speed"))
                 .add(Attributes.ATTACK_DAMAGE, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "armor"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 

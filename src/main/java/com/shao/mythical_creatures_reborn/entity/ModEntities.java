@@ -180,7 +180,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<BearEntity>> BEAR =
             ENTITY_TYPES.register("bear", () ->
                     EntityType.Builder.of(BearEntity::new, MobCategory.CREATURE)
-                            .sized(5.5F, 8.0F).clientTrackingRange(10).build("bear"));
+                            .sized(2.6F, 3.6F).clientTrackingRange(10).build("bear"));
     public static final RegistryObject<EntityType<CockatriceEntity>> COCKATRICE =
             ENTITY_TYPES.register("cockatrice", () ->
                     EntityType.Builder.of(CockatriceEntity::new, MobCategory.MONSTER)

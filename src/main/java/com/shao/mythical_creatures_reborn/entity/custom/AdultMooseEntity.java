@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 
 public class AdultMooseEntity extends HostilePonyEntity {
 
@@ -44,6 +45,7 @@ public class AdultMooseEntity extends HostilePonyEntity {
                 .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:adult_moose", "max_health"))
                 .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:adult_moose", "move_speed"))
                 .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:adult_moose", "attack_damage"))
+                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:adult_moose", "armor"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
     }
 
@@ -69,9 +71,10 @@ public class AdultMooseEntity extends HostilePonyEntity {
         boolean tookDamage = super.hurt(source, amount);
         if (tookDamage && !this.level().isClientSide()) {
             Entity attacker = source.getEntity();
-            // 创造模式玩家不触发仇恨：不锁定、也不向族群广播
+            // 创造模式玩家、被排除实体（假人 / 盔甲架 / 展示框）不触发仇恨：不锁定、也不向族群广播
             if (attacker instanceof LivingEntity living && !MooseHerd.isMoose(attacker)
-                    && !(attacker instanceof Player player && player.isCreative())) {
+                    && !(attacker instanceof Player player && player.isCreative())
+                    && !EntityHateFilter.shouldIgnore(living)) {
                 this.setTarget(living);
                 MooseHerd.alert(living, this.level(), this.getX(), this.getY(), this.getZ());
             }

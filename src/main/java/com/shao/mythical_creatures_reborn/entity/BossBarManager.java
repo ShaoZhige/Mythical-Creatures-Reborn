@@ -36,10 +36,10 @@ import java.util.WeakHashMap;
 public class BossBarManager {
 
     private static final Set<Class<? extends LivingEntity>> BOSS_CLASSES = new HashSet<>(Arrays.asList(
-            SpikezillaEntity.class, HydraEntity.class, CragadileEntity.class,
-            WindigoEntity.class, ManticoreEntity.class, PhoenixEntity.class, UrsamajorEntity.class,
-            PrinceRutherfordEntity.class, ChiefThunderhoovesEntity.class,
-            IronWillEntity.class, GarbleEntity.class, ArcticScorpionEntity.class,
+            SpikezillaEntity.class, HydraEntity.class,
+            WindigoEntity.class, ManticoreEntity.class, UrsamajorEntity.class,
+            ChiefThunderhoovesEntity.class,
+            GarbleEntity.class,
             KingbowserEntity.class
     ));
 
