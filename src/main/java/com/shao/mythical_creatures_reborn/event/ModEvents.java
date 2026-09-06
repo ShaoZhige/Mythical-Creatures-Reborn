@@ -45,6 +45,7 @@ public class ModEvents {
         KeyStateHelper.clearDescendState(event.getEntity().getUUID());
         KeyStateHelper.clearJumpState(event.getEntity().getUUID());
         CutieMarkHandler.clearPlayerState(event.getEntity().getUUID());
+        SetBonusManager.clearPlayerState(event.getEntity().getUUID());
     }
 
     /** 云宝套装：免疫摔落伤害 */

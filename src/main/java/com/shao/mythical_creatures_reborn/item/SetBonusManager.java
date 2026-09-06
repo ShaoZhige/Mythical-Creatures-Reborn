@@ -1,5 +1,6 @@
 package com.shao.mythical_creatures_reborn.item;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -138,6 +139,9 @@ public class SetBonusManager {
 
     private static final List<SetDef> SETS = new ArrayList<>();
 
+    /** 玩家 UUID → 套装当前授予的「效果|等级」键集合。用于脱下套装时只移除套装自身给过的效果，避免误删可爱标志等外源同名 buff。 */
+    private static final Map<UUID, Set<String>> OWNED_EFFECTS = new HashMap<>();
+
     /**
      * 在所有注册完成后调用，统一注册所有套装效果。
      * 被 {@code MythicalCreaturesMod.commonSetup} 调用。
@@ -232,19 +236,33 @@ public class SetBonusManager {
     /**
      * 维护一个套装授予的无限时长药水效果：穿齐时若无则给予（amplifier 0=1级，1=2级…），
      * 脱下时仅移除套装自身授予的（duration<0 且 amplifier 匹配），不误删外源 buff（药水等 duration>0）。
+     * <p>
+     * 通过 {@link #OWNED_EFFECTS} 记录「套装确实给过」的效果，脱下时只在记录存在时才移除；
+     * 这样可爱标志（CutieMarkHandler）等其它系统授予的同名同等级无限 buff 不会被误删，
+     * 避免两者在 tick 里互相移除/补回导致 buff 闪烁。
+     * </p>
      */
     private static void maintainEffect(Player player, boolean wearing,
                                        net.minecraft.world.effect.MobEffect effect, int amplifier) {
+        String key = BuiltInRegistries.MOB_EFFECT.getKey(effect) + "|" + amplifier;
+        Set<String> owned = OWNED_EFFECTS.computeIfAbsent(player.getUUID(), u -> new HashSet<>());
         var cur = player.getEffect(effect);
         if (wearing) {
             if (cur == null) {
                 player.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect, -1, amplifier, false, false, true));
             }
+            owned.add(key);
         } else {
-            if (cur != null && cur.getDuration() < 0 && cur.getAmplifier() == amplifier) {
+            // 只有套装自己之前授予过这个效果，才移除它；否则跳过（可能是可爱标志给的）
+            if (owned.remove(key) && cur != null && cur.getDuration() < 0 && cur.getAmplifier() == amplifier) {
                 player.removeEffect(effect);
             }
         }
+    }
+
+    /** 玩家退出时清理套装效果所有权记录，避免残留占用。 */
+    public static void clearPlayerState(UUID player) {
+        OWNED_EFFECTS.remove(player);
     }
 
     /**

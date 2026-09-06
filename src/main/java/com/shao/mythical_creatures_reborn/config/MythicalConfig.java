@@ -101,7 +101,7 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:garble",            630, 0.28, 35);
             entity("mythical_creatures_reborn:kingbowser_9000",   199.0, 0.45, 20.0);
             ENTITY_DEFAULTS.put("mythical_creatures_reborn:kingbowser_9000|armor", 15.0);
-            entity("mythical_creatures_reborn:parasprite",        40.0, 0.25, 6.0);
+            entity("mythical_creatures_reborn:parasprite",        5.0, 0.25, 3.0);
             entity("mythical_creatures_reborn:phoenix",           780, 0.25, 44);
             entity("mythical_creatures_reborn:ursa_major",        780, 0.25, 44);
             entity("mythical_creatures_reborn:buffalo", 100, 0.25, 9);
@@ -123,7 +123,7 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:arctic_scorpion", 630, 0.28, 35);
             entity("mythical_creatures_reborn:timber_wolf", 40, 0.35, 6);
             entity("mythical_creatures_reborn:crabzilla", 975, 0.18, 42);
-            entity("mythical_creatures_reborn:iron_will", 630, 0.22, 35);
+            entity("mythical_creatures_reborn:iron_will", 400, 0.22, 15);
             entity("mythical_creatures_reborn:skull_of_doom", 50, 0.1, 7);
             entity("mythical_creatures_reborn:prince_rutherford", 630, 0.25, 35);
             entity("mythical_creatures_reborn:spikezilla", 975, 0.2, 54);
