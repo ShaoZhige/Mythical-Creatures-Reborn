@@ -71,10 +71,11 @@ public class MobStatsScreen extends Screen {
     private Category pickCat = Category.ENTITY;
     private EditBox pickSearch;
     private final List<Target> pickList = new ArrayList<>();
-    private int pickScroll = 0;
 
-    private int listScroll = 0;
-    private int detailScroll = 0;
+    /** 三处列表的滚动状态（以「行」为单位，保证行永远与视口顶端对齐，不出现半行空位） */
+    private final ScrollState listScroll = new ScrollState();
+    private final ScrollState detailScroll = new ScrollState();
+    private final ScrollState pickScroll = new ScrollState();
 
     // 当前选中对象的编辑控件
     private final List<EditBox> valueBoxes = new ArrayList<>();
@@ -107,6 +108,45 @@ public class MobStatsScreen extends Screen {
     private int boxW() { return Math.max(64, Math.min(120, rightW() - RESET_W - 6 - 12)); }
     private int boxX() { return rightX() + rightW() - RESET_W - 6 - boxW(); }
     private int resetX() { return rightX() + rightW() - RESET_W - 4; }
+
+    /** 视口 [top, bottom) 内能完整容纳的行数（高度向下取整到行高的整数倍，杜绝半行残留） */
+    private static int visibleRows(int top, int bottom, int rowH) {
+        int h = bottom - top;
+        if (h <= 0 || rowH <= 0) return 1;
+        return Math.max(1, h / rowH);
+    }
+
+    /**
+     * 列表滚动状态：以「行」为单位，永不出现半行。
+     * acc 累积亚行滚动量（兼容触控板等小 delta 设备），满一行才推进一格；
+     * 抵达两端时清零残留，避免回头滚时的「回卷迟滞」。
+     */
+    private static final class ScrollState {
+        int row = 0;
+        double acc = 0.0D;
+
+        void add(double delta, int rowH, int maxRow) {
+            this.acc += -delta * (double) rowH;
+            int lines = (int) (this.acc / (double) rowH);
+            if (lines != 0) this.acc -= (double) lines * (double) rowH;
+            this.apply(maxRow, lines);
+        }
+
+        void clamp(int maxRow) {
+            this.apply(maxRow, 0);
+        }
+
+        private void apply(int maxRow, int deltaRow) {
+            int next = Math.max(0, Math.min(maxRow, this.row + deltaRow));
+            if (next == 0 || next == maxRow) this.acc = 0.0D;
+            this.row = next;
+        }
+
+        void reset() {
+            this.row = 0;
+            this.acc = 0.0D;
+        }
+    }
 
     private boolean isOnServer() {
         return this.minecraft != null && this.minecraft.player != null && this.minecraft.getConnection() != null;
@@ -160,7 +200,7 @@ public class MobStatsScreen extends Screen {
         flushCurrent();
         this.picking = true;
         this.pickCat = Category.ENTITY;
-        this.pickScroll = 0;
+        this.pickScroll.reset();
         this.clearWidgets();
         initPickWidgets();
     }
@@ -176,7 +216,7 @@ public class MobStatsScreen extends Screen {
         for (Category c : Category.values()) {
             Category cc = c;
             Button tab = Button.builder(categoryName(c),
-                    b -> { this.pickCat = cc; this.pickScroll = 0; refreshPickList(); })
+                    b -> { this.pickCat = cc; this.pickScroll.reset(); refreshPickList(); })
                     .pos(tx, 4).size(tw, 20).build();
             this.addRenderableWidget(tab);
             tx += tw + 4;
@@ -186,7 +226,7 @@ public class MobStatsScreen extends Screen {
         this.pickSearch = new EditBox(this.font, this.width - 160, 4, 152, 20, Component.literal(""));
         this.pickSearch.setMaxLength(64);
         this.pickSearch.setHint(Component.translatable("gui.mythical_creatures_reborn.editor.search"));
-        this.pickSearch.setResponder(s -> { this.pickScroll = 0; refreshPickList(); });
+        this.pickSearch.setResponder(s -> { this.pickScroll.reset(); refreshPickList(); });
         this.addRenderableWidget(this.pickSearch);
 
         refreshPickList();
@@ -221,7 +261,7 @@ public class MobStatsScreen extends Screen {
         this.valueBoxes.clear();
         this.resetButtons.clear();
         this.commentBoxes.clear();
-        this.detailScroll = 0;
+        this.detailScroll.reset();
         if (this.selected < 0 || this.selected >= this.added.size()) return;
 
         Target t = this.added.get(this.selected);
@@ -250,13 +290,16 @@ public class MobStatsScreen extends Screen {
     }
 
     private void layoutDetailRows() {
-        int top = listTop();
+        int top = listTop() + 2;
         int bottom = listBottom();
-        int y = top + 2 - this.detailScroll;
+        int rows = visibleRows(top, bottom, STAT_ROW_H);
+        int first = this.detailScroll.row;
         int bx = boxX();
         int rx = resetX();
         for (int i = 0; i < this.valueBoxes.size(); i++) {
-            boolean vis = (y >= top && y + STAT_ROW_H <= bottom);
+            int slot = i - first;
+            boolean vis = (slot >= 0 && slot < rows);
+            int y = top + slot * STAT_ROW_H;
             EditBox box = this.valueBoxes.get(i);
             Button btn = this.resetButtons.get(i);
             EditBox cmt = this.commentBoxes.get(i);
@@ -266,7 +309,6 @@ public class MobStatsScreen extends Screen {
             btn.visible = vis;
             cmt.setPosition(rightX() + 6, y + 34);
             cmt.visible = vis;
-            y += STAT_ROW_H;
         }
     }
 
@@ -393,21 +435,23 @@ public class MobStatsScreen extends Screen {
                     Component.translatable("gui.mythical_creatures_reborn.editor.empty"), LEFT_W - 8),
                     12, listTop() + 6, DIM);
         } else {
-            int maxScroll = Math.max(0, this.added.size() * ROW_H - (bottom - listTop()));
-            this.listScroll = Math.min(this.listScroll, maxScroll);
-            for (int i = 0; i < this.added.size(); i++) {
-                int k = listTop() + i * ROW_H - this.listScroll;
-                if (k >= listTop() && k + ROW_H <= bottom) {
-                    boolean sel = (i == this.selected);
-                    boolean hover = (mouseX >= 8 && mouseX <= LEFT_W + 8 && mouseY >= k && mouseY < k + ROW_H);
-                    if (sel) g.fill(8, k, LEFT_W + 8, k + ROW_H, SEL);
-                    else if (hover) g.fill(8, k, LEFT_W + 8, k + ROW_H, HOVER);
-                    int n = overriddenCount(this.added.get(i));
-                    String label = categoryShort(this.added.get(i).category) + " " + labelOf(this.added.get(i)).getString();
-                    if (n > 0) label += "  (" + n + ")";
-                    g.drawString(this.font, trim(this.font, Component.literal(label), LEFT_W - 8),
-                            12, k + 5, sel ? 0xFFFFFF : TEXT);
-                }
+            int top = listTop();
+            int rows = visibleRows(top, bottom, ROW_H);
+            this.listScroll.clamp(Math.max(0, this.added.size() - rows));
+            int first = this.listScroll.row;
+            for (int s = 0; s < rows; s++) {
+                int i = first + s;
+                if (i >= this.added.size()) break;
+                int k = top + s * ROW_H;
+                boolean sel = (i == this.selected);
+                boolean hover = (mouseX >= 8 && mouseX <= LEFT_W + 8 && mouseY >= k && mouseY < k + ROW_H);
+                if (sel) g.fill(8, k, LEFT_W + 8, k + ROW_H, SEL);
+                else if (hover) g.fill(8, k, LEFT_W + 8, k + ROW_H, HOVER);
+                int n = overriddenCount(this.added.get(i));
+                String label = categoryShort(this.added.get(i).category) + " " + labelOf(this.added.get(i)).getString();
+                if (n > 0) label += "  (" + n + ")";
+                g.drawString(this.font, trim(this.font, Component.literal(label), LEFT_W - 8),
+                        12, k + 5, sel ? 0xFFFFFF : TEXT);
             }
         }
 
@@ -419,16 +463,19 @@ public class MobStatsScreen extends Screen {
                     rightX + 6, listTop() + 6, DIM);
         } else {
             Target cur = this.added.get(this.selected);
-            int y = listTop() + 2 - this.detailScroll;
-            for (int j = 0; j < cur.rows.size(); j++) {
+            int dTop = listTop() + 2;
+            int dRows = visibleRows(dTop, bottom, STAT_ROW_H);
+            this.detailScroll.clamp(Math.max(0, cur.rows.size() - dRows));
+            int dFirst = this.detailScroll.row;
+            for (int s = 0; s < dRows; s++) {
+                int j = dFirst + s;
+                if (j >= cur.rows.size()) break;
                 Row row = cur.rows.get(j);
-                if (y >= listTop() + 2 && y + STAT_ROW_H <= bottom) {
-                    g.drawString(this.font, trim(this.font, statName(row.key), boxX() - rightX - 12),
-                            rightX + 6, y + 6, TEXT);
-                    g.drawString(this.font, Component.translatable("gui.mythical_creatures_reborn.editor.default", fmt(row.def)),
-                            rightX + 6, y + 20, DIM);
-                }
-                y += STAT_ROW_H;
+                int y = dTop + s * STAT_ROW_H;
+                g.drawString(this.font, trim(this.font, statName(row.key), boxX() - rightX - 12),
+                        rightX + 6, y + 6, TEXT);
+                g.drawString(this.font, Component.translatable("gui.mythical_creatures_reborn.editor.default", fmt(row.def)),
+                        rightX + 6, y + 20, DIM);
             }
             layoutDetailRows();
         }
@@ -442,17 +489,18 @@ public class MobStatsScreen extends Screen {
         g.fill(8, 48, this.width - 8, bottom, BG);
 
         int top = 50;
-        int maxScroll = Math.max(0, this.pickList.size() * ROW_H - (bottom - top));
-        this.pickScroll = Math.min(this.pickScroll, maxScroll);
-        for (int i = 0; i < this.pickList.size(); i++) {
-            int k = top + i * ROW_H - this.pickScroll;
-            if (k >= top && k + ROW_H <= bottom) {
-                boolean hover = (mouseX >= 8 && mouseX <= this.width - 8 && mouseY >= k && mouseY < k + ROW_H);
-                if (hover) g.fill(8, k, this.width - 8, k + ROW_H, HOVER);
-                String label = categoryShort(this.pickList.get(i).category) + " " + labelOf(this.pickList.get(i)).getString();
-                g.drawString(this.font, trim(this.font, Component.literal(label), this.width - 24),
-                        12, k + 5, TEXT);
-            }
+        int rows = visibleRows(top, bottom, ROW_H);
+        this.pickScroll.clamp(Math.max(0, this.pickList.size() - rows));
+        int first = this.pickScroll.row;
+        for (int s = 0; s < rows; s++) {
+            int i = first + s;
+            if (i >= this.pickList.size()) break;
+            int k = top + s * ROW_H;
+            boolean hover = (mouseX >= 8 && mouseX <= this.width - 8 && mouseY >= k && mouseY < k + ROW_H);
+            if (hover) g.fill(8, k, this.width - 8, k + ROW_H, HOVER);
+            String label = categoryShort(this.pickList.get(i).category) + " " + labelOf(this.pickList.get(i)).getString();
+            g.drawString(this.font, trim(this.font, Component.literal(label), this.width - 24),
+                    12, k + 5, TEXT);
         }
         if (this.pickList.isEmpty())
             g.drawString(this.font, trim(this.font,
@@ -475,7 +523,7 @@ public class MobStatsScreen extends Screen {
         int bottom = listBottom();
         // 左栏列表点击
         if (mouseX >= 8.0D && mouseX <= LEFT_W + 8.0D && mouseY >= listTop() && mouseY < bottom) {
-            int i = (int) ((mouseY - listTop() + this.listScroll) / ROW_H);
+            int i = (int) ((mouseY - listTop()) / ROW_H) + this.listScroll.row;
             if (i >= 0 && i < this.added.size()) {
                 flushCurrent();
                 this.selected = i;
@@ -490,7 +538,7 @@ public class MobStatsScreen extends Screen {
         int bottom = listBottom();
         int top = 50;
         if (mouseY >= top && mouseY < bottom && mouseX >= 8.0D && mouseX <= this.width - 8.0D) {
-            int i = (int) ((mouseY - top + this.pickScroll) / ROW_H);
+            int i = (int) ((mouseY - top) / ROW_H) + this.pickScroll.row;
             if (i >= 0 && i < this.pickList.size()) {
                 Target t = this.pickList.get(i);
                 if (!this.added.contains(t)) this.added.add(t);
@@ -507,21 +555,21 @@ public class MobStatsScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (super.mouseScrolled(mouseX, mouseY, delta)) return true;
-        int d = (int) (-delta * 18.0D);
+        int bottom = listBottom();
         if (picking) {
-            int bottom = listBottom();
-            int maxScroll = Math.max(0, this.pickList.size() * ROW_H - (bottom - 50));
-            this.pickScroll = Math.max(0, Math.min(maxScroll, this.pickScroll + d));
+            int rows = visibleRows(50, bottom, ROW_H);
+            this.pickScroll.add(delta, ROW_H, Math.max(0, this.pickList.size() - rows));
             return true;
         }
         if (mouseX <= LEFT_W + 8.0D) {
-            this.listScroll = Math.max(0, this.listScroll + d);
+            // 左栏：一次滚轮 = 一行，行高对齐，永不产生半行空位
+            int rows = visibleRows(listTop(), bottom, ROW_H);
+            this.listScroll.add(delta, ROW_H, Math.max(0, this.added.size() - rows));
         } else {
             Target cur = (this.selected >= 0 && this.selected < this.added.size()) ? this.added.get(this.selected) : null;
             if (cur != null) {
-                int bottom = listBottom();
-                int maxScroll = Math.max(0, cur.rows.size() * STAT_ROW_H - (bottom - (listTop() + 2)));
-                this.detailScroll = Math.max(0, Math.min(maxScroll, this.detailScroll + d));
+                int rows = visibleRows(listTop() + 2, bottom, STAT_ROW_H);
+                this.detailScroll.add(delta, STAT_ROW_H, Math.max(0, cur.rows.size() - rows));
             }
         }
         return true;

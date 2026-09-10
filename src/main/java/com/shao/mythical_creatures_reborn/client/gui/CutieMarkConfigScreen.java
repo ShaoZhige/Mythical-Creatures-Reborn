@@ -1,82 +1,106 @@
 package com.shao.mythical_creatures_reborn.client.gui;
 
 import com.shao.mythical_creatures_reborn.client.CutieMarkConfig;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
- * 客户端配置界面 | Client config screen.
+ * 可爱标志饰品渲染位置 | Cutie Mark rendering offsets.
  * <p>
- * 编辑可爱标志饰品的渲染偏移（scale/x/y/z，左右腿各一组）。这些是 CLIENT 配置，
+ * 左右分栏：左栏「左腿渲染」、右栏「右腿渲染」，各 4 个滑块（缩放 / 前后 / 上下 / 内外）。
+ * 分栏后每栏只占 4 个控件的高度，不会再顶到底部按钮。
  * 改值即时生效（热重载），鼠标松开滑块时写回 client.toml。
  */
 public class CutieMarkConfigScreen extends Screen {
 
-    private static final int SLIDER_W = 220;
     private static final int SLIDER_H = 20;
-    private static final int LEFT_X = 40;
+    private static final int BTN_H = 20;
+    private static final int PAD = 20;        // 屏幕左右留白
+    private static final int COL_GAP = 24;    // 两栏间距
+    private static final int COL_MAX = 240;   // 单栏最大宽度
+    private static final int BODY_TOP = 42;   // 分组标题行 y
+    private static final int VALUES = 4;
+
+    /** 每组 4 项的顺序：缩放 / 前后 / 上下 / 内外 */
+    private static final String[] VALUE_KEYS = {"scale", "x", "y", "z"};
+    private static final double[][] VALUE_RANGES = {
+            {0.001, 1.0}, {-2.0, 2.0}, {-2.0, 2.0}, {-2.0, 2.0}
+    };
 
     private final Screen parent;
+    private final List<GroupLabel> groupLabels = new ArrayList<>();
 
     public CutieMarkConfigScreen(Screen parent) {
-        super(Component.translatable("gui.mythical_creatures_reborn.client_config.title"));
+        super(Component.translatable("gui.mythical_creatures_reborn.client_config.category.cutie_mark"));
         this.parent = parent;
     }
 
     @Override
     protected void init() {
-        int x = LEFT_X;
-        int y = 32;
+        // 两栏等宽、整体居中；窗口过窄时按最小宽度兜底
+        int colW = Math.max(120, Math.min(COL_MAX, (this.width - PAD * 2 - COL_GAP) / 2));
+        int totalW = colW * 2 + COL_GAP;
+        int leftX = Math.max(4, this.width / 2 - totalW / 2);
+        int rightX = leftX + colW + COL_GAP;
 
-        // 左腿 | Left leg
-        addLabel("gui.mythical_creatures_reborn.client_config.left_leg", y);
-        y += 16;
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.scale", CutieMarkConfig.DATA.leftScale, 0.001, 1.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.x", CutieMarkConfig.DATA.leftX, -2.0, 2.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.y", CutieMarkConfig.DATA.leftY, -2.0, 2.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.z", CutieMarkConfig.DATA.leftZ, -2.0, 2.0);
+        int sliderTop = BODY_TOP + 18;
+        int btnY = this.height - 30;
 
-        // 右腿 | Right leg
-        y += 6;
-        addLabel("gui.mythical_creatures_reborn.client_config.right_leg", y);
-        y += 16;
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.scale", CutieMarkConfig.DATA.rightScale, 0.001, 1.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.x", CutieMarkConfig.DATA.rightX, -2.0, 2.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.y", CutieMarkConfig.DATA.rightY, -2.0, 2.0);
-        y = addSlider(x, y, "gui.mythical_creatures_reborn.client_config.z", CutieMarkConfig.DATA.rightZ, -2.0, 2.0);
+        // 控件间距自适应：窗口偏矮时收紧，保证最后一项不压到完成按钮
+        int gap = 6;
+        int avail = btnY - 12 - sliderTop;
+        if (avail < SLIDER_H * VALUES + gap * (VALUES - 1)) {
+            gap = Math.max(2, (avail - SLIDER_H * VALUES) / (VALUES - 1));
+        }
 
-        // 完成按钮 | Done button
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.mythical_creatures_reborn.client_config.done"),
+        this.groupLabels.clear();
+        addColumn(leftX, colW, sliderTop, gap, true);
+        addColumn(rightX, colW, sliderTop, gap, false);
+
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
                         b -> this.onClose())
-                .pos(this.width / 2 - 100, this.height - 30).size(200, 20).build());
+                .pos(this.width / 2 - 100, btnY).size(200, BTN_H).build());
     }
 
-    private void addLabel(String key, int y) {
-        // 分组标题通过 render 里的 drawString 绘制（见 render 方法）
-        this.groupLabels.add(new GroupLabel(y, Component.translatable(key)));
+    /** 添加一栏：分组标题 + 4 个滑块 */
+    private void addColumn(int x, int colW, int sliderTop, int gap, boolean left) {
+        Component title = Component.translatable(left
+                ? "gui.mythical_creatures_reborn.client_config.left_leg_render"
+                : "gui.mythical_creatures_reborn.client_config.right_leg_render");
+        this.groupLabels.add(new GroupLabel(x + colW / 2, BODY_TOP, title));
+
+        ForgeConfigSpec.DoubleValue[] vals = left
+                ? new ForgeConfigSpec.DoubleValue[]{
+                        CutieMarkConfig.DATA.leftScale, CutieMarkConfig.DATA.leftX,
+                        CutieMarkConfig.DATA.leftY, CutieMarkConfig.DATA.leftZ}
+                : new ForgeConfigSpec.DoubleValue[]{
+                        CutieMarkConfig.DATA.rightScale, CutieMarkConfig.DATA.rightX,
+                        CutieMarkConfig.DATA.rightY, CutieMarkConfig.DATA.rightZ};
+
+        for (int i = 0; i < VALUES; i++) {
+            int y = sliderTop + i * (SLIDER_H + gap);
+            this.addRenderableWidget(new ConfigSlider(x, y, colW, SLIDER_H,
+                    Component.translatable("gui.mythical_creatures_reborn.client_config." + VALUE_KEYS[i]),
+                    vals[i], VALUE_RANGES[i][0], VALUE_RANGES[i][1]));
+        }
     }
 
-    private int addSlider(int x, int y, String labelKey, ForgeConfigSpec.DoubleValue value, double min, double max) {
-        this.addRenderableWidget(new ConfigSlider(x, y, SLIDER_W, SLIDER_H,
-                Component.translatable(labelKey), value, min, max));
-        return y + SLIDER_H + 4;
-    }
-
-    private final java.util.List<GroupLabel> groupLabels = new java.util.ArrayList<>();
-
-    private record GroupLabel(int y, Component text) {}
+    private record GroupLabel(int centerX, int y, Component text) {}
 
     @Override
-    public void render(net.minecraft.client.gui.GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(g);
-        g.drawString(this.font, this.title, LEFT_X, 8, 0xFFFFFF);
+        g.drawCenteredString(this.font, this.title, this.width / 2, 16, 0xFFFFFF);
         for (GroupLabel gl : this.groupLabels) {
-            g.drawString(this.font, gl.text, LEFT_X, gl.y, 0xFFFFFF);
+            g.drawCenteredString(this.font, gl.text, gl.centerX, gl.y, 0xFFFFFF);
         }
         super.render(g, mouseX, mouseY, partialTick);
     }

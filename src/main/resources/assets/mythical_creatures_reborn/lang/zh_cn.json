@@ -400,8 +400,9 @@
   "gui.mythical_creatures_reborn.main_config.client": "客户端配置",
 
   "gui.mythical_creatures_reborn.client_config.title": "客户端配置",
-  "gui.mythical_creatures_reborn.client_config.left_leg": "左腿",
-  "gui.mythical_creatures_reborn.client_config.right_leg": "右腿",
+  "gui.mythical_creatures_reborn.client_config.category.cutie_mark": "饰品栏可爱标志渲染位置",
+  "gui.mythical_creatures_reborn.client_config.left_leg_render": "左腿渲染",
+  "gui.mythical_creatures_reborn.client_config.right_leg_render": "右腿渲染",
   "gui.mythical_creatures_reborn.client_config.scale": "缩放",
   "gui.mythical_creatures_reborn.client_config.x": "前后偏移",
   "gui.mythical_creatures_reborn.client_config.y": "上下偏移",

@@ -50,7 +50,7 @@ public class MainConfigScreen extends Screen {
 
     private void openClient() {
         if (this.minecraft != null)
-            this.minecraft.setScreen(new CutieMarkConfigScreen(this));
+            this.minecraft.setScreen(new ClientConfigScreen(this));
     }
 
     @Override
