@@ -31,12 +31,8 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
 
     private int magicSummonCooldown = 0;
 
-    @Override protected void refreshConfigAttributes() {
-        cacheRideTuning(entityId());
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return true; }
+    @Override protected boolean isRideable() { return true; } // 可骑乘：refreshConfigAttributes 会缓存骑乘调参
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.TS_TAMING, ModItems.TWILIGHT_CUTIEMARK.get());
     }

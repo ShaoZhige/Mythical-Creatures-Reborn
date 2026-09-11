@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class SpikezillaEntityModel extends GeoModel<SpikezillaEntity> {
     private static final ResourceLocation MODEL = new ResourceLocation(MythicalCreaturesMod.MODID, "geo/spikezilla.geo.json");
     private static final ResourceLocation TEXTURE = new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/spikezilla.png");
-    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/mod_placeholder.animation.json");
+    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/spikezilla.animation.json");
 
 
 

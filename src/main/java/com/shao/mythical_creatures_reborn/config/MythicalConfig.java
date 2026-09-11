@@ -104,7 +104,7 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:parasprite",        5.0, 0.25, 3.0);
             entity("mythical_creatures_reborn:phoenix",           780, 0.25, 44);
             entity("mythical_creatures_reborn:ursa_major",        780, 0.25, 44);
-            entity("mythical_creatures_reborn:buffalo", 100, 0.25, 9);
+            entity("mythical_creatures_reborn:buffalo", 35, 0.25, 9);
             entity("mythical_creatures_reborn:chief_thunderhooves", 630, 0.28, 35);
             entity("mythical_creatures_reborn:black_widow", 35, 0.3, 5);
             entity("mythical_creatures_reborn:leviathan", 60.0, 0.2, 8.0);

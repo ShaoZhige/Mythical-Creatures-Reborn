@@ -18,10 +18,6 @@ public class ChiefThunderhoovesEntity extends HostilePonyEntity {
         super(type, level);
     }
 
-    @Override protected void refreshConfigAttributes() {
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return false; }
     @Override protected Item getTamingItem() { return Items.APPLE; }
 

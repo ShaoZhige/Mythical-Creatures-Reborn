@@ -44,7 +44,7 @@ public final class GroundRideAPI {
 
     /** 对应 PlayerRideable#getRiddenSpeed —— 骑乘速度 = 实体移动速度 × ridden_speed_factor */
     public static float getRiddenSpeed(@NotNull PonyEntity self) {
-        return (float)(self.getAttributeValue(Attributes.MOVEMENT_SPEED) * self.rideSpeedFactor);
+        return (float)(self.getAttributeValue(Attributes.MOVEMENT_SPEED) * self.riding.speedFactor);
     }
 
     /** 对应 PlayerRideable#getRiddenInput —— 把玩家按键映射为骑乘输入向量 */
@@ -76,7 +76,7 @@ public final class GroundRideAPI {
     }
 
     private static void executeRidersJump(@NotNull PonyEntity self, float scale, @NotNull Vec3 travelVector) {
-        double jumpY = self.rideJumpHeight * scale + (double)self.getJumpBoostPower();
+        double jumpY = self.riding.jumpHeight * scale + (double)self.getJumpBoostPower();
         // jumpY = 配置基础跳跃高度 × 蓄力比例 + 跳跃提升附魔加成 | base jump height × charge + Jump Boost
         Vec3 delta = self.getDeltaMovement();
         self.setDeltaMovement(delta.x, jumpY, delta.z);

@@ -21,10 +21,6 @@ public class PhoenixEntity extends HostilePonyEntity {
         super(type, level);
     }
 
-    @Override protected void refreshConfigAttributes() {
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return true; }
     @Override protected Item getTamingItem() { return Items.APPLE; }
 

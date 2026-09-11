@@ -25,12 +25,8 @@ public class ApplejackEntity extends NeutralPonyEntity implements PlayerRideable
         super(type, level);
     }
 
-    @Override protected void refreshConfigAttributes() {
-        cacheRideTuning(entityId());
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return false; }
+    @Override protected boolean isRideable() { return true; } // 可骑乘：refreshConfigAttributes 会缓存骑乘调参
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.AJ_TAMING, ModItems.APPLEJACK_CUTIEMARK.get());
     }

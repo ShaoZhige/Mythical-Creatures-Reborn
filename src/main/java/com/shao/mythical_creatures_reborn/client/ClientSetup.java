@@ -45,9 +45,12 @@ import com.shao.mythical_creatures_reborn.client.renderer.CragadileEntityRendere
 import com.shao.mythical_creatures_reborn.entity.ModEntities;
 import com.shao.mythical_creatures_reborn.client.renderer.ScaledThrownItemRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.model.SeparateTransformsModel;
+import com.shao.mythical_creatures_reborn.client.model.TooltipPreview3DModel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -131,6 +134,57 @@ public class ClientSetup {
                 new ResourceLocation(MythicalCreaturesMod.MODID, "twilicane_2d"), "inventory"));
         event.register(new ModelResourceLocation(
                 new ResourceLocation(MythicalCreaturesMod.MODID, "ursa_claws_3d"), "inventory"));
+    }
+
+    /**
+     * 给 {@code forge:separate_transforms} 物品套一层「按姿势切换视角」的包装，
+     * 让「鼠标悬停看 3D、物品栏里仍是 2D」同时成立。
+     *
+     * <p>背景：Tooltip Overhaul 的悬停预览面板和物品栏都用 {@code ItemDisplayContext.GUI}，
+     * 模型层单看上下文分不清两者，{@code perspectives.gui} 只能二选一。
+     * 唯一的差异是姿势矩阵 —— 物品栏是纯平移+对角缩放（无旋转），预览面板额外压了自转/俯仰。
+     * 于是用 {@link TooltipPreview3DModel} 在「GUI + 姿势带旋转」时改返回 3D 模型。</p>
+     *
+     * <p>必须等模型烘焙完（{@code bakedTopLevelModels} 成型）才能替换，所以挂在
+     * {@link ModelEvent.ModifyBakingResult}；挂在 {@code RegisterAdditional} 上太早，模型还没烘出来。
+     * 没装 Tooltip Overhaul 时这段逻辑同样安全：只是「带旋转的 GUI 渲染也走 3D」，不影响物品栏。</p>
+     */
+    @SubscribeEvent
+    public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
+        installTooltipPreview3D(event, "alicorn_sword", "alicorn_sword_3d");
+    }
+
+    /**
+     * 把 {@code <itemModel>#inventory} 换成 {@link TooltipPreview3DModel}，悬停预览改用 {@code <preview3dModel>}。
+     *
+     * <p>取不到模型时静默跳过（例如资源包把模型换了、或这个版本里模型名对不上），
+     * 宁可退回原本的 2D 行为，也不要在客户端启动阶段抛异常。</p>
+     *
+     * @param itemModel     物品在 {@code #inventory} 变体下的模型名（不含命名空间与 {@code #inventory}）
+     * @param preview3dModel 悬停预览时要用的 3D 模型名（同上）
+     */
+    private static void installTooltipPreview3D(ModelEvent.ModifyBakingResult event, String itemModel, String preview3dModel) {
+        ModelResourceLocation guiLocation =
+                new ModelResourceLocation(new ResourceLocation(MythicalCreaturesMod.MODID, itemModel), "inventory");
+        ModelResourceLocation previewLocation =
+                new ModelResourceLocation(new ResourceLocation(MythicalCreaturesMod.MODID, preview3dModel), "inventory");
+
+        BakedModel guiModel = event.getModels().get(guiLocation);
+        BakedModel previewModel = event.getModels().get(previewLocation);
+        if (guiModel == null || previewModel == null) {
+            return;
+        }
+        // 只包装 separate_transforms 模型：普通模型的「视角变体」是烘焙期就固化好的，
+        // 运行时换模型没有意义，包装反而多一层无谓调用。
+        if (!(guiModel instanceof SeparateTransformsModel.Baked)) {
+            return;
+        }
+        // 资源包重载会重跑烘焙，这里防一手重复包装（虽然新模型是新对象，保险起见）。
+        if (guiModel instanceof TooltipPreview3DModel) {
+            return;
+        }
+
+        event.getModels().put(guiLocation, new TooltipPreview3DModel(guiModel, previewModel));
     }
 
     /**

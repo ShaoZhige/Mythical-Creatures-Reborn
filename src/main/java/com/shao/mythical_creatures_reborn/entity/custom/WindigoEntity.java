@@ -64,10 +64,6 @@ public class WindigoEntity extends HostilePonyEntity {
                         this.getX() + hw, minY + BB_HEIGHT, this.getZ() + hd);
     }
 
-    @Override protected void refreshConfigAttributes() {
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return true; } // 雪魔飞行：常驻悬停追击（由 WindigoSkyChaseGoal 驱动）
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
@@ -117,7 +113,10 @@ public class WindigoEntity extends HostilePonyEntity {
         // 该 Goal 接管水平靠拢 / 横向走位 / 后撤与高度跟随，并在进入射程且有视线时调用
         // performRangedAttack 发射 15~25 颗「不稳定物品」；框架 tickFlight() 负责无重力与悬停维持。
         this.goalSelector.getAvailableGoals().removeIf(w ->
-                w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof WindigoSkyChaseGoal);
+                w.getGoal() instanceof MeleeAttackGoal || w.getGoal() instanceof WindigoSkyChaseGoal
+                        || w.getGoal() instanceof WindigoChargeGoal);
+        // 冲锋优先级(1) 高于追击(2)：冲锋期间接管移动；平时其 canUse 因仇恨计时未达标返回 false，不干扰追击。
+        this.goalSelector.addGoal(1, new WindigoChargeGoal(this));
         this.goalSelector.addGoal(2, new WindigoSkyChaseGoal(this, 0.5D, 12, 40.0D));
         // 目标：攻击一切见到的生物（玩家 / 动物 / 村民 / 其它怪物都在内），
         // 但排除 DuMmmMmmy 假人、原版盔甲架与展示框（统一由 EntityHateFilter 处理），

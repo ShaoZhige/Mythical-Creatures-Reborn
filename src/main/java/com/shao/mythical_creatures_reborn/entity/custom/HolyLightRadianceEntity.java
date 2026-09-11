@@ -65,11 +65,8 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
 
     @Override public void handleStopJump() { GroundRideAPI.handleStopJump(this); }
 
-    @Override protected void refreshConfigAttributes() {
-        cacheRideTuning(entityId());
-        applyCoreStats(entityId(), canFly());
-    }
     @Override protected boolean canFly() { return false; }
+    @Override protected boolean isRideable() { return true; } // 可骑乘：refreshConfigAttributes 会缓存骑乘调参
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.HL_TAMING, com.shao.mythical_creatures_reborn.item.ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK.get());
     }

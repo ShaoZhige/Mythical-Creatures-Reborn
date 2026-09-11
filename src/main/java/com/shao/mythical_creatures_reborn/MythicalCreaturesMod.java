@@ -59,6 +59,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import java.util.List;
@@ -208,18 +209,25 @@ public class MythicalCreaturesMod {
 
     /**
      * 通用敌对生物生成判定（适用于任意 Entity 子类，本项目敌对生物继承自 PonyEntity/Animal 而非 Monster）：
-     * 非和平难度 + 夜晚或足够暗（天空亮度 <= 8，即夜间 / 洞穴 / 阴影）。
-     * 注意不能与理论最大亮度比较：露天恒等成立，白天会满地乱刷。
+     * 非和平难度 + 原版 {@link Monster#isDarkEnoughToSpawn}（时间校正后的"够暗"判定）。
+     *
+     * 【曾经的 bug】旧实现用 {@code getBrightness(LightLayer.SKY, pos) <= 8} 判"夜晚"是错的：
+     * LightLayer.SKY 是**原始天光**（露天恒为 15，不随时间变化，只被方块遮挡），所以露天夜里
+     * 该值仍是 15 → 判定恒 false → 所有模组敌对生物在空旷处**永远刷不出来**，只在树下/洞穴
+     * 这类被遮挡的阴影里刷。正确做法是用原版 isDarkEnoughToSpawn：它用 getMaxLocalRawBrightness
+     * （已减去随昼夜变化的 skyDarken）判定，因此夜晚露天 / 洞穴 / 阴影都能刷，白天露天则被挡住，
+     * 与僵尸/骷髅完全同一原理。
      *
      * Generic hostile spawn rule (any entity; our hostiles extend PonyEntity/Animal, not Monster):
-     * non-peaceful difficulty AND sky light <= 8 (night / cave / shadow). Do NOT compare
-     * against the *max* brightness — outdoors it is always true and would spawn hostiles
-     * in broad daylight.
+     * non-peaceful AND vanilla {@link Monster#isDarkEnoughToSpawn} (time-adjusted darkness).
+     * The old rule used the RAW sky light (LightLayer.SKY), which is 15 in the open at ANY time of
+     * day, so hostiles could never spawn in the open at night. isDarkEnoughToSpawn uses the
+     * time-adjusted brightness (getMaxLocalRawBrightness), matching vanilla zombies/skeletons.
      */
     private static <T extends net.minecraft.world.entity.Entity> boolean checkHostileSpawnRules(
             EntityType<T> pEntityType, ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
         return pLevel.getDifficulty() != Difficulty.PEACEFUL
-                && pLevel.getBrightness(LightLayer.SKY, pPos) <= 8;
+                && Monster.isDarkEnoughToSpawn(pLevel, pPos, pRandom);
     }
 
     /** 洞穴：完全无天光（被方块遮挡 = 地下/洞穴）。 */

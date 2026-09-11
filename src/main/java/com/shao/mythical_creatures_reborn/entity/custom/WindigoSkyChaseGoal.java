@@ -25,7 +25,7 @@ public class WindigoSkyChaseGoal extends Goal {
     // 保距区间（硬编码）：小于 MIN_DIST 后撤，大于 MAX_DIST 靠近，中间横向走位。
     private static final double MIN_DIST = 12.0D;
     private static final double MAX_DIST = 32.0D;
-    private static final double HOVER_OFFSET = 6.0D; // 悬停高度相对目标眼睛的偏移（略高于目标）
+    private static final double HOVER_OFFSET = 14.0D; // 悬停高度相对目标眼睛的偏移（离地更高，俯视压制）
 
     public WindigoSkyChaseGoal(WindigoEntity mob, double speed, int attackInterval, double range) {
         this.mob = mob;
@@ -50,7 +50,7 @@ public class WindigoSkyChaseGoal extends Goal {
     @Override
     public void start() {
         // 标记愤怒飞行，框架 tickFlight 维持 HOVER 不降落；进入常驻悬停追击。
-        this.mob.angryFlight = true;
+        this.mob.flight.angryFlight = true;
         this.mob.setHovering(true);
         this.attackCooldown = 0;
         this.strafeTimer = 0;
@@ -63,7 +63,7 @@ public class WindigoSkyChaseGoal extends Goal {
         if (target == null || !target.isAlive()) return;
 
         // 持续维持愤怒悬停（防止框架在边界条件退出悬停导致下坠）
-        this.mob.angryFlight = true;
+        this.mob.flight.angryFlight = true;
         if (!this.mob.isHovering() && !this.mob.isFlying()) this.mob.setHovering(true);
 
         double dx = target.getX() - this.mob.getX();
@@ -112,6 +112,6 @@ public class WindigoSkyChaseGoal extends Goal {
 
     @Override
     public void stop() {
-        this.mob.angryFlight = false;
+        this.mob.flight.angryFlight = false;
     }
 }

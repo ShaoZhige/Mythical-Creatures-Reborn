@@ -12,7 +12,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:wool",
+          "name": "minecraft:white_wool",
           "weight": 6,
           "functions": [
             {

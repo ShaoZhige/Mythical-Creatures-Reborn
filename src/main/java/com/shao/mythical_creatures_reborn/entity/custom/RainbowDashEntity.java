@@ -22,12 +22,8 @@ public class RainbowDashEntity extends NeutralPonyEntity {
         super(type, level);
     }
 
-    @Override protected void refreshConfigAttributes() {
-        cacheRideTuning(entityId());
-        applyCoreStats(entityId(), canFly());
-    }
-
     @Override protected boolean canFly() { return true; }
+    @Override protected boolean isRideable() { return true; } // 可骑乘：refreshConfigAttributes 会缓存骑乘调参
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.RD_TAMING, ModItems.RAINBOW_DASH_CUTIEMARK.get());
     }

@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class WindigoEntityModel extends GeoModel<WindigoEntity> {
     private static final ResourceLocation MODEL = new ResourceLocation(MythicalCreaturesMod.MODID, "geo/windigo.geo.json");
     private static final ResourceLocation TEXTURE = new ResourceLocation(MythicalCreaturesMod.MODID, "textures/entity/windigo.png");
-    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/mod_placeholder.animation.json");
+    private static final ResourceLocation ANIMATION = new ResourceLocation(MythicalCreaturesMod.MODID, "animations/windigo.animation.json");
 
 
 

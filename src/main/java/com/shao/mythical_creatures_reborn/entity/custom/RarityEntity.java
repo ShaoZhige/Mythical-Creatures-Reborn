@@ -58,11 +58,8 @@ public class RarityEntity extends NeutralPonyEntity implements PlayerRideableJum
 
     @Override public void handleStopJump() { GroundRideAPI.handleStopJump(this); }
 
-    @Override protected void refreshConfigAttributes() {
-        cacheRideTuning(entityId());
-        applyCoreStats(entityId(), canFly());
-    }
     @Override protected boolean canFly() { return false; }
+    @Override protected boolean isRideable() { return true; } // 可骑乘：refreshConfigAttributes 会缓存骑乘调参
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.RY_TAMING, com.shao.mythical_creatures_reborn.item.ModItems.RARITY_CUTIEMARK.get());
     }

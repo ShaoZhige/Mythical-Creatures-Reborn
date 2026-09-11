@@ -33,7 +33,7 @@ public final class FlightRideAPI {
     /** 对应 PlayerRideable#getRiddenInput —— 把玩家按键映射为骑乘输入向量 */
     public static @NotNull Vec3 getRiddenInput(PonyEntity self, @NotNull Player player, @NotNull Vec3 v) {
         float fwd = player.zza;
-        float str = (float)(player.xxa * self.rideSpeedFactor);
+        float str = (float)(player.xxa * self.riding.speedFactor);
         if (fwd <= 0) fwd *= 0.25F; // 倒车比前进慢（×0.25）| Reversing is slower than forward (×0.25)
         return new Vec3(str, v.y, fwd);
     }
@@ -51,7 +51,7 @@ public final class FlightRideAPI {
         // 地面：移动速度 × ridden_speed_factor，避免误用飞行速度导致地面飞快
         // On the ground: MOVEMENT_SPEED × ridden_speed_factor (never reuse the faster flying speed).
         return (float)(self.getAttributeValue(Attributes.MOVEMENT_SPEED)
-                * self.rideSpeedFactor);
+                * self.riding.speedFactor);
     }
 
     /** 对应 PlayerRideable#tickRidden —— 飞行/悬停时的垂直控制（空格升、V 降、无输入缓降） */
@@ -60,10 +60,10 @@ public final class FlightRideAPI {
         self.yRotO = self.yBodyRot = self.yHeadRot = self.getYRot();
         if (self.isFlying() || self.isHovering()) {
             float vert = KeyStateHelper.isJumpKeyDown(player)
-                    ? (float) self.rideVerticalUp
+                    ? (float) self.riding.verticalUp
                     : KeyStateHelper.isMountDescendDown(player)
-                    ? (float) self.rideVerticalDown
-                    : (float) self.rideVerticalHover;
+                    ? (float) self.riding.verticalDown
+                    : (float) self.riding.verticalHover;
             self.setDeltaMovement(self.getDeltaMovement().add(0, vert, 0));
         }
     }
@@ -80,11 +80,11 @@ public final class FlightRideAPI {
                 self.fallDistance = 0;
                 // 只在权威端（服务端 AI）或本地控制端移动，避免旁观客户端本地移动坐骑造成抖动
                 if (self.isEffectiveAi() || self.isControlledByLocalInstance()) {
-                    float s = (float)(getRiddenSpeed(self) * self.rideHorizontalFactor);
+                    float s = (float)(getRiddenSpeed(self) * self.riding.horizontalFactor);
                     self.moveRelative(s, new Vec3(v.x, 0, v.z));
                     self.move(MoverType.SELF, self.getDeltaMovement());
                 }
-                self.setDeltaMovement(self.getDeltaMovement().scale((float) self.rideInertiaDecay));
+                self.setDeltaMovement(self.getDeltaMovement().scale((float) self.riding.inertiaDecay));
                 if (self.getY() > self.level().getMaxBuildHeight() + 4)
                     self.setDeltaMovement(self.getDeltaMovement().add(0, -0.5, 0));
                 return true;
@@ -129,7 +129,7 @@ public final class FlightRideAPI {
         }
 
         // 骑乘时持续扇动翅膀（保持原视觉）
-        self.wingFlapTicks = (float)((self.wingFlapTicks + PonyEntity.GLOBAL_WING_FLAP_SPEED) % 360.0);
+        self.flight.flapWhileRidden();
         return true;
     }
 }
