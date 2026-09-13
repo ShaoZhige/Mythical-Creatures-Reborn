@@ -3,8 +3,9 @@ package com.shao.mythical_creatures_reborn.event;
 import com.shao.mythical_creatures_reborn.MythicalCreaturesMod;
 import com.shao.mythical_creatures_reborn.effect.ModEffects;
 import com.shao.mythical_creatures_reborn.item.ModItems;
+import com.shao.mythical_creatures_reborn.util.EffectGrants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -14,17 +15,26 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
- * 可爱标志 Buff：无限时长，1.5 秒检查一次，放入给予、取出移除。
- * 移除时只移除与可爱标志等级相同的效果，不影响外源高等 Buff。
+ * 可爱标志 Buff：无限时长，每 {@value #CHECK_INTERVAL} tick（1 秒）检查一次，放入给予、取出移除。
+ *
+ * <p>与套装的差异只在「怎么判断该不该有」：套装读的是装备槽，纯同步内存读、结果永远确定；
+ * 可爱标志还要额外查 Curios 饰品栏，而 Curios 的库存是 Capability，<b>可能未就绪或查询失败</b>。
+ * 因此 {@link #hasItem} 返回三态 —— 明确有 / 明确无 / 查不到（{@code null}），
+ * 只有拿到前两种<b>明确结论</b>时才通知 {@link EffectGrants}。</p>
+ *
+ * <p><b>本类不需要任何防抖机制。</b>只要把"查不到"如实报成 {@code null}（保持现状），
+ * 就不存在「偶发抖动导致误判取下」的问题。旧版曾用「连续 3 次未命中才移除」来掩盖它，
+ * 那只是因为当时把"查询失败"和"确实没有"混为一谈了；三态区分之后，
+ * 查询成功即真值（背包与 Curios 槽内容都是内存数据），可以放心立即生效 ——
+ * 摘下标志会<b>立刻</b>收回，不必等 3 秒。</p>
  */
 @Mod.EventBusSubscriber(modid = MythicalCreaturesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CutieMarkHandler {
@@ -34,11 +44,13 @@ public class CutieMarkHandler {
     /** 可爱标志 → 效果表 */
     private static final Map<RegistryObject<? extends Item>, EffectInfo[]> CUTIEMARK_EFFECTS = new LinkedHashMap<>();
 
-    /** 玩家 UUID → 各可爱标志的连续「未找到」计数，用于防抖移除 buff。 */
-    private static final Map<UUID, Map<Item, Integer>> MISS_COUNTERS = new HashMap<>();
-
-    /** 连续多少次（每次间隔 30 tick ≈ 1.5 秒）未找到可爱标志才移除其 buff。 */
-    private static final int REMOVE_AFTER_MISSES = 3;
+    /**
+     * 可爱标志的检查周期（tick）：20 tick = 1 秒。
+     *
+     * <p>这是<b>可爱标志自己的节奏</b>，与套装各管各的（目前两边都取 20，
+     * 但以后需要不同频率时可以各自调整，互不影响）。</p>
+     */
+    private static final int CHECK_INTERVAL = 20;
 
     static {
         CUTIEMARK_EFFECTS.put(ModItems.APPLEJACK_CUTIEMARK, new EffectInfo[]{
@@ -64,72 +76,68 @@ public class CutieMarkHandler {
         Player player = event.player;
         if (player.level().isClientSide) return;
 
-        if (player.tickCount % 30 != 0) return;
-
-        // 本次检查周期内每个可爱标志的「未找到」连续计数（按物品），
-        // 只有连续多次未找到才移除 buff，避免 Curios 查询偶发抖动导致 buff 闪烁。
-        Map<Item, Integer> missCounts = MISS_COUNTERS.computeIfAbsent(player.getUUID(), u -> new HashMap<>());
+        // 每 20 tick（1 秒）检查一次。套装那边的周期也是 20，两者在同一 tick 一起跑。
+        if (player.tickCount % CHECK_INTERVAL != 0) return;
 
         for (var entry : CUTIEMARK_EFFECTS.entrySet()) {
             Item item = entry.getKey().get();
-            boolean found = hasItem(player, item);
+            Boolean found = hasItem(player, item);
 
-            // 未找到：累计连续未命中次数；只有连续 N 次都未找到才判定为真正脱下/取出
-            int misses = found ? 0 : missCounts.getOrDefault(item, 0) + 1;
-            missCounts.put(item, misses);
-            if (!found && misses < REMOVE_AFTER_MISSES) continue;
+            // Curios 未就绪 / 查询失败 → 本轮无法判定，保持现状：
+            // 既不当作"没有"（那会误删玩家背着的标志的 buff），也不当作"有"。
+            if (found == null) continue;
+
+            // 来源标识：套装侧是 "set:<套装id>"，这里用 "cutiemark:<物品注册名>"，互不冲突。
+            String source = "cutiemark:" + BuiltInRegistries.ITEM.getKey(item);
 
             for (EffectInfo info : entry.getValue()) {
-                MobEffect type = info.effect().get();
-                int ourLevel = info.amplifier();
-
-                if (found) {
-                    // 已有 >= 自身的同种 buff：不做任何事（不刷新，避免重复 add 触发 HUD 抖动）
-                    // 已有但等级更低：addEffect 会以更高等级替换；没有：直接给予。
-                    MobEffectInstance existing = player.getEffect(type);
-                    if (existing != null && existing.getAmplifier() >= ourLevel) continue;
-                    player.addEffect(new MobEffectInstance(type, -1, ourLevel,
-                            false, false, true));
-                } else {
-                    // 仅移除可爱标志自身授予的无限时长（duration < 0）、且等级相同的 buff，
-                    // 不影响药水等外源同种 buff。
-                    MobEffectInstance current = player.getEffect(type);
-                    if (current != null && current.getAmplifier() == ourLevel
-                            && current.getDuration() < 0) {
-                        player.removeEffect(type);
-                    }
-                }
+                // found 已是明确结论：true 保证有、false 立刻收回
+                EffectGrants.autoPermanent(player, found, info.effect().get(),
+                        info.amplifier(), source);
             }
         }
     }
 
-    /** 玩家退出时清理其防抖计数，避免残留占用。 */
-    public static void clearPlayerState(UUID player) {
-        MISS_COUNTERS.remove(player);
-    }
-
-    private static boolean hasItem(Player player, Item item) {
+    /**
+     * 检查玩家是否携带指定的可爱标志 —— <b>两个来源缺一不可</b>：
+     * <ol>
+     *   <li><b>物品栏</b>：主背包 36 格（{@link Inventory#getContainerSize()} 覆盖的范围）；</li>
+     *   <li><b>饰品栏</b>：安装了 Curios 时的<b>所有</b>饰品槽（逐个槽类型、逐格检查）。</li>
+     * </ol>
+     * 两者是「或」的关系：放在任意一处都算携带，从一处移到另一处不会中断 buff。
+     *
+     * @return {@link Boolean#TRUE}/{@link Boolean#FALSE} = 明确的有 / 无；
+     *         {@code null} = <b>本次无法判定</b>（Curios Capability 未就绪，或库存查询抛异常）——
+     *         调用方必须保持现状，不能当作"没有"，否则会把玩家明明带着的标志误判成取下
+     */
+    @Nullable
+    private static Boolean hasItem(Player player, Item item) {
+        // 来源一：物品栏（同步内存读，结果永远可信）
         Inventory inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
-            if (inv.getItem(i).is(item)) return true;
+            if (inv.getItem(i).is(item)) return Boolean.TRUE;
         }
-        if (ModList.get().isLoaded("curios")) {
-            try {
-                var handler = CuriosApi.getCuriosInventory(player).resolve();
-                if (handler.isPresent()) {
-                    var curios = handler.get();
-                    for (var slotEntry : curios.getCurios().entrySet()) {
-                        for (int i = 0; i < slotEntry.getValue().getStacks().getSlots(); i++) {
-                            if (slotEntry.getValue().getStacks().getStackInSlot(i).is(item)) return true;
-                        }
-                    }
+        if (!ModList.get().isLoaded("curios")) return Boolean.FALSE;
+
+        // 来源二：Curios 饰品栏（所有槽类型）
+        try {
+            var handler = CuriosApi.getCuriosInventory(player).resolve();
+            // 🔴 Capability 尚未挂载时（玩家刚登录 / 换维度 / 初始化中）拿到的是 empty。
+            //    这是"查不到"，必须报 null —— 若当成"玩家没带"，buff 会被误删并来回闪。
+            if (handler.isEmpty()) return null;
+
+            var curios = handler.get();
+            for (var slotEntry : curios.getCurios().entrySet()) {
+                for (int i = 0; i < slotEntry.getValue().getStacks().getSlots(); i++) {
+                    if (slotEntry.getValue().getStacks().getStackInSlot(i).is(item)) return Boolean.TRUE;
                 }
-            } catch (Exception e) {
-                // Curios 的 inventory future 异常完成时会抛 CompletionException；此处仅跳过本次检查，避免每 30 tick 崩游戏。
-                org.apache.logging.log4j.LogManager.getLogger(CutieMarkHandler.class)
-                        .warn("Curios 库存查询失败，已跳过本次可爱标志检查", e);
             }
+        } catch (Exception e) {
+            // 库存 future 异常完成时抛 CompletionException —— 同样属于"查不到"，保持现状
+            org.apache.logging.log4j.LogManager.getLogger(CutieMarkHandler.class)
+                    .warn("Curios 库存查询失败，本次跳过可爱标志检查", e);
+            return null;
         }
-        return false;
+        return Boolean.FALSE;
     }
 }

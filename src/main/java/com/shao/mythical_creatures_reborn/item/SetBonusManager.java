@@ -1,6 +1,6 @@
 package com.shao.mythical_creatures_reborn.item;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.util.EffectGrants;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -139,9 +139,6 @@ public class SetBonusManager {
 
     private static final List<SetDef> SETS = new ArrayList<>();
 
-    /** 玩家 UUID → 套装当前授予的「效果|等级」键集合。用于脱下套装时只移除套装自身给过的效果，避免误删可爱标志等外源同名 buff。 */
-    private static final Map<UUID, Set<String>> OWNED_EFFECTS = new HashMap<>();
-
     /**
      * 在所有注册完成后调用，统一注册所有套装效果。
      * 被 {@code MythicalCreaturesMod.commonSetup} 调用。
@@ -152,8 +149,8 @@ public class SetBonusManager {
                 ModItems.APPLEJACK_LEGGINGS, ModItems.APPLEJACK_BOOTS,
                 bonuses().id("applejack").build(),
                 (player, wearing) -> {
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 1);
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.REGENERATION, 1);
+                    maintainEffect(player, wearing, "applejack", net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 1);
+                    maintainEffect(player, wearing, "applejack", net.minecraft.world.effect.MobEffects.REGENERATION, 1);
                 });
 
         // === 紫悦套装 — 全套 +25 最大生命 ===
@@ -165,28 +162,16 @@ public class SetBonusManager {
         registerSet("bowsers", "库巴套装", ModItems.BOWSERS_HELMET, ModItems.BOWSERS_CHESTPLATE,
                 ModItems.BOWSERS_LEGGINGS, ModItems.BOWSERS_BOOTS,
                 bonuses().id("bowsers").maxHealth(15.0).build(),
-                (player, wearing) -> {
-                    if (wearing) {
-                        if (!player.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) {
-                            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                                    net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE,
-                                    -1, 0, false, false, true));
-                        }
-                    } else {
-                        // 仅移除套装自身授予的无限时长防火（duration<0），避免误删抗火药水的外源 buff
-                        var cur = player.getEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
-                        if (cur != null && cur.getDuration() < 0)
-                            player.removeEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
-                    }
-                });
+                (player, wearing) -> maintainEffect(player, wearing, "bowsers",
+                        net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 0));
 
         // === 碧琪套装 — 速度 III + 急迫 II ===
         registerSet("pinkie_pie", "碧琪套装", ModItems.PINKIE_PIE_HELMET, ModItems.PINKIE_PIE_CHESTPLATE,
                 ModItems.PINKIE_PIE_LEGGINGS, ModItems.PINKIE_PIE_BOOTS,
                 bonuses().id("pinkie_pie").build(),
                 (player, wearing) -> {
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 2);
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.DIG_SPEED, 1);
+                    maintainEffect(player, wearing, "pinkie_pie", net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 2);
+                    maintainEffect(player, wearing, "pinkie_pie", net.minecraft.world.effect.MobEffects.DIG_SPEED, 1);
                 });
 
         // === 柔柔套装 — 生命恢复 I + 伤害吸收 I ===
@@ -194,27 +179,30 @@ public class SetBonusManager {
                 ModItems.FLUTTERSHY_LEGGINGS, ModItems.FLUTTERSHY_BOOTS,
                 bonuses().id("fluttershy").build(),
                 (player, wearing) -> {
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.REGENERATION, 0);
-                    maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.ABSORPTION, 0);
+                    maintainEffect(player, wearing, "fluttershy", net.minecraft.world.effect.MobEffects.REGENERATION, 0);
+                    maintainEffect(player, wearing, "fluttershy", net.minecraft.world.effect.MobEffects.ABSORPTION, 0);
                 });
 
         // === 熊皮套装 — 力量 I ===
         registerSet("bear_fur", "熊皮套装", ModItems.BEAR_FUR_HELMET, ModItems.BEAR_FUR_CHESTPLATE,
                 ModItems.BEAR_FUR_LEGGINGS, ModItems.BEAR_FUR_BOOTS,
                 bonuses().id("bear_fur").build(),
-                (player, wearing) -> maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 0));
+                (player, wearing) -> maintainEffect(player, wearing, "bear_fur",
+                        net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 0));
 
         // === 苹果套装 — 饱和 ===
         registerSet("apple", "苹果套装", ModItems.APPLE_HELMET, ModItems.APPLE_CHESTPLATE,
                 ModItems.APPLE_LEGGINGS, ModItems.APPLE_BOOTS,
                 bonuses().id("apple").build(),
-                (player, wearing) -> maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.SATURATION, 0));
+                (player, wearing) -> maintainEffect(player, wearing, "apple",
+                        net.minecraft.world.effect.MobEffects.SATURATION, 0));
 
         // === 黑晶套装 — 夜视 + 攻击伤害 +3 ===
         registerSet("dark_crystal", "黑晶套装", ModItems.DARK_CRYSTAL_HELMET, ModItems.DARK_CRYSTAL_CHESTPLATE,
                 ModItems.DARK_CRYSTAL_LEGGINGS, ModItems.DARK_CRYSTAL_BOOTS,
                 bonuses().id("dark_crystal").attackDamage(3.0).build(),
-                (player, wearing) -> maintainEffect(player, wearing, net.minecraft.world.effect.MobEffects.NIGHT_VISION, 0));
+                (player, wearing) -> maintainEffect(player, wearing, "dark_crystal",
+                        net.minecraft.world.effect.MobEffects.NIGHT_VISION, 0));
 
         // === 云宝套装 — 飞行 + 免疫摔落（摔落在 ModEvents 处理） ===
         registerSet("rainbow_dash", "云宝套装", ModItems.RAINBOW_DASH_HELMET, ModItems.RAINBOW_DASH_CHESTPLATE,
@@ -234,35 +222,26 @@ public class SetBonusManager {
     }
 
     /**
-     * 维护一个套装授予的无限时长药水效果：穿齐时若无则给予（amplifier 0=1级，1=2级…），
-     * 脱下时仅移除套装自身授予的（duration<0 且 amplifier 匹配），不误删外源 buff（药水等 duration>0）。
-     * <p>
-     * 通过 {@link #OWNED_EFFECTS} 记录「套装确实给过」的效果，脱下时只在记录存在时才移除；
-     * 这样可爱标志（CutieMarkHandler）等其它系统授予的同名同等级无限 buff 不会被误删，
-     * 避免两者在 tick 里互相移除/补回导致 buff 闪烁。
-     * </p>
+     * 套装效果的检查周期（tick）：20 tick = 1 秒。
+     *
+     * <p>{@code ModEvents} 用它驱动周期检查。这是<b>套装自己的节奏</b> —— 与可爱标志各管各的
+     * （目前两边都取 20，但以后需要不同频率时可以各自调整，互不影响）。</p>
      */
-    private static void maintainEffect(Player player, boolean wearing,
-                                       net.minecraft.world.effect.MobEffect effect, int amplifier) {
-        String key = BuiltInRegistries.MOB_EFFECT.getKey(effect) + "|" + amplifier;
-        Set<String> owned = OWNED_EFFECTS.computeIfAbsent(player.getUUID(), u -> new HashSet<>());
-        var cur = player.getEffect(effect);
-        if (wearing) {
-            if (cur == null) {
-                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect, -1, amplifier, false, false, true));
-            }
-            owned.add(key);
-        } else {
-            // 只有套装自己之前授予过这个效果，才移除它；否则跳过（可能是可爱标志给的）
-            if (owned.remove(key) && cur != null && cur.getDuration() < 0 && cur.getAmplifier() == amplifier) {
-                player.removeEffect(effect);
-            }
-        }
-    }
+    public static final int CHECK_INTERVAL = 20;
 
-    /** 玩家退出时清理套装效果所有权记录，避免残留占用。 */
-    public static void clearPlayerState(UUID player) {
-        OWNED_EFFECTS.remove(player);
+    /**
+     * 自动添加 / 移除套装授予的永久药水效果。
+     *
+     * <p>把「是否穿齐」这个判断直接交给 {@link EffectGrants#autoPermanent}：<b>穿齐就保证有，
+     * 脱下就立刻收回</b>，不需要在这里写 else 分支，也不需要轮询式的心跳超时。
+     * 来源标识用套装 ID，因此不同套装给同名效果时各自独立记账，
+     * 与可爱标志等同名来源也不会互相误删、不会来回反复给。</p>
+     *
+     * @param setId 套装 ID，用作来源标识 {@code "set:<id>"}
+     */
+    private static void maintainEffect(Player player, boolean wearing, String setId,
+                                       net.minecraft.world.effect.MobEffect effect, int amplifier) {
+        EffectGrants.autoPermanent(player, wearing, effect, amplifier, "set:" + setId);
     }
 
     /**

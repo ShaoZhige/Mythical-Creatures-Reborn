@@ -2,11 +2,11 @@ package com.shao.mythical_creatures_reborn.entity;
 
 import com.shao.mythical_creatures_reborn.effect.ModEffects;
 import com.shao.mythical_creatures_reborn.item.ModItems;
+import com.shao.mythical_creatures_reborn.util.EffectGrants;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -58,10 +58,10 @@ public class PreciousGemEntity extends ModThrowableProjectile {
             if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
                 // 低直接伤害（投掷物伤害源）
                 target.hurt(this.damageSources().thrown(this, this.getOwner()), IMPACT_DAMAGE);
-                // 流血 + 修补各 3 秒。原版 addEffect 对同等级效果会刷新到更长持续时间，
+                // 流血 + 修补各 3 秒。限时效果在同等级再次命中时会刷新到更长时长（原版 addEffect 语义），
                 // 因此 3 秒内再次命中即等于「重置计数」（重新回到满 3 秒）。
-                target.addEffect(new MobEffectInstance(ModEffects.BLEEDING.get(), EFFECT_DURATION, 0));
-                target.addEffect(new MobEffectInstance(ModEffects.REPAIR.get(), EFFECT_DURATION, 0));
+                EffectGrants.timed(target, ModEffects.BLEEDING.get(), EFFECT_DURATION, 0);
+                EffectGrants.timed(target, ModEffects.REPAIR.get(), EFFECT_DURATION, 0);
             }
         }
 
