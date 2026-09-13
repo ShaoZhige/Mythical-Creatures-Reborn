@@ -42,6 +42,10 @@ public class EquipmentConfigHandler {
         UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), // CHEST
         UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"), // HEAD
     };
+    // 武器修饰符 UUID：具体值不重要（绿色数值由 tooltip 事件重渲染负责，不依赖 UUID 引用相等），
+    // 只需保持稳定，避免同一属性上重复挂载修饰器。
+    private static final UUID WEAPON_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+    private static final UUID WEAPON_ATTACK_SPEED_UUID  = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
     @SubscribeEvent
     public static void onItemAttributes(ItemAttributeModifierEvent event) {
@@ -104,7 +108,7 @@ public class EquipmentConfigHandler {
         // 修饰器用什么 UUID 不重要（绿色是 tooltip 事件重渲染负责），但用稳定的常量避免重复。
         event.removeAttribute(Attributes.ATTACK_DAMAGE);
         event.addModifier(Attributes.ATTACK_DAMAGE,
-            new AttributeModifier(UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF"), "config",
+            new AttributeModifier(WEAPON_ATTACK_DAMAGE_UUID, "config",
                 atk - 1.0, AttributeModifier.Operation.ADDITION));
     }
 
@@ -119,7 +123,7 @@ public class EquipmentConfigHandler {
         // (speed - 4.0)，因此这里也要加 (speed - 4.0)，否则显示/实际攻速会变成 speed + 4.0。
         event.removeAttribute(Attributes.ATTACK_SPEED);
         event.addModifier(Attributes.ATTACK_SPEED,
-            new AttributeModifier(UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3"), "config",
+            new AttributeModifier(WEAPON_ATTACK_SPEED_UUID, "config",
                 speed - 4.0, AttributeModifier.Operation.ADDITION));
     }
 

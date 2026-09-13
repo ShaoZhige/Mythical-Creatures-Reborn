@@ -1,53 +1,18 @@
 package com.shao.mythical_creatures_reborn.client;
 
 import com.shao.mythical_creatures_reborn.MythicalCreaturesMod;
-import com.shao.mythical_creatures_reborn.client.model.TwilightMagicModel;
-import com.shao.mythical_creatures_reborn.client.renderer.ApplejackRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.BearEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.CockatriceEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.FluttershyEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.GarbleEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.HolyLightRadianceEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.KingbowserEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.ParaspriteEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.PhoenixEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.PinkiePieEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RainbowBeamRenderer;
 import com.shao.mythical_creatures_reborn.client.renderer.MagicBurstRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RainbowDashRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RarityEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.TwilightMagicRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.TwilightSparkleRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.UrsamajorEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.BuffaloEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.ChiefThunderhoovesEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.BlackWidowEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.LeviathanEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.CentipedeEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.HydraEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.WindigoEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.BabyMooseEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.AdultMooseEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.ToughGuyEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.MavisEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.ManticoreEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RainbowCentipedeEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.ArcticScorpionEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.TimberWolfEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.CrabzillaEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.IronWillEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.SkullOfDoomEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.PrinceRutherfordEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.SpikezillaEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RhinocerosEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.RobotSombraEntityRenderer;
-import com.shao.mythical_creatures_reborn.client.renderer.CragadileEntityRenderer;
-import com.shao.mythical_creatures_reborn.entity.ModEntities;
+import com.shao.mythical_creatures_reborn.client.renderer.RainbowBeamRenderer;
 import com.shao.mythical_creatures_reborn.client.renderer.ScaledThrownItemRenderer;
+import com.shao.mythical_creatures_reborn.client.renderer.SimpleGeoRenderer;
+import com.shao.mythical_creatures_reborn.entity.MobCatalog;
+import com.shao.mythical_creatures_reborn.entity.ModEntities;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.SeparateTransformsModel;
 import com.shao.mythical_creatures_reborn.client.model.TooltipPreview3DModel;
@@ -59,66 +24,53 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import com.shao.mythical_creatures_reborn.client.gui.MainConfigScreen;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 
 @Mod.EventBusSubscriber(modid = MythicalCreaturesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
 
+    /**
+     * 实体渲染器注册。
+     *
+     * <p>投掷物 / 特效仍逐个登记（它们不是 GeckoLib 生物）；所有 GeckoLib 生物统一由
+     * {@link MobCatalog#ALL} 驱动，渲染资源名（geo / 贴图 / 动画）都写在元数据表里，
+     * 这里不再逐个写死。</p>
+     */
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        // ── 投掷物 / 视觉特效（无 GeckoLib 模型，走原版 ThrownItemRenderer）──
         event.registerEntityRenderer(ModEntities.TWILIGHT_STAR.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.UNSTABLE_ITEM.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_CLOUD.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.APPLE_PROJECTILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.TWILIGHT_SPARKLE.get(), TwilightSparkleRenderer::new);
-        event.registerEntityRenderer(ModEntities.RAINBOW_DASH.get(), RainbowDashRenderer::new);
-        event.registerEntityRenderer(ModEntities.APPLEJACK.get(), ApplejackRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_DASH_SLASH.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.RAINBOW_BEAM.get(), RainbowBeamRenderer::new);
         event.registerEntityRenderer(ModEntities.MAGIC_BURST.get(), MagicBurstRenderer::new);
         event.registerEntityRenderer(ModEntities.PHOENIX_FEATHER.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.METEOR_FIREBALL.get(),
                 ctx -> new ScaledThrownItemRenderer<>(ctx, 2.0F));
-
-        // 趣味投掷物
         event.registerEntityRenderer(ModEntities.BALLOON_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.BUTTERFLY_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.CUPCAKE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.PRECIOUS_GEM_PROJECTILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.TWILIGHT_MAGIC.get(), TwilightMagicRenderer::new);
-        event.registerEntityRenderer(ModEntities.BEAR.get(), BearEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.COCKATRICE.get(), CockatriceEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.GARBLE.get(), GarbleEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.KINGBOWSER_9000.get(), KingbowserEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.PARASPRITE.get(), ParaspriteEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.PHOENIX.get(), PhoenixEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.URSA_MAJOR.get(), UrsamajorEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.FLUTTERSHY.get(), FluttershyEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.HOLY_LIGHT_RADIANCE.get(), HolyLightRadianceEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.PINKIE_PIE.get(), PinkiePieEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.RARITY.get(), RarityEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.BUFFALO.get(), BuffaloEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.CHIEF_THUNDERHOOVES.get(), ChiefThunderhoovesEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.BLACK_WIDOW_SPIDER.get(), BlackWidowEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.LEVIATHAN.get(), LeviathanEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.CENTIPEDE.get(), CentipedeEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.HYDRA.get(), HydraEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.WINDIGO.get(), WindigoEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.BABY_MOOSE.get(), BabyMooseEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.ADULT_MOOSE.get(), AdultMooseEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.TOUGH_GUY.get(), ToughGuyEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.MAVIS.get(), MavisEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.MANTICORE.get(), ManticoreEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.RAINBOW_CENTIPEDE.get(), RainbowCentipedeEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.ARCTIC_SCORPION.get(), ArcticScorpionEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.TIMBER_WOLF.get(), TimberWolfEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.CRABZILLA.get(), CrabzillaEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.IRON_WILL.get(), IronWillEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.SKULL_OF_DOOM.get(), SkullOfDoomEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.PRINCE_RUTHERFORD.get(), PrinceRutherfordEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.SPIKEZILLA.get(), SpikezillaEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.RHINOCEROS.get(), RhinocerosEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.ROBOT_SOMBRA.get(), RobotSombraEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.CRAGADILE.get(), CragadileEntityRenderer::new);
+
+        // ── 生物：由 MobCatalog 元数据表驱动（新增生物不需要动这里）──
+        for (MobCatalog.MobDef<?> mob : MobCatalog.ALL) {
+            registerMobRenderer(event, mob);
+        }
+    }
+
+    /** 捕获通配符：把 {@link MobCatalog.Mob} 的具体实体类型传进泛型的 {@code registerEntityRenderer}。 */
+    private static <T extends Mob & GeoAnimatable> void registerMobRenderer(
+            EntityRenderersEvent.RegisterRenderers event, MobCatalog.MobDef<T> mob) {
+        EntityType<T> type = mob.type().get();
+        String base = mob.renderBase();
+        String animation = mob.animation();
+        if (mob.cullDisabled()) {
+            event.registerEntityRenderer(type, ctx -> SimpleGeoRenderer.noCull(ctx, base));
+        } else {
+            event.registerEntityRenderer(type, ctx -> new SimpleGeoRenderer<>(ctx, base, animation));
+        }
     }
 
     /** 注册3D模型，使 forge:separate_transforms 能引用它 */

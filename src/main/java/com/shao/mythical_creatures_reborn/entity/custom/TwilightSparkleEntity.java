@@ -47,13 +47,7 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
     @Override protected int    getFlightDurationMax()   { return MythicalConfig.DATA.getInt("mythical_creatures_reborn:twilight_sparkle", "fly_duration_max", 150); }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH,  (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "move_speed"))
-                .add(Attributes.FLYING_SPEED,   (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "fly_speed"))
-                .add(Attributes.ATTACK_DAMAGE,  (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_sparkle", "armor"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.flying("mythical_creatures_reborn:twilight_sparkle");
     }
 
     @Override protected void defineSynchedData() {

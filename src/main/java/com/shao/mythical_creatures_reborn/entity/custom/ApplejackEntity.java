@@ -34,12 +34,7 @@ public class ApplejackEntity extends NeutralPonyEntity implements PlayerRideable
     @Override @Nullable protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.APPLEJACK_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH,      MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:applejack", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED,  MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:applejack", "move_speed"))
-                .add(Attributes.ATTACK_DAMAGE,   MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:applejack", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:applejack", "armor"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.of("mythical_creatures_reborn:applejack");
     }
 
     /* ════════════════════════════════════════════════════════════════

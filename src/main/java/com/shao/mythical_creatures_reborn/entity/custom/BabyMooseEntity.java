@@ -31,12 +31,7 @@ public class BabyMooseEntity extends HostilePonyEntity {
     protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:baby_moose", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:baby_moose", "move_speed"))
-                .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:baby_moose", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:baby_moose", "armor"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.of("mythical_creatures_reborn:baby_moose");
     }
 
     @Override

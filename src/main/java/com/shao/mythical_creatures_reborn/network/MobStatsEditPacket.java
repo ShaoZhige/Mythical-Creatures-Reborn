@@ -48,6 +48,9 @@ public class MobStatsEditPacket {
             if (msg.reset) {
                 MobStatsManager.reset(msg.target, msg.key);
             } else {
+                // 入参来自客户端，必须校验：readDouble 能把 NaN / ±Infinity 原样解出来，
+                // 一旦写进 common.toml 会让该条 override（乃至整份配置）失去意义。
+                if (!Double.isFinite(msg.value) || msg.target.isBlank() || msg.key.isBlank()) return;
                 MobStatsManager.set(msg.target, msg.key, msg.value, msg.comment);
             }
             // 改动仅在内存，落盘由 MobStatsSavePacket 触发；配置重启后生效，无需实时 apply。

@@ -42,13 +42,7 @@ public class RainbowDashEntity extends NeutralPonyEntity {
     @Override protected int    getFlightDurationMax()   { return MythicalConfig.DATA.getInt("mythical_creatures_reborn:rainbow_dash", "fly_duration_max", 250); }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "move_speed"))
-                .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "fly_speed"))
-                .add(Attributes.ATTACK_DAMAGE, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:rainbow_dash", "armor"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.flying("mythical_creatures_reborn:rainbow_dash");
     }
 
     @Override protected void defineSynchedData() {

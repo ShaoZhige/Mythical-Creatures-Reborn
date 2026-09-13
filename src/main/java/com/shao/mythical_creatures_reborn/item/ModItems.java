@@ -26,6 +26,19 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, MythicalCreaturesMod.MODID);
 
+    // ==================== 装备属性修饰符 UUID ====================
+    // 修饰符 UUID 是属性修饰器的唯一标识：同一件护甲的不同槽位必须用不同 UUID，
+    // 否则后加的修饰器会覆盖先加的。这些值一经发布就不能再改 —— 改了会让玩家
+    // 已经拿到的装备属性叠加错乱。
+    private static final UUID AJ_KB_HELMET      = UUID.fromString("a01b01c1-d111-e111-f111-000000000111");
+    private static final UUID AJ_KB_CHESTPLATE  = UUID.fromString("a02b02c2-d222-e222-f222-000000000222");
+    private static final UUID AJ_KB_LEGGINGS    = UUID.fromString("a03b03c3-d333-e333-f333-000000000333");
+    private static final UUID AJ_KB_BOOTS       = UUID.fromString("a04b04c4-d444-e444-f444-000000000444");
+    private static final UUID RD_SPD_HELMET     = UUID.fromString("b01c01d1-e111-f111-a111-000000000555");
+    private static final UUID RD_SPD_CHESTPLATE = UUID.fromString("b02c02d2-e222-f222-a222-000000000666");
+    private static final UUID RD_SPD_LEGGINGS   = UUID.fromString("b03c03d3-e333-f333-a333-000000000777");
+    private static final UUID RD_SPD_BOOTS      = UUID.fromString("b04c04d4-e444-f444-a444-000000000888");
+
     // ==================== 零、方块 (10) ====================
 
     public static final RegistryObject<Item> APPLE_BLOCK = ITEMS.register("apple_block",
@@ -284,30 +297,30 @@ public class ModItems {
     // AppleJack Armor — 每件 +0.05 击退抗性
     public static final RegistryObject<ArmorItem> APPLEJACK_HELMET = ITEMS.register("applejack_helmet",
             () -> new ModArmorItem(ModArmorMaterials.APPLEJACK_ARMOR, ArmorItem.Type.HELMET, new Item.Properties(),
-                    kbMod(0.05, UUID.fromString("a01b01c1-d111-e111-f111-000000000111")), "applejack"));
+                    kbMod(0.05, AJ_KB_HELMET), "applejack"));
     public static final RegistryObject<ArmorItem> APPLEJACK_CHESTPLATE = ITEMS.register("applejack_chestplate",
             () -> new ModArmorItem(ModArmorMaterials.APPLEJACK_ARMOR, ArmorItem.Type.CHESTPLATE, new Item.Properties(),
-                    kbMod(0.05, UUID.fromString("a02b02c2-d222-e222-f222-000000000222")), "applejack"));
+                    kbMod(0.05, AJ_KB_CHESTPLATE), "applejack"));
     public static final RegistryObject<ArmorItem> APPLEJACK_LEGGINGS = ITEMS.register("applejack_leggings",
             () -> new ModArmorItem(ModArmorMaterials.APPLEJACK_ARMOR, ArmorItem.Type.LEGGINGS, new Item.Properties(),
-                    kbMod(0.05, UUID.fromString("a03b03c3-d333-e333-f333-000000000333")), "applejack"));
+                    kbMod(0.05, AJ_KB_LEGGINGS), "applejack"));
     public static final RegistryObject<ArmorItem> APPLEJACK_BOOTS = ITEMS.register("applejack_boots",
             () -> new ModArmorItem(ModArmorMaterials.APPLEJACK_ARMOR, ArmorItem.Type.BOOTS, new Item.Properties(),
-                    kbMod(0.05, UUID.fromString("a04b04c4-d444-e444-f444-000000000444")), "applejack"));
+                    kbMod(0.05, AJ_KB_BOOTS), "applejack"));
 
     // Rainbow Dash Armor — 每件 +0.15 移动速度（乘算）
     public static final RegistryObject<ArmorItem> RAINBOW_DASH_HELMET = ITEMS.register("rainbow_dash_helmet",
             () -> new ModArmorItem(ModArmorMaterials.DASH, ArmorItem.Type.HELMET, new Item.Properties(),
-                    spdMod(0.15, UUID.fromString("b01c01d1-e111-f111-a111-000000000555")), "rainbow_dash"));
+                    spdMod(0.15, RD_SPD_HELMET), "rainbow_dash"));
     public static final RegistryObject<ArmorItem> RAINBOW_DASH_CHESTPLATE = ITEMS.register("rainbow_dash_chestplate",
             () -> new ModArmorItem(ModArmorMaterials.DASH, ArmorItem.Type.CHESTPLATE, new Item.Properties(),
-                    spdMod(0.15, UUID.fromString("b02c02d2-e222-f222-a222-000000000666")), "rainbow_dash"));
+                    spdMod(0.15, RD_SPD_CHESTPLATE), "rainbow_dash"));
     public static final RegistryObject<ArmorItem> RAINBOW_DASH_LEGGINGS = ITEMS.register("rainbow_dash_leggings",
             () -> new ModArmorItem(ModArmorMaterials.DASH, ArmorItem.Type.LEGGINGS, new Item.Properties(),
-                    spdMod(0.15, UUID.fromString("b03c03d3-e333-f333-a333-000000000777")), "rainbow_dash"));
+                    spdMod(0.15, RD_SPD_LEGGINGS), "rainbow_dash"));
     public static final RegistryObject<ArmorItem> RAINBOW_DASH_BOOTS = ITEMS.register("rainbow_dash_boots",
             () -> new ModArmorItem(ModArmorMaterials.DASH, ArmorItem.Type.BOOTS, new Item.Properties(),
-                    spdMod(0.15, UUID.fromString("b04c04d4-e444-f444-a444-000000000888")), "rainbow_dash"));
+                    spdMod(0.15, RD_SPD_BOOTS), "rainbow_dash"));
 
     // ---- 属性辅助方法 ----
     private static Multimap<net.minecraft.world.entity.ai.attributes.Attribute, AttributeModifier> kbMod(double v, UUID id) {

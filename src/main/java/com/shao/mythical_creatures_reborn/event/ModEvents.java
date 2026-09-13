@@ -11,13 +11,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 @Mod.EventBusSubscriber(modid = MythicalCreaturesMod.MODID)
 public class ModEvents {
 
-    private static final Map<Player, Integer> tickCounter = new WeakHashMap<>();
+    /** 套装加成的兜底检查周期（tick）。 */
+    private static final int SET_BONUS_CHECK_INTERVAL = 20;
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
@@ -26,22 +24,23 @@ public class ModEvents {
         }
     }
 
-    /** 定期检查：每 20 tick 一次，覆盖登录/重生等未触发装备变更事件的边缘情况 */
+    /**
+     * 定期检查：每 {@value #SET_BONUS_CHECK_INTERVAL} tick 一次，覆盖登录/重生等未触发装备变更事件的边缘情况。
+     *
+     * <p>直接用实体自带的 {@link Player#tickCount} 取模，不需要再自己维护一张
+     * 「玩家 → 计数器」的 WeakHashMap（原先每 tick 对每个玩家做一次 map 读写，纯属多余状态）。</p>
+     */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
-        int count = tickCounter.getOrDefault(player, 0) + 1;
-        tickCounter.put(player, count);
-        if (count % 20 == 0) {
-            SetBonusManager.checkAllSets(player);
+        if (event.player.tickCount % SET_BONUS_CHECK_INTERVAL == 0) {
+            SetBonusManager.checkAllSets(event.player);
         }
     }
 
-    /** 退出时清理计数器与坐骑按键状态，避免 WeakHashMap / Map 暂留 */
+    /** 退出时清理坐骑按键等其他模块的玩家级状态，避免 WeakHashMap / Map 暂留 */
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        tickCounter.remove(event.getEntity());
         KeyStateHelper.clearDescendState(event.getEntity().getUUID());
         KeyStateHelper.clearJumpState(event.getEntity().getUUID());
         CutieMarkHandler.clearPlayerState(event.getEntity().getUUID());

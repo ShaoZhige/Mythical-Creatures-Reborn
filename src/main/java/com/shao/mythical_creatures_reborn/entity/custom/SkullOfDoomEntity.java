@@ -122,13 +122,7 @@ public class SkullOfDoomEntity extends HostilePonyEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:skull_of_doom", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:skull_of_doom", "move_speed"))
-                .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:skull_of_doom", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:skull_of_doom", "armor"))
-                .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:skull_of_doom", "fly_speed"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.flying("mythical_creatures_reborn:skull_of_doom");
     }
 
     @Override public void performRangedAttack(LivingEntity target, float power) {}

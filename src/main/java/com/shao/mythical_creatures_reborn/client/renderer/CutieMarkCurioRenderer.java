@@ -70,7 +70,10 @@ public class CutieMarkCurioRenderer implements ICurioRenderer {
                 var stacks = curios.get("cutie_mark");
                 return index < stacks.getSlots() && !stacks.getStacks().getStackInSlot(index).isEmpty();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // 这里是渲染路径，每帧都会走到，刻意不写日志以免刷屏：
+            // Curios 未安装 / 库存查询异常时一律按「槽位为空」处理。
+        }
         return false;
     }
 

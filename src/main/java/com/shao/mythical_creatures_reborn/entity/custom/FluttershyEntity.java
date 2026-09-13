@@ -29,13 +29,7 @@ public class FluttershyEntity extends NeutralPonyEntity {
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
     @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:fluttershy", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:fluttershy", "move_speed"))
-                .add(Attributes.FLYING_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:fluttershy", "fly_speed"))
-                .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:fluttershy", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:fluttershy", "armor"))
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("global_params", "follow_range", 16.0));
+        return PonyAttributes.flying("mythical_creatures_reborn:fluttershy");
     }
     @Override protected void defineSynchedData() { super.defineSynchedData(); defineFlyData(); }
     @Override public void performRangedAttack(LivingEntity target, float power) {

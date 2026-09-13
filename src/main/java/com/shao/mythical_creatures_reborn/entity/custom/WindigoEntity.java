@@ -73,17 +73,12 @@ public class WindigoEntity extends HostilePonyEntity {
     protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.WINDIGO_HURT.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "move_speed"))
-                .add(Attributes.ATTACK_DAMAGE, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "attack_damage"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "armor"))
+        // 索敌距离 = 射程(40)的两倍，与飞行小马的比例一致（射程16/索敌32）；
+        // 用雪魔专属键，避免被 global_params.follow_range 的默认值(32)拉低。
+        return PonyAttributes.scoped(TamableAnimal.createMobAttributes(), "mythical_creatures_reborn:windigo", 80.0)
                 // 飞行速度：canFly()=true 时由 applyCoreStats 注入 FLYING_SPEED 属性，这里也显式声明，
                 // 否则该属性不存在、雪魔静默 0 速飞不起来（与末日颅骨同理）。
-                .add(Attributes.FLYING_SPEED, (float) MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:windigo", "fly_speed"))
-                // 索敌距离 = 射程(40)的两倍，与飞行小马的比例一致（射程16/索敌32）；
-                // 用雪魔专属键，避免被 global_params.follow_range 的默认值(32)拉低。
-                .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("mythical_creatures_reborn:windigo", "follow_range", 80.0))
+                .add(Attributes.FLYING_SPEED, PonyAttributes.flySpeed("mythical_creatures_reborn:windigo"))
                 // 满击退抗性：不被爆炸/击退/近战连击推走，防止被"控距"风筝致死或炸得下不来。
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }

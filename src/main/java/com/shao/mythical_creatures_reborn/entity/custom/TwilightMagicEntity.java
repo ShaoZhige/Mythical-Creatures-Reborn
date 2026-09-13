@@ -106,11 +106,10 @@ public class TwilightMagicEntity extends Mob implements GeoEntity {
     public void setRemainingFireTicks(int ticks) { /* 免疫着火 */ }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "max_health"))
-                .add(Attributes.MOVEMENT_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "move_speed"))
-                .add(Attributes.ARMOR, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "armor"))
-                .add(Attributes.FLYING_SPEED, MythicalConfig.DATA.entityAttr("mythical_creatures_reborn:twilight_magic", "fly_speed"))
+        // 不注册 ATTACK_DAMAGE：紫悦之杖召唤物不做近战攻击（保持原属性表不变）。
+        // 跟随范围用自身键（20），不受 global_params.follow_range 影响。
+        return PonyAttributes.coreNoAttack(Mob.createMobAttributes(), "mythical_creatures_reborn:twilight_magic")
+                .add(Attributes.FLYING_SPEED, PonyAttributes.flySpeed("mythical_creatures_reborn:twilight_magic"))
                 .add(Attributes.FOLLOW_RANGE, MythicalConfig.DATA.get("mythical_creatures_reborn:twilight_magic", "follow_range", 20.0));
     }
 

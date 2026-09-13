@@ -247,6 +247,12 @@ public class MythicalConfig {
                 String attr   = String.valueOf(list.get(1)).trim();
                 try {
                     double val = ((Number) list.get(2)).doubleValue();
+                    // TOML 允许 nan / inf 字面量，手改配置或恶意网络包都可能带进来；
+                    // 非有限值会让属性变成 NaN（实体位置/血量立刻失控），直接忽略并告警。
+                    if (!Double.isFinite(val)) {
+                        LOGGER.warn("override 数值非有限（NaN/Infinity），已忽略: {} -> {}", target, attr);
+                        continue;
+                    }
                     parsed.computeIfAbsent(target, k -> new HashMap<>()).put(attr, val);
                     if (list.size() >= 4 && list.get(3) instanceof String c && !c.isEmpty())
                         comments.computeIfAbsent(target, k -> new HashMap<>()).put(attr, c);
@@ -330,6 +336,11 @@ public class MythicalConfig {
 
         /** 写回单条 override（含可选注释），仅更新内存（实时预览用），落盘由 persistIfDirty() 完成 */
         public void setOverride(String target, String attr, double value, String comment) {
+            // 第二道闸：网络包入口已拦过一次，这里兜住任何程序化写入（NaN 会让属性彻底失效）。
+            if (!Double.isFinite(value)) {
+                LOGGER.warn("拒绝写入非有限数值（NaN/Infinity）: {} -> {}", target, attr);
+                return;
+            }
             parsed.computeIfAbsent(target, k -> new HashMap<>()).put(attr, value);
             if (comment != null && !comment.isEmpty())
                 comments.computeIfAbsent(target, k -> new HashMap<>()).put(attr, comment);
@@ -386,7 +397,10 @@ public class MythicalConfig {
             Path path = cfg.getFullPath();
             try {
                 Files.copy(path, Paths.get(path + ".bak"), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException ignored) {}
+            } catch (IOException e) {
+                // 备份失败不该阻断保存流程，但要让玩家知道 .bak 没写成（原先静默吞掉，出问题无从查起）
+                LOGGER.warn("备份 common.toml 失败（{} 未更新）: {}", path + ".bak", e.getMessage());
+            }
             try {
                 cfg.getConfigData().set("overrides", list);
                 cfg.save();
