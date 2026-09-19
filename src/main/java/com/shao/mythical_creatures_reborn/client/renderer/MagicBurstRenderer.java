@@ -91,7 +91,7 @@ public class MagicBurstRenderer extends EntityRenderer<MagicBurstEntity> {
     @Override
     public void render(MagicBurstEntity entity, float entityYaw, float partialTicks,
                        PoseStack stack, MultiBufferSource buffer, int packedLight) {
-        float t = Math.min(1.0F, (entity.getAge() + partialTicks) / (float) MagicBurstEntity.LIFE);
+        float t = Math.min(1.0F, (entity.getAge() + partialTicks) / (float) MagicBurstEntity.life());
         if (t <= 0.0F || t >= 1.0F) return;
 
         if (IrisCompat.isShaderPackActive()) {
@@ -104,7 +104,7 @@ public class MagicBurstRenderer extends EntityRenderer<MagicBurstEntity> {
 
     /** 实际绘制魔法爆发。供常规渲染与 Oculus 延迟渲染两种路径共用。 */
     public static void drawBurst(PoseStack stack, MultiBufferSource buffer, MagicBurstEntity entity, float partialTicks) {
-        float t = Math.min(1.0F, (entity.getAge() + partialTicks) / (float) MagicBurstEntity.LIFE);
+        float t = Math.min(1.0F, (entity.getAge() + partialTicks) / (float) MagicBurstEntity.life());
         if (t <= 0.0F || t >= 1.0F) return;
 
         Matrix4f m = stack.last().pose();

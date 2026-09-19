@@ -17,13 +17,14 @@ import java.util.*;
  * 通用配置编辑器的数据层 | Data layer for the generic config editor.
  * <p>
  * 与「覆盖式配置」共用唯一数据源 {@link MythicalConfig#DATA}：这里只负责
- * ① 按「分类(生物/物品/全局)」枚举可编辑对象与它们真正支持的属性；
+ * ① 按「分类(生物/物品/投掷物/全局)」枚举可编辑对象与它们真正支持的属性；
  * ② 构建对象×属性的快照供 GUI 展示；③ 把 GUI 改动写回 {@code common.toml} 的 overrides。
  * <p>
- * 三类对象共用同一个 overrides 列表（第 4 元为可选注释），读取方法分别为
- * {@code entityAttr}（生物）/ {@code equipAttr}（物品）/ {@code get("global_params",…)}（全局）。
+ * 四类对象共用同一个 overrides 列表（第 4 元为可选注释），读取方法分别为
+ * {@code entityAttr}（生物）/ {@code equipAttr}（物品）/ {@code projectileAttr}（投掷物）/
+ * {@code get("global_params",…)}（全局）。
  * 所有改动「重启后生效」——生物在构造时读配置、物品在 ItemAttributeModifierEvent 读配置、
- * 全局在各处 fallback 读配置，因此无需实时 apply 逻辑。
+ * 投掷物在命中时读配置、全局在各处 fallback 读配置，因此无需实时 apply 逻辑。
  * <p>
  * 修正了参考分支的取值 bug：默认值查询必须为 {@code target + "|" + attr}，
  * 而非 {@code target + "|" + target}（后者会让未手写 override 的属性静默归零）。
@@ -33,9 +34,9 @@ public final class MobStatsManager {
     /** 全局参数在 overrides 里的注册名 | The registry key used for global params */
     public static final String GLOBAL = "global_params";
 
-    /** 可编辑对象的三大分类 | The three editable categories */
+    /** 可编辑对象的四大分类 | The four editable categories */
     public enum Category {
-        ENTITY, ITEM, GLOBAL
+        ENTITY, ITEM, PROJECTILE, GLOBAL
     }
 
     /* ============================================================
@@ -59,10 +60,55 @@ public final class MobStatsManager {
     /** 实体核心属性（所有生物都消费：applyCoreStats / createAttributes）：生命 / 移速 / 攻击 / 护甲 */
     private static final List<String> CORE_KEYS = List.of("max_health", "move_speed", "attack_damage", "armor");
 
+    /** 纯特效实体（非生物，只有视觉/临时效果，没有血量等生物属性可调）。只暴露它们登记的技能键。 */
+    private static final List<String> FX_ONLY = List.of("mythical_creatures_reborn:magic_burst");
+
     /** 骑乘/飞行调参键（仅当实体在 ENTITY_DEFAULTS 里有对应默认值时才暴露） */
     private static final List<String> TUNING_KEYS = List.of(
             "ridden_speed_factor", "vertical_up", "vertical_down", "vertical_hover",
             "horizontal_factor", "inertia_decay", "jump_height");
+
+    /**
+     * 技能 / AI 调参键（仅当实体在 ENTITY_DEFAULTS 里登记了对应默认值时才暴露）。
+     * <p>
+     * 这些原先是各 Goal 类里的 {@code private static final} 魔法数字（雪魔冲刺、麋鹿冲撞、
+     * 穗龙斯拉横扫、末日颅骨俯冲）。登记到配置后即可在编辑器里改，无需改代码。
+     * ⚠️ 新增技能键必须同时加进本列表**和** {@code MythicalConfig.D} 的默认值登记，
+     * 否则 GUI 不会显示（keysOf 只暴露有默认值的键）。
+     */
+    private static final List<String> ABILITY_KEYS = List.of(
+            // 麋鹿：邻近防御
+            "proximity_range",
+            // 冲锋类（雪魔 / 麋鹿）
+            "charge_damage_mult", "charge_speed", "charge_duration", "charge_cooldown", "charge_min_dist",
+            "trigger_odds", "aggro_buildup", "aggro_decay_interval", "destroy_radius", "hit_radius", "drop_chance",
+            // 雪魔：空中追击与霰弹
+            "hover_min_dist", "hover_max_dist", "hover_offset",
+            "shot_count_min", "shot_count_max", "shot_spread",
+            // 穗龙斯拉：横扫
+            "sweep_damage_mult", "sweep_half_angle", "sweep_knockback", "sweep_knockback_y",
+            "sweep_cooldown", "sweep_windup",
+            // 末日颅骨：俯冲
+            "dive_speed", "climb_speed", "dive_trigger_range", "dive_max_ticks",
+            "climb_ticks", "dive_cooldown", "dive_hit_inflate",
+            // 紫悦：魔法团召唤与施法特效
+            "summon_chance", "summon_count", "summon_cooldown", "burst_particles",
+            // 特效实体（魔法爆发）寿命
+            "life"
+    );
+
+    /**
+     * 投掷物可改数值（仅当该投掷物在 PROJECTILE_DEFAULTS 里登记了对应键时才暴露）。
+     * <p>
+     * 投掷物没有 Attribute 体系，伤害是命中时直接 {@code hurt()}，因此单独一张表。
+     */
+    private static final List<String> PROJECTILE_KEYS = List.of(
+            "damage", "impact_damage", "magic_damage",      // 伤害（不同投掷物用不同名字，语义相同）
+            "hit_radius", "mob_shot_lifetime",              // 通用（projectile_params）
+            "fire_seconds", "effect_duration", "frost_trigger_chance",
+            "beam_length", "beam_size", "damage_interval",
+            "range", "area_x", "area_z", "area_y_up", "area_y_down"
+    );
 
     /** 物品——武器/工具（TieredItem）可改属性 */
     private static final List<String> WEAPON_KEYS = List.of("attack_damage", "attack_speed", "max_damage");
@@ -81,6 +127,15 @@ public final class MobStatsManager {
             case ENTITY -> {
                 Set<String> ids = new LinkedHashSet<>();
                 for (String k : MythicalConfig.D.ENTITY_DEFAULTS.keySet()) {
+                    int i = k.indexOf('|');
+                    if (i > 0) ids.add(k.substring(0, i));
+                }
+                out.addAll(ids);
+            }
+            case PROJECTILE -> {
+                // 投掷物 + 通用参数（projectile_params）共用同一张表，按登记顺序去重
+                Set<String> ids = new LinkedHashSet<>();
+                for (String k : MythicalConfig.D.PROJECTILE_DEFAULTS.keySet()) {
                     int i = k.indexOf('|');
                     if (i > 0) ids.add(k.substring(0, i));
                 }
@@ -105,10 +160,21 @@ public final class MobStatsManager {
         List<String> keys = new ArrayList<>();
         switch (cat) {
             case ENTITY -> {
-                keys.addAll(CORE_KEYS);
-                if (MythicalConfig.D.ENTITY_DEFAULTS.containsKey(target + "|fly_speed")) keys.add("fly_speed");
-                for (String k : TUNING_KEYS)
+                // 纯特效实体（如魔法爆发）不是生物，不暴露核心四项，只暴露它登记的技能键（如 life）
+                boolean fxOnly = FX_ONLY.contains(target);
+                if (!fxOnly) {
+                    keys.addAll(CORE_KEYS);
+                    if (MythicalConfig.D.ENTITY_DEFAULTS.containsKey(target + "|fly_speed")) keys.add("fly_speed");
+                    for (String k : TUNING_KEYS)
+                        if (MythicalConfig.D.ENTITY_DEFAULTS.containsKey(target + "|" + k)) keys.add(k);
+                }
+                // 技能/AI 调参：只暴露该实体登记过的
+                for (String k : ABILITY_KEYS)
                     if (MythicalConfig.D.ENTITY_DEFAULTS.containsKey(target + "|" + k)) keys.add(k);
+            }
+            case PROJECTILE -> {
+                for (String k : PROJECTILE_KEYS)
+                    if (MythicalConfig.D.PROJECTILE_DEFAULTS.containsKey(target + "|" + k)) keys.add(k);
             }
             case ITEM -> {
                 Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(target));
@@ -124,6 +190,7 @@ public final class MobStatsManager {
     public static double defaultOf(String target, String key, Category cat) {
         return switch (cat) {
             case ENTITY -> MythicalConfig.D.ENTITY_DEFAULTS.getOrDefault(target + "|" + key, 0.0);
+            case PROJECTILE -> MythicalConfig.D.PROJECTILE_DEFAULTS.getOrDefault(target + "|" + key, 0.0);
             case GLOBAL -> GLOBAL_DEFAULTS.getOrDefault(key, 0.0);
             case ITEM -> itemDefault(target, key);
         };
@@ -159,6 +226,7 @@ public final class MobStatsManager {
     public static double currentOf(String target, String key, Category cat) {
         return switch (cat) {
             case ENTITY -> MythicalConfig.DATA.entityAttr(target, key);
+            case PROJECTILE -> MythicalConfig.DATA.projectileAttr(target, key);
             case GLOBAL -> MythicalConfig.DATA.get(target, key, GLOBAL_DEFAULTS.getOrDefault(key, 0.0));
             case ITEM -> MythicalConfig.DATA.equipAttr(target, key);
         };
@@ -168,7 +236,7 @@ public final class MobStatsManager {
      * 快照构建 | Snapshot building
      * ============================================================ */
 
-    /** 全量快照：三类 × 所有候选对象 × 各自支持的属性（用于打开编辑器时下发） */
+    /** 全量快照：四类 × 所有候选对象 × 各自支持的属性（用于打开编辑器时下发） */
     public static List<Target> buildSnapshot() {
         List<Target> out = new ArrayList<>();
         for (Category cat : Category.values()) {

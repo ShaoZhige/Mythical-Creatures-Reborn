@@ -67,7 +67,7 @@ public class ClientSetup {
         String base = mob.renderBase();
         String animation = mob.animation();
         if (mob.cullDisabled()) {
-            event.registerEntityRenderer(type, ctx -> SimpleGeoRenderer.noCull(ctx, base));
+            event.registerEntityRenderer(type, ctx -> SimpleGeoRenderer.noCull(ctx, base, animation));
         } else {
             event.registerEntityRenderer(type, ctx -> new SimpleGeoRenderer<>(ctx, base, animation));
         }

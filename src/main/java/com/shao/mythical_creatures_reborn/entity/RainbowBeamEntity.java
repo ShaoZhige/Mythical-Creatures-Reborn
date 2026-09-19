@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.item.RainbowDashSword;
 import net.minecraft.client.Minecraft;
@@ -24,9 +25,21 @@ import java.util.UUID;
 
 public class RainbowBeamEntity extends Projectile {
 
-    private static final float BEAM_LENGTH = 14.0F;
-    private static final float BEAM_SIZE = 0.6F;
-    private static final float DAMAGE = 8.0F;
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:rainbow_beam";
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|beam_length}（可在配置编辑器「投掷物」分类里改） */
+    private static float beamLength() { return (float) MythicalConfig.DATA.projectileAttr(PID, "beam_length"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|beam_size}（可在配置编辑器「投掷物」分类里改） */
+    private static float beamSize() { return (float) MythicalConfig.DATA.projectileAttr(PID, "beam_size"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float damage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "damage"); }
+
+    
+    
+    
     private static final int DAMAGE_INTERVAL = 4;
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID =
@@ -61,7 +74,7 @@ public class RainbowBeamEntity extends Projectile {
     }
 
     public static float getBeamLength() {
-        return BEAM_LENGTH;
+        return beamLength();
     }
 
     public float getSpinAngle() {
@@ -112,14 +125,14 @@ public class RainbowBeamEntity extends Projectile {
         if (tickCount % DAMAGE_INTERVAL == 0) {
             Vec3 origin = this.position();
             Vec3 dir = Vec3.directionFromRotation(this.getXRot(), this.getYRot());
-            Vec3 end = origin.add(dir.scale(BEAM_LENGTH));
+            Vec3 end = origin.add(dir.scale(beamLength()));
 
-            AABB beamBox = new AABB(origin, end).inflate(BEAM_SIZE);
+            AABB beamBox = new AABB(origin, end).inflate(beamSize());
             for (LivingEntity target : this.level().getEntitiesOfClass(LivingEntity.class, beamBox,
                     e -> e != owner && e.isAlive()
                         && !(e instanceof TamableAnimal ta && ta.isOwnedBy(owner)))) {
                 if (target.getBoundingBox().clip(origin, end).isPresent()) {
-                    target.hurt(this.damageSources().magic(), DAMAGE);
+                    target.hurt(this.damageSources().magic(), damage());
                     target.invulnerableTime = 0;
                 }
             }

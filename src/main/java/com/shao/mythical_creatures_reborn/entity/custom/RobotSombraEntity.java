@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 public class RobotSombraEntity extends HostilePonyEntity {
 
@@ -21,16 +20,7 @@ public class RobotSombraEntity extends HostilePonyEntity {
     @Override protected boolean canFly() { return false; }
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
-    // 机械黑晶王沿用铁傀儡音效：受击 / 死亡 / 脚步均为铁傀儡音；环境音为 null（铁傀儡本就无环境音）。
-    // Robot Sombra reuses Iron Golem sounds: hurt / death / step are Iron Golem; ambient stays null (golem is silent).
-    @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
-    @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return SoundEvents.IRON_GOLEM_HURT; }
-
-    @Override
-    protected net.minecraft.sounds.SoundEvent getDeathSound() { return SoundEvents.IRON_GOLEM_DEATH; }
-
+    // 语音（环境音 null / 受伤·死亡 = 铁傀儡音）已收进 EntitySoundProfiles 总表统一管理，这里不再覆写。
     // 脚步音：基类 PonyEntity 把 playStepSound 置空（小马无声），这里特意改回铁傀儡脚步声。
     // Step sound: base PonyEntity silences playStepSound; override it back to Iron Golem steps.
     @Override

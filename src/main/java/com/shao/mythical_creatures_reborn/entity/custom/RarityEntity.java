@@ -63,8 +63,6 @@ public class RarityEntity extends NeutralPonyEntity implements PlayerRideableJum
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.RY_TAMING, com.shao.mythical_creatures_reborn.item.ModItems.RARITY_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return PonyAttributes.of("mythical_creatures_reborn:rarity");
     }

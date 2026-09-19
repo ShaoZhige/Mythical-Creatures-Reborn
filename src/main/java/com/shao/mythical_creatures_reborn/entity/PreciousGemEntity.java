@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.effect.ModEffects;
 import com.shao.mythical_creatures_reborn.item.ModItems;
@@ -24,11 +25,20 @@ import net.minecraft.world.phys.Vec3;
  */
 public class PreciousGemEntity extends ModThrowableProjectile {
 
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:precious_gem_projectile";
+
+    /** 取自配置 {@code mythical_creatures_reborn:precious_gem_projectile|impact_damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float impactDamage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "impact_damage"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:precious_gem_projectile|effect_duration}（可在配置编辑器「投掷物」分类里改） */
+    private static int effectDuration() { return (int) MythicalConfig.DATA.projectileAttr(PID, "effect_duration"); }
+
     /** 直接伤害刻意压低：主要输出靠命中后的流血 buff。 */
-    private static final float IMPACT_DAMAGE = 4.0F;
+    
 
     /** 流血 / 修补 buff 持续时间（tick）：3 秒。 */
-    private static final int EFFECT_DURATION = 60; // 20 tick/s × 3s
+    
 
     private boolean hasHit = false;
 
@@ -57,11 +67,11 @@ public class PreciousGemEntity extends ModThrowableProjectile {
             EntityHitResult ehr = (EntityHitResult) result;
             if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
                 // 低直接伤害（投掷物伤害源）
-                target.hurt(this.damageSources().thrown(this, this.getOwner()), IMPACT_DAMAGE);
+                target.hurt(this.damageSources().thrown(this, this.getOwner()), impactDamage());
                 // 流血 + 修补各 3 秒。限时效果在同等级再次命中时会刷新到更长时长（原版 addEffect 语义），
                 // 因此 3 秒内再次命中即等于「重置计数」（重新回到满 3 秒）。
-                EffectGrants.timed(target, ModEffects.BLEEDING.get(), EFFECT_DURATION, 0);
-                EffectGrants.timed(target, ModEffects.REPAIR.get(), EFFECT_DURATION, 0);
+                EffectGrants.timed(target, ModEffects.BLEEDING.get(), effectDuration(), 0);
+                EffectGrants.timed(target, ModEffects.REPAIR.get(), effectDuration(), 0);
             }
         }
 

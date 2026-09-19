@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.sounds.SoundEvent;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -157,8 +158,11 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     private static final EntityDataAccessor<Boolean> DATA_ATTACK_ANIM =
             SynchedEntityData.defineId(PonyEntity.class, EntityDataSerializers.BOOLEAN);
 
-    /** 攻击动画的动画名：两个导出文件（spikezilla / windigo）里均为 attack。 */
+    /** 攻击动画的动画名：所有导出文件里攻击片段都叫 {@code attack}。 */
     private static final String ATTACK_ANIM = "attack";
+
+    /** 近战命中触发的攻击动画剩余 tick（服务端倒计时，见 {@link #doHurtTarget}）。 */
+    private int attackAnimTicks;
 
     @Override
     protected void defineSynchedData() {
@@ -176,6 +180,47 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         return this.entityData.get(DATA_ATTACK_ANIM);
     }
 
+    /**
+     * 该生物**是否有** {@code attack} 片段。默认 false。
+     *
+     * <p>只有真正导出了 attack 动画的类才该覆写为 true：没有片段却去请求它，会让状态机
+     * 每一帧都走一次"找不到动画"的降级路径（见 {@code SimpleGeoModel#getAnimation}），
+     * 播放器会因此被打断、观感上原地卡顿。</p>
+     */
+    protected boolean hasAttackAnimation() { return false; }
+
+    /** 近战命中后攻击动画的保持时长（tick）；本项目 attack 片段多为 0.8s，放在它附近。 */
+    protected int getAttackAnimationTicks() { return 16; }
+
+    /**
+     * 近战命中即播放攻击动画。
+     *
+     * <p>为什么挂在 {@code doHurtTarget} 上：原版 {@code MeleeAttackGoal} 打出伤害的唯一出口就是
+     * 这里，所以任何近战生物（含子类自己换的攻击 Goal，只要它走 doHurtTarget）都能白拿一份
+     * 「攻击时抬手」的表现，不必给每个生物单独写攻击 Goal。</p>
+     *
+     * <p>子类若另有攻击 Goal 自己管理 {@code setAttackAnimation}（例如穗龙斯拉横扫、雪魔冲锋），
+     * 两者共用同一个同步位、互不冲突：Goal 在 stop() 里清位，本倒计时到点也清位。</p>
+     */
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        boolean hit = super.doHurtTarget(target);
+        if (hit && hasAttackAnimation()) {
+            this.attackAnimTicks = getAttackAnimationTicks();
+            setAttackAnimation(true);
+        }
+        return hit;
+    }
+
+    /** 攻击动画倒计时（服务端）；只在置位后递减，避免干扰由 Goal 自己管理的攻击动画。 */
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide && this.attackAnimTicks > 0 && --this.attackAnimTicks == 0) {
+            setAttackAnimation(false);
+        }
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main", 5, this::predicate));
@@ -186,8 +231,9 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
         // On death, stop the animation so the corpse is handled by the vanilla death animation
         // instead of looping idle in place.
         if (!this.isAlive()) return PlayState.STOP;
-        // 攻击动画优先级最高：横扫 / 冲锋期间播放 attack（thenPlay 只播一遍，播完停在末帧）
-        if (this.isAttackAnimationPlaying()) {
+        // 攻击动画优先级最高：横扫 / 冲锋 / 近战命中期间播放 attack（thenPlay 只播一遍，播完停在末帧）。
+        // 只在真的有 attack 片段的生物上生效（见 hasAttackAnimation），否则会每帧请求一个不存在的动画。
+        if (hasAttackAnimation() && this.isAttackAnimationPlaying()) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(ATTACK_ANIM));
             return PlayState.CONTINUE;
         }
@@ -380,6 +426,29 @@ public abstract class PonyEntity extends TamableAnimal implements GeoEntity, Ran
     @Override public boolean causeFallDamage(float distance, float multiplier, DamageSource source) { return false; }
     @Override protected void playStepSound(BlockPos pos, BlockState state) {}
     @Override public int getAmbientSoundInterval() { return 200; }
+
+    /* ================================================================
+     * 语音（统一入口）
+     *  全模组生物的环境音 / 受伤音 / 死亡音 / 音量 / 音高集中在
+     *  {@link EntitySoundProfiles} 一张表里，此处统一读取 —— 避免在 37 个实体类里各写一份。
+     *  子类需要特殊表现时（如末日颅骨用爆炸音）仍可自行覆写。
+     * ================================================================ */
+
+    /** 本生物的语音配置（按注册名查表）。 */
+    protected EntitySoundProfiles.Profile soundProfile() {
+        return EntitySoundProfiles.of(entityId());
+    }
+
+    @Override protected SoundEvent getAmbientSound() { return soundProfile().ambientEvent(); }
+
+    @Override protected SoundEvent getHurtSound(DamageSource source) { return soundProfile().hurtEvent(); }
+
+    @Override protected SoundEvent getDeathSound() { return soundProfile().deathEvent(); }
+
+    @Override protected float getSoundVolume() { return soundProfile().volume(); }
+
+    // 注意：getVoicePitch() 在 LivingEntity 中是 public，覆写时不能收窄为 protected
+    @Override public float getVoicePitch() { return soundProfile().pitch(); }
 
     /* ================================================================
      * 飞行同步数据 & 状态（委托 PonyFlight）

@@ -1,4 +1,7 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -23,24 +26,25 @@ import java.util.EnumSet;
  */
 public class SkullDiveAttackGoal extends Goal {
 
+    /* ── 数值来自配置（键 = 本实体注册名；可在编辑器的「生物」分类里改）──
+       所有 cfg/cfgInt 都带原硬编码值作 fallback，配置缺失时行为与改动前完全一致。 */
+    private String eid() {
+        ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(this.mob.getType());
+        return rl == null ? "" : rl.toString();
+    }
+
+    private double cfg(String key, double fallback) {
+        return MythicalConfig.DATA.get(eid(), key, fallback);
+    }
+
+    private int cfgInt(String key, int fallback) {
+        return (int) cfg(key, fallback);
+    }
+
     private final SkullOfDoomEntity mob;
 
-    /** 俯冲速度（方块/tick） */
-    private static final double DIVE_SPEED = 0.6D;
-    /** 拉起爬升速度（方块/tick） */
-    private static final double CLIMB_SPEED = 0.32D;
-    /** 进入俯冲的最大距离（格） */
-    private static final double TRIGGER_RANGE = 20.0D;
-    /** 单次俯冲最长时间（tick），超时自动拉起，避免追不上时贴地打转 */
-    private static final int MAX_DIVE_TICKS = 50;
-    /** 命中 / 超时后的拉起爬升时长（tick） */
-    private static final int CLIMB_TICKS = 30;
-    /** 两次俯冲之间的冷却（tick） */
-    private static final int COOLDOWN_TICKS = 15;
     /** 命中后攻击动画保持时长（tick） */
     private static final int ATTACK_ANIM_TICKS = 10;
-    /** 命中判定在双方碰撞箱半宽基础上额外放宽的距离（格） */
-    private static final double HIT_INFLATE = 1.0D;
 
     private enum Phase { DIVE, CLIMB, DONE }
 
@@ -63,7 +67,7 @@ public class SkullDiveAttackGoal extends Goal {
         if (!(this.mob.isFlying() || this.mob.isHovering())) return false;
         LivingEntity target = this.mob.getTarget();
         if (target == null || !target.isAlive() || !this.mob.canAttack(target)) return false;
-        return this.mob.distanceTo(target) <= TRIGGER_RANGE;
+        return this.mob.distanceTo(target) <= cfg("dive_trigger_range", 20.0);
     }
 
     @Override
@@ -86,7 +90,7 @@ public class SkullDiveAttackGoal extends Goal {
         this.timer = 0;
         this.mob.setDiving(false);
         if (this.animTicks > 0) { this.animTicks = 0; this.mob.setAttackAnimation(false); }
-        this.cooldown = COOLDOWN_TICKS;
+        this.cooldown = cfgInt("dive_cooldown", 15);
     }
 
     @Override
@@ -100,7 +104,7 @@ public class SkullDiveAttackGoal extends Goal {
                 // 瞄向目标身体中心（脚底 + 半高），保证撞击点落在身体上而非脚下
                 Vec3 aim = new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ());
                 Vec3 delta = aim.subtract(this.mob.position());
-                double reach = (this.mob.getBbWidth() + target.getBbWidth()) * 0.5D + HIT_INFLATE;
+                double reach = (this.mob.getBbWidth() + target.getBbWidth()) * 0.5D + cfg("dive_hit_inflate", 1.0);
                 if (delta.lengthSqr() <= reach * reach) {
                     // 接触：造成一次近战伤害并播放攻击动画
                     if (this.mob.doHurtTarget(target)) {
@@ -108,16 +112,16 @@ public class SkullDiveAttackGoal extends Goal {
                         this.animTicks = ATTACK_ANIM_TICKS;
                     }
                     beginClimb();
-                } else if (++this.timer >= MAX_DIVE_TICKS) {
+                } else if (++this.timer >= cfgInt("dive_max_ticks", 50)) {
                     beginClimb();
                 } else {
-                    this.mob.setDeltaMovement(delta.normalize().scale(DIVE_SPEED));
+                    this.mob.setDeltaMovement(delta.normalize().scale(cfg("dive_speed", 0.6)));
                     this.mob.getLookControl().setLookAt(target, 40.0F, 40.0F);
                 }
             }
             case CLIMB -> {
-                this.mob.setDeltaMovement(0.0D, CLIMB_SPEED, 0.0D);
-                if (++this.timer >= CLIMB_TICKS) this.phase = Phase.DONE;
+                this.mob.setDeltaMovement(0.0D, cfg("climb_speed", 0.32), 0.0D);
+                if (++this.timer >= cfgInt("climb_ticks", 30)) this.phase = Phase.DONE;
             }
             default -> { }
         }
@@ -127,6 +131,6 @@ public class SkullDiveAttackGoal extends Goal {
     private void beginClimb() {
         this.phase = Phase.CLIMB;
         this.timer = 0;
-        this.mob.setDeltaMovement(0.0D, CLIMB_SPEED, 0.0D);
+        this.mob.setDeltaMovement(0.0D, cfg("climb_speed", 0.32), 0.0D);
     }
 }

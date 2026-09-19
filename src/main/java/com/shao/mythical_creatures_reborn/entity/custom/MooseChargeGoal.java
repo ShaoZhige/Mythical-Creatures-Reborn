@@ -1,4 +1,7 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -31,18 +34,21 @@ import java.util.Set;
  */
 public class MooseChargeGoal extends Goal {
 
-    /** 一次冲锋持续 tick 数（约 2 秒 @20tps） */
-    private static final int CHARGE_DURATION = 40;
-    /** 冲锋结束后的冷却 tick 数（约 1.25 秒），防止刚停下又立刻再冲 */
-    private static final int COOLDOWN = 25;
-    /** 每 tick 触发冲锋的随机门槛：1/25 ≈ 4%，约每 ~1.5 秒（含冷却）在持有目标时随机起冲一次 */
-    private static final int TRIGGER_ODDS = 25;
-    /** 起冲所需最小距离：太近没空间冲刺，交给近战处理 */
-    private static final double MIN_CHARGE_DIST = 1.8D;
-    /** 冲锋水平速度（MC 标准单位，高于 walk 0.22） */
-    private static final double CHARGE_SPEED = 1.1D;
-    /** 冲锋伤害 = 实体攻击力 × 此倍率（8.0 → 20.0） */
-    private static final double CHARGE_DAMAGE_MULT = 2.5D;
+    /* ── 数值来自配置（键 = 本实体注册名；可在编辑器的「生物」分类里改）──
+       所有 cfg/cfgInt 都带原硬编码值作 fallback，配置缺失时行为与改动前完全一致。 */
+    private String eid() {
+        ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(this.moose.getType());
+        return rl == null ? "" : rl.toString();
+    }
+
+    private double cfg(String key, double fallback) {
+        return MythicalConfig.DATA.get(eid(), key, fallback);
+    }
+
+    private int cfgInt(String key, int fallback) {
+        return (int) cfg(key, fallback);
+    }
+
 
     private final AdultMooseEntity moose;
     private int chargeTime;
@@ -65,14 +71,14 @@ public class MooseChargeGoal extends Goal {
         LivingEntity target = this.moose.getTarget();
         if (target == null || !target.isAlive()) return false;
         // 太近则不起冲，避免原地空撞
-        if (this.moose.distanceToSqr(target) < MIN_CHARGE_DIST * MIN_CHARGE_DIST) return false;
-        return this.moose.getRandom().nextInt(TRIGGER_ODDS) == 0;
+        if (this.moose.distanceToSqr(target) < cfg("charge_min_dist", 1.8) * cfg("charge_min_dist", 1.8)) return false;
+        return this.moose.getRandom().nextInt(cfgInt("trigger_odds", 25)) == 0;
     }
 
     @Override
     public void start() {
-        this.chargeTime = CHARGE_DURATION;
-        this.chargeDamage = this.moose.getAttributeValue(Attributes.ATTACK_DAMAGE) * CHARGE_DAMAGE_MULT;
+        this.chargeTime = cfgInt("charge_duration", 40);
+        this.chargeDamage = this.moose.getAttributeValue(Attributes.ATTACK_DAMAGE) * cfg("charge_damage_mult", 2.5);
         this.hitThisCharge.clear();
     }
 
@@ -84,7 +90,7 @@ public class MooseChargeGoal extends Goal {
 
     @Override
     public void stop() {
-        this.cooldown = COOLDOWN;
+        this.cooldown = cfgInt("charge_cooldown", 25);
     }
 
     @Override
@@ -100,9 +106,9 @@ public class MooseChargeGoal extends Goal {
         double dist = Math.sqrt(dx * dx + dz * dz);
         if (dist > 1e-4) {
             this.moose.setDeltaMovement(
-                    dx / dist * CHARGE_SPEED,
+                    dx / dist * cfg("charge_speed", 1.1),
                     this.moose.getDeltaMovement().y(),
-                    dz / dist * CHARGE_SPEED);
+                    dz / dist * cfg("charge_speed", 1.1));
         }
         this.moose.getLookControl().setLookAt(target, 30.0F, 30.0F);
 

@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,8 +15,17 @@ import net.minecraft.world.phys.HitResult;
 
 public class PhoenixFeatherEntity extends ModThrowableProjectile {
 
-    private static final float DAMAGE = 6.0F;
-    private static final int FIRE_SECONDS = 5;
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:phoenix_feather";
+
+    /** 取自配置 {@code mythical_creatures_reborn:phoenix_feather|damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float damage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "damage"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:phoenix_feather|fire_seconds}（可在配置编辑器「投掷物」分类里改） */
+    private static int fireSeconds() { return (int) MythicalConfig.DATA.projectileAttr(PID, "fire_seconds"); }
+
+    
+    
 
     public PhoenixFeatherEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
@@ -34,8 +44,8 @@ public class PhoenixFeatherEntity extends ModThrowableProjectile {
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         if (!this.level().isClientSide) {
-            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), DAMAGE);
-            result.getEntity().setRemainingFireTicks(FIRE_SECONDS * 20);
+            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), damage());
+            result.getEntity().setRemainingFireTicks(fireSeconds() * 20);
         }
     }
 

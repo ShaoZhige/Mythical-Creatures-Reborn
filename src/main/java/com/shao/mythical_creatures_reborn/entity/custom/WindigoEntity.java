@@ -130,7 +130,13 @@ public class WindigoEntity extends HostilePonyEntity {
     public void performRangedAttack(LivingEntity target, float power) {
         if (this.level().isClientSide() || target == null || !target.isAlive()) return;
 
-        int count = 15 + this.random.nextInt(11); // 15..25
+        // 霰弹颗数与散布：取自配置（shot_count_min / shot_count_max / shot_spread），
+        // 缺省 15~25 颗、散布 0.1（与改动前一致）。max 会被夹到不小于 min，避免配错导致区间非法。
+        int shotMin = (int) MythicalConfig.DATA.entityAttr(entityId(), "shot_count_min");
+        int shotMax = (int) MythicalConfig.DATA.entityAttr(entityId(), "shot_count_max");
+        if (shotMin <= 0) shotMin = 15;
+        if (shotMax < shotMin) shotMax = shotMin;
+        int count = shotMin + this.random.nextInt(shotMax - shotMin + 1);
         double sx = this.getX();
         double sy = this.getY(0.5D);
         double sz = this.getZ();
@@ -143,7 +149,7 @@ public class WindigoEntity extends HostilePonyEntity {
         aim = aim.normalize();
 
         double speed = 2.0D; // 弹速（原 1.5，现 2.0）
-        double spread = 0.1D; // 随机分布幅度（弧度级，决定散布锥半角）
+        double spread = MythicalConfig.DATA.entityAttr(entityId(), "shot_spread"); // 随机分布幅度（散布锥半角）
 
         this.level().playSound(null, sx, sy, sz,
                 SoundEvents.ENDER_PEARL_THROW, net.minecraft.sounds.SoundSource.NEUTRAL, 0.3F,

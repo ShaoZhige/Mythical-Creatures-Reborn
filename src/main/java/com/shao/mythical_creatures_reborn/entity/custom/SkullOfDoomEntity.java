@@ -84,6 +84,13 @@ public class SkullOfDoomEntity extends HostilePonyEntity {
         defineFlyData();
     }
 
+    /**
+     * 末日颅骨**没有** {@code attack} 片段（skullofdoom.animation.json 只有 idle / fly），
+     * 俯冲扑击的表现完全由位移承担（对齐原版幻翼）。覆写回 false，免得状态机每帧去请求一个
+     * 不存在的动画名 —— 那会让动画控制器反复停摆，反而把悬停动作也打断。
+     */
+    @Override protected boolean hasAttackAnimation() { return false; }
+
     /** 驱动自主飞行状态机（蜜蜂式悬停）；俯冲期间跳过，交由 SkullDiveAttackGoal 独占移动。 */
     @Override public void tick() {
         super.tick();

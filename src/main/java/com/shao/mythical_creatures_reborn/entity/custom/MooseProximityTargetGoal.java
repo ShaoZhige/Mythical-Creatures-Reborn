@@ -1,4 +1,7 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +34,16 @@ public class MooseProximityTargetGoal extends TargetGoal {
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }
 
+    /* ── 配置读取：proximity_range 覆盖构造参数传入的半径（配置缺失则用传入值）── */
+    private String eid() {
+        ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(this.mob.getType());
+        return rl == null ? "" : rl.toString();
+    }
+
+    private double activeRadius() {
+        return MythicalConfig.DATA.get(eid(), "proximity_range", this.radius);
+    }
+
     @Override
     public boolean canUse() {
         LivingEntity cur = this.mob.getTarget();
@@ -60,9 +73,9 @@ public class MooseProximityTargetGoal extends TargetGoal {
 
     @Nullable
     private LivingEntity findNearest() {
-        AABB box = this.mob.getBoundingBox().inflate(this.radius);
+        AABB box = this.mob.getBoundingBox().inflate(activeRadius());
         LivingEntity best = null;
-        double bestDistSq = this.radius * this.radius;
+        double bestDistSq = activeRadius() * activeRadius();
         for (LivingEntity e : this.mob.level().getEntitiesOfClass(LivingEntity.class, box)) {
             if (e == this.mob) continue;
             if (MooseHerd.isMoose(e)) continue;                       // 不攻击同类

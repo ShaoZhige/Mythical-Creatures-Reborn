@@ -117,6 +117,47 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> GARBLE_HURT =
             register("entity.garble.hurt");
 
+    /* ================================================================
+     * 共享音效 | Shared sounds
+     *  原先 13 个生物完全没有声音、且几乎没有生物有死亡音。这里补一组按「音色」而非
+     *  「生物」命名的共享 SoundEvent，供 EntitySoundProfiles 分配给缺声的生物 ——
+     *  避免为 38 个生物 × 3 种事件注册上百个重复条目（它们引用的本来就是同一批 ogg）。
+     * ================================================================ */
+    public static final RegistryObject<SoundEvent> SHARED_GROWL =
+            register("entity.shared.growl");
+    public static final RegistryObject<SoundEvent> SHARED_ROAR =
+            register("entity.shared.roar");
+    public static final RegistryObject<SoundEvent> SHARED_BEASTROAR =
+            register("entity.shared.beastroar");
+    public static final RegistryObject<SoundEvent> SHARED_BOSSHURT =
+            register("entity.shared.bosshurt");
+    public static final RegistryObject<SoundEvent> SHARED_PINCER =
+            register("entity.shared.pincer");
+    public static final RegistryObject<SoundEvent> SHARED_FLAP =
+            register("entity.shared.flap");
+    public static final RegistryObject<SoundEvent> SHARED_HOWL =
+            register("entity.shared.howl");
+    public static final RegistryObject<SoundEvent> SHARED_SLAP =
+            register("entity.shared.slap");
+    public static final RegistryObject<SoundEvent> SHARED_URSAROAR =
+            register("entity.shared.ursaroar");
+    public static final RegistryObject<SoundEvent> SHARED_WINDIGO =
+            register("entity.shared.windigo");
+    public static final RegistryObject<SoundEvent> SHARED_FANFARE =
+            register("entity.shared.fanfare");
+    public static final RegistryObject<SoundEvent> SHARED_LIGHTNINGDEATH =
+            register("entity.shared.lightningdeath");
+    public static final RegistryObject<SoundEvent> SHARED_CRAGADILE_AMBIENT =
+            register("entity.shared.cragadile_ambient");
+    public static final RegistryObject<SoundEvent> SHARED_CRAGADILE_HURT =
+            register("entity.shared.cragadile_hurt");
+    public static final RegistryObject<SoundEvent> SHARED_CRAGADILE_ATTACK =
+            register("entity.shared.cragadile_attack");
+    public static final RegistryObject<SoundEvent> SHARED_TOUGHPAIN =
+            register("entity.shared.toughpain");
+    public static final RegistryObject<SoundEvent> SHARED_TOUGHDEATH =
+            register("entity.shared.toughdeath");
+
     private static RegistryObject<SoundEvent> register(String path) {
         return SOUND_EVENTS.register(path,
                 () -> SoundEvent.createVariableRangeEvent(

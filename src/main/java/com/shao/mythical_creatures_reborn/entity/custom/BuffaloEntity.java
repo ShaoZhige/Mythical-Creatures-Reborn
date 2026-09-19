@@ -20,9 +20,6 @@ public class BuffaloEntity extends HostilePonyEntity {
 
     @Override protected boolean canFly() { return false; }
     @Override protected Item getTamingItem() { return Items.APPLE; }
-
-    @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
     @Nullable @Override
     protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return ModSounds.BUFFALO_HURT.get(); }
 

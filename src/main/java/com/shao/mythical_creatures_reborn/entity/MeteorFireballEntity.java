@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,7 +16,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class MeteorFireballEntity extends ModThrowableProjectile {
 
-    private static final float DAMAGE = 13.0F;
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:meteor_fireball";
+
+    /** 取自配置 {@code mythical_creatures_reborn:meteor_fireball|damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float damage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "damage"); }
+
+    
     private boolean hasHit = false;
 
     public MeteorFireballEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
@@ -36,7 +43,7 @@ public class MeteorFireballEntity extends ModThrowableProjectile {
         super.onHitEntity(result);
         if (!this.level().isClientSide && !hasHit) {
             hasHit = true;
-            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), DAMAGE);
+            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), damage());
             result.getEntity().setRemainingFireTicks(100);
             explode(result.getLocation());
         }

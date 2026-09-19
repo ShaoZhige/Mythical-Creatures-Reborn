@@ -18,6 +18,7 @@
     "subtitle": "subtitles.mythical_creatures_reborn.entity.rainbow_dash.ambient",
     "sounds": [
       "mythical_creatures_reborn:entity/rainbow_dash/rainbow_dash_ambient_1",
+      "mythical_creatures_reborn:entity/rainbow_dash/rainbow_dash_ambient_2",
       "mythical_creatures_reborn:entity/rainbow_dash/rainbow_dash_ambient_3"
     ]
   },
@@ -319,6 +320,97 @@
     "subtitle": "subtitles.mythical_creatures_reborn.entity.garble.hurt",
     "sounds": [
       "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.shared.growl": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/growl"
+    ]
+  },
+  "entity.shared.roar": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/roar"
+    ]
+  },
+  "entity.shared.beastroar": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/beastroar"
+    ]
+  },
+  "entity.shared.bosshurt": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/bosshurt"
+    ]
+  },
+  "entity.shared.pincer": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/pincer_1",
+      "mythical_creatures_reborn:entity/shared/pincer_2",
+      "mythical_creatures_reborn:entity/shared/pincer_3",
+      "mythical_creatures_reborn:entity/shared/pincer_4"
+    ]
+  },
+  "entity.shared.flap": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/flap_1",
+      "mythical_creatures_reborn:entity/shared/flap_2"
+    ]
+  },
+  "entity.shared.howl": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/howl_1",
+      "mythical_creatures_reborn:entity/shared/howl_2"
+    ]
+  },
+  "entity.shared.slap": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/slap"
+    ]
+  },
+  "entity.shared.ursaroar": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/ursaroar"
+    ]
+  },
+  "entity.shared.windigo": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/windigo_1",
+      "mythical_creatures_reborn:entity/shared/windigo_2"
+    ]
+  },
+  "entity.shared.fanfare": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/fanfare"
+    ]
+  },
+  "entity.shared.lightningdeath": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/lightningdeath"
+    ]
+  },
+  "entity.shared.cragadile_ambient": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/cragadile_ambient"
+    ]
+  },
+  "entity.shared.cragadile_hurt": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/cragadile_hurt"
+    ]
+  },
+  "entity.shared.cragadile_attack": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/cragadile_attack"
+    ]
+  },
+  "entity.shared.toughpain": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/toughpain"
+    ]
+  },
+  "entity.shared.toughdeath": {
+    "sounds": [
+      "mythical_creatures_reborn:entity/shared/toughdeath"
     ]
   }
 }

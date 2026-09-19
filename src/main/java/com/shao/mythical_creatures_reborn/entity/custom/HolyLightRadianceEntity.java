@@ -70,8 +70,6 @@ public class HolyLightRadianceEntity extends NeutralPonyEntity implements Player
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.HL_TAMING, com.shao.mythical_creatures_reborn.item.ModItems.HOLY_LIGHT_RADIANCE_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return PonyAttributes.of("mythical_creatures_reborn:holy_light_radiance");
     }

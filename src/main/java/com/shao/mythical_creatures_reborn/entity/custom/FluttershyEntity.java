@@ -26,8 +26,6 @@ public class FluttershyEntity extends NeutralPonyEntity {
     @Override protected Item getTamingItem() {
         return resolveTamingItem(MythicalConfig.D.FS_TAMING, com.shao.mythical_creatures_reborn.item.ModItems.FLUTTERSHY_CUTIEMARK.get());
     }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
-    @Nullable @Override protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
     public static AttributeSupplier.Builder createAttributes() {
         return PonyAttributes.flying("mythical_creatures_reborn:fluttershy");
     }

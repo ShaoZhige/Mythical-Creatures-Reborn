@@ -126,7 +126,9 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:iron_will", 400, 0.22, 15);
             entity("mythical_creatures_reborn:skull_of_doom", 50, 0.1, 7);
             entity("mythical_creatures_reborn:prince_rutherford", 630, 0.25, 35);
-            entity("mythical_creatures_reborn:spikezilla", 975, 0.2, 54);
+            // 穗龙斯拉：移速 ×2.5（0.2 → 0.5，2026-09-19）。横扫 Goal 用 1.2× 移速追目标，
+            // 原速下巨型 boss 追不上地面目标；提到 0.5 后实际追击速度 ≈ 0.6 方块/tick。
+            entity("mythical_creatures_reborn:spikezilla", 975, 0.5, 54);
             entity("mythical_creatures_reborn:rhinoceros", 60.0, 0.2, 7.0);
             entity("mythical_creatures_reborn:robot_sombra", 55, 0.28, 7);
             entity("mythical_creatures_reborn:cragadile", 75.0, 0.28, 14.0);
@@ -141,6 +143,8 @@ public class MythicalConfig {
             ENTITY_DEFAULTS.put("mythical_creatures_reborn:garble|fly_speed", 0.30);
             // 末日颅骨：会飞（蜜蜂式悬停）+ 白天燃烧（亡灵）；fly_speed 必填，否则 entityAttr 静默 0.0 飞不起来
             ENTITY_DEFAULTS.put("mythical_creatures_reborn:skull_of_doom|fly_speed", 0.22);
+            // 帕拉斯prite：改为蜜蜂式常驻飞行（永不落地），fly_speed 必填，否则 FLYING_SPEED 静默 0.0 飞不起来
+            ENTITY_DEFAULTS.put("mythical_creatures_reborn:parasprite|fly_speed", 0.25);
 
             // 飞行坐骑骑乘调参默认值（空配置 = 小马手感；玩家可在 overrides 覆盖）
             for (String id : new String[]{"mythical_creatures_reborn:twilight_sparkle", "mythical_creatures_reborn:rainbow_dash"}) {
@@ -166,6 +170,114 @@ public class MythicalConfig {
                 ENTITY_DEFAULTS.put(id + "|ridden_speed_factor", 1.15); // 骑乘移动速度倍率（基于实体 move_speed）
                 ENTITY_DEFAULTS.put(id + "|jump_height", 0.63);         // 满蓄力跳跃初速度基数
             }
+
+            // ── 技能 / AI 调参 ──────────────────────────────────────────────
+            // 这些数值原先硬编码在各个 Goal 类里（private static final 常量）。
+            // 登记到 ENTITY_DEFAULTS 后即可在编辑器的「生物」分类里改，也能写进 common.toml。
+            // 只有在此登记过的键才会在 GUI 暴露（见 MobStatsManager.ABILITY_KEYS）。
+
+            // 雪魔：地面冲锋 + 空中追击 + 不稳定物品霰弹
+            abi("mythical_creatures_reborn:windigo", "charge_damage_mult", 1.5);  // 冲锋伤害倍率
+            abi("mythical_creatures_reborn:windigo", "charge_speed", 1.8);        // 冲锋速度
+            abi("mythical_creatures_reborn:windigo", "charge_duration", 18);      // 冲锋持续(tick)
+            abi("mythical_creatures_reborn:windigo", "charge_cooldown", 25);      // 冲锋冷却(tick)
+            abi("mythical_creatures_reborn:windigo", "charge_min_dist", 4.0);     // 触发冲锋的最小距离
+            abi("mythical_creatures_reborn:windigo", "aggro_buildup", 30);        // 蓄怒阈值(tick)
+            abi("mythical_creatures_reborn:windigo", "aggro_decay_interval", 20); // 怒气衰减间隔(tick)
+            abi("mythical_creatures_reborn:windigo", "trigger_odds", 12);         // 触发概率分母(1/N)
+            abi("mythical_creatures_reborn:windigo", "destroy_radius", 2);        // 冲锋破坏方块半径
+            abi("mythical_creatures_reborn:windigo", "hit_radius", 2.5);          // 冲锋命中判定半径
+            abi("mythical_creatures_reborn:windigo", "drop_chance", 0.1);         // 掉落概率
+            abi("mythical_creatures_reborn:windigo", "hover_min_dist", 12.0);     // 空中追击最小距离
+            abi("mythical_creatures_reborn:windigo", "hover_max_dist", 32.0);     // 空中追击最大距离
+            abi("mythical_creatures_reborn:windigo", "hover_offset", 14.0);       // 悬停高度偏移
+            abi("mythical_creatures_reborn:windigo", "shot_count_min", 15);       // 霰弹最少颗数
+            abi("mythical_creatures_reborn:windigo", "shot_count_max", 25);       // 霰弹最多颗数
+            abi("mythical_creatures_reborn:windigo", "shot_spread", 0.1);         // 霰弹散布(弧度)
+
+            // 麋鹿：邻近防御（大/小麋鹿都有 MooseProximityTargetGoal）
+            for (String id : new String[]{"mythical_creatures_reborn:baby_moose", "mythical_creatures_reborn:adult_moose"}) {
+                abi(id, "proximity_range", 6.0);      // 进入该范围才产生仇恨
+            }
+            // 麋鹿冲撞：**只有大麋鹿**挂了 MooseChargeGoal（小麋鹿只跟随族群、不冲撞），
+            // 因此冲撞相关键只登记在 adult_moose 上，避免编辑器里出现改了没用的项。
+            abi("mythical_creatures_reborn:adult_moose", "charge_damage_mult", 2.5);   // 冲撞伤害倍率
+            abi("mythical_creatures_reborn:adult_moose", "charge_speed", 1.1);         // 冲撞速度
+            abi("mythical_creatures_reborn:adult_moose", "charge_duration", 40);       // 冲撞持续(tick)
+            abi("mythical_creatures_reborn:adult_moose", "charge_cooldown", 25);       // 冲撞冷却(tick)
+            abi("mythical_creatures_reborn:adult_moose", "charge_min_dist", 1.8);      // 触发冲撞的最小距离
+            abi("mythical_creatures_reborn:adult_moose", "trigger_odds", 25);          // 触发概率分母(1/N)
+
+            // 穗龙斯拉：横扫
+            abi("mythical_creatures_reborn:spikezilla", "sweep_damage_mult", 1.6);   // 横扫伤害倍率
+            abi("mythical_creatures_reborn:spikezilla", "sweep_half_angle", 60.0);   // 横扫扇形半角(度)
+            abi("mythical_creatures_reborn:spikezilla", "sweep_knockback", 1.4);     // 额外击退(水平)
+            abi("mythical_creatures_reborn:spikezilla", "sweep_knockback_y", 0.4);   // 额外击退(垂直)
+            abi("mythical_creatures_reborn:spikezilla", "sweep_cooldown", 18);       // 横扫冷却(tick)
+            abi("mythical_creatures_reborn:spikezilla", "sweep_windup", 6);          // 前摇(tick)
+
+            // 末日颅骨：俯冲扑击
+            abi("mythical_creatures_reborn:skull_of_doom", "dive_speed", 0.6);         // 俯冲速度
+            abi("mythical_creatures_reborn:skull_of_doom", "climb_speed", 0.32);       // 拉起速度
+            abi("mythical_creatures_reborn:skull_of_doom", "dive_trigger_range", 20.0);// 触发俯冲的距离
+            abi("mythical_creatures_reborn:skull_of_doom", "dive_max_ticks", 50);      // 俯冲最长(tick)
+            abi("mythical_creatures_reborn:skull_of_doom", "climb_ticks", 30);         // 拉起耗时(tick)
+            abi("mythical_creatures_reborn:skull_of_doom", "dive_cooldown", 15);       // 俯冲冷却(tick)
+            abi("mythical_creatures_reborn:skull_of_doom", "dive_hit_inflate", 1.0);   // 命中判定膨胀
+
+            // 紫悦：远程攻击 / 魔法团召唤 / 施法特效
+            abi("mythical_creatures_reborn:twilight_sparkle", "summon_chance", 0.35);  // 召唤魔法团的概率
+            abi("mythical_creatures_reborn:twilight_sparkle", "summon_count", 3);      // 一次召唤几只
+            abi("mythical_creatures_reborn:twilight_sparkle", "summon_cooldown", 120); // 召唤冷却(tick)
+            abi("mythical_creatures_reborn:twilight_sparkle", "burst_particles", 28);  // 施法特效粒子数
+            // 魔法爆发特效实体（紫悦施法时的紫色冲击波）：纯视觉、不造成伤害
+            abi("mythical_creatures_reborn:magic_burst", "life", 16);                  // 特效寿命(tick)
+        }
+
+        /** 技能/AI 调参登记（语义同 entity()，只是键不是属性名） */
+        static void abi(String id, String key, double v) { ENTITY_DEFAULTS.put(id + "|" + key, v); }
+
+        /* ================================================================
+         * 投掷物默认值 | Projectile defaults
+         *  投掷物不走 Attribute 体系（伤害是命中时直接 hurt），因此单独一张表。
+         *  键格式同实体：{@code 注册名|属性}；读取用 {@code Data#projectileAttr}。
+         * ================================================================ */
+        public static final Map<String, Double> PROJECTILE_DEFAULTS = new LinkedHashMap<>();
+
+        /** 投掷物通用参数在 overrides 里的注册名 */
+        public static final String PROJECTILE_PARAMS = "projectile_params";
+
+        static void projectile(String id, String key, double v) { PROJECTILE_DEFAULTS.put(id + "|" + key, v); }
+
+        static {
+            // ── 通用（基类 ModThrowableProjectile 消费）──
+            projectile(PROJECTILE_PARAMS, "hit_radius", 1.0);          // 实体命中判定半径
+            projectile(PROJECTILE_PARAMS, "mob_shot_lifetime", 200);   // 生物发射时的存活(tick)
+
+            // ── 各投掷物 ──
+            projectile("mythical_creatures_reborn:apple_projectile", "damage", 9.0);
+            projectile("mythical_creatures_reborn:balloon_projectile", "damage", 5.0);
+            projectile("mythical_creatures_reborn:butterfly_projectile", "damage", 6.0);
+            projectile("mythical_creatures_reborn:cupcake_projectile", "damage", 8.0);
+            projectile("mythical_creatures_reborn:rainbow_cloud", "damage", 7.0);
+            projectile("mythical_creatures_reborn:twilight_star", "damage", 13.0);
+            projectile("mythical_creatures_reborn:meteor_fireball", "damage", 13.0);
+            projectile("mythical_creatures_reborn:phoenix_feather", "damage", 6.0);
+            projectile("mythical_creatures_reborn:phoenix_feather", "fire_seconds", 5.0);   // 点燃秒数
+            projectile("mythical_creatures_reborn:precious_gem_projectile", "impact_damage", 4.0);
+            projectile("mythical_creatures_reborn:precious_gem_projectile", "effect_duration", 60.0); // 效果时长(tick)
+            projectile("mythical_creatures_reborn:rainbow_beam", "damage", 8.0);
+            projectile("mythical_creatures_reborn:rainbow_beam", "beam_length", 14.0);      // 光束长度
+            projectile("mythical_creatures_reborn:rainbow_beam", "beam_size", 0.6);         // 光束粗细
+            projectile("mythical_creatures_reborn:rainbow_beam", "damage_interval", 4.0);   // 伤害间隔(tick)
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "damage", 10.0);
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "range", 18.0);      // 斩击射程
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "area_x", 17.0);     // 判定盒 X
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "area_z", 17.0);     // 判定盒 Z
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "area_y_up", 10.0);  // 判定盒 向上
+            projectile("mythical_creatures_reborn:rainbow_dash_slash", "area_y_down", 10.0);// 判定盒 向下
+            projectile("mythical_creatures_reborn:unstable_item", "magic_damage", 15.0);
+            projectile("mythical_creatures_reborn:unstable_item", "frost_trigger_chance", 0.3); // 覆雪触发概率
         }
     }
 
@@ -262,11 +374,13 @@ public class MythicalConfig {
             }
             // 校验 override 目标是否为已知实体（捕获配置拼写错误，避免「静默无效」）
             for (String target : parsed.keySet()) {
-                if (target.equals("global_params")) continue;
+                if (target.equals("global_params") || target.equals(D.PROJECTILE_PARAMS)) continue;
                 boolean knownEntity = D.ENTITY_DEFAULTS.keySet().stream()
                         .anyMatch(k -> k.startsWith(target + "|"));
-                if (!knownEntity)
-                    LOGGER.warn("override 目标「{}」不在已知实体列表中，该条覆盖可能永久无效", target);
+                boolean knownProjectile = D.PROJECTILE_DEFAULTS.keySet().stream()
+                        .anyMatch(k -> k.startsWith(target + "|"));
+                if (!knownEntity && !knownProjectile)
+                    LOGGER.warn("override 目标「{}」不在已知实体/投掷物列表中，该条覆盖可能永久无效", target);
             }
         }
 
@@ -310,6 +424,33 @@ public class MythicalConfig {
             if (m != null && m.containsKey(attr))
                 return m.get(attr);
             return 0.0;
+        }
+
+        /**
+         * 获取投掷物数值：优先取玩家 override，否则取内置默认。
+         * 与 {@link #entityAttr} 同构（缺失时静默返回 0.0），调用方需保证键已在
+         * {@code D.PROJECTILE_DEFAULTS} 登记。
+         *
+         * Projectile value: override wins, then the built-in default (silently 0.0 if missing).
+         */
+        public double projectileAttr(String projectileId, String attr) {
+            var m = parsed != null ? parsed.get(projectileId) : null;
+            if (m != null && m.containsKey(attr))
+                return m.get(attr);
+            return D.PROJECTILE_DEFAULTS.getOrDefault(projectileId + "|" + attr, 0.0);
+        }
+
+        /**
+         * 获取投掷物通用参数（{@code projectile_params}）：override 优先，否则回退 fallback。
+         * 与 {@link #get} 同构 —— 缺失时返回 fallback，不会静默 0.0。
+         */
+        public double projectileParam(String attr, double fallback) {
+            return get(D.PROJECTILE_PARAMS, attr, fallback);
+        }
+
+        /** 投掷物通用 int 参数 */
+        public int projectileParamInt(String attr, int fallback) {
+            return (int) projectileParam(attr, fallback);
         }
 
         /** twilicane 召唤列表 */

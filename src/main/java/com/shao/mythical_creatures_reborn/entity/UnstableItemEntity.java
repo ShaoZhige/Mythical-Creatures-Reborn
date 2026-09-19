@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -22,10 +23,19 @@ import java.util.List;
 
 public class UnstableItemEntity extends ModThrowableProjectile {
 
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:unstable_item";
+
+    /** 取自配置 {@code mythical_creatures_reborn:unstable_item|magic_damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float magicDamage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "magic_damage"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:unstable_item|frost_trigger_chance}（可在配置编辑器「投掷物」分类里改） */
+    private static float frostChance() { return (float) MythicalConfig.DATA.projectileAttr(PID, "frost_trigger_chance"); }
+
     // 魔法伤害：比紫悦弹射物(13)高一点，也高于小马弹射物平均(约8)
-    private static final float MAGIC_DAMAGE = 15.0F;
+    
     // 霜冻触发概率：每次命中约 30% 概率铺霜，其余命中只造成伤害与特效
-    private static final float FROST_TRIGGER_CHANCE = 0.3F;
+    
     private boolean hasHit = false;
 
     public UnstableItemEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
@@ -54,7 +64,7 @@ public class UnstableItemEntity extends ModThrowableProjectile {
         if (result.getType() == HitResult.Type.ENTITY) {
             EntityHitResult ehr = (EntityHitResult) result;
             if (ehr.getEntity() instanceof LivingEntity target && target != this.getOwner()) {
-                target.hurt(this.damageSources().indirectMagic(this, this.getOwner()), MAGIC_DAMAGE);
+                target.hurt(this.damageSources().indirectMagic(this, this.getOwner()), magicDamage());
             }
         }
 
@@ -87,7 +97,7 @@ public class UnstableItemEntity extends ModThrowableProjectile {
             }
         }
         // 霜冻效果按概率触发：约 30% 命中会铺霜，其余命中只造成伤害与命中特效
-        if (serverLevel.random.nextFloat() < FROST_TRIGGER_CHANCE) {
+        if (serverLevel.random.nextFloat() < frostChance()) {
             frostScatter(serverLevel, frostPos);
         }
 

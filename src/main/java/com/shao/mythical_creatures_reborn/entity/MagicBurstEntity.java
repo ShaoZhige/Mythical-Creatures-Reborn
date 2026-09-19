@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -15,7 +16,13 @@ import net.minecraft.world.level.Level;
  */
 public class MagicBurstEntity extends Entity {
 
-    public static final int LIFE = 16; // tick 数（约 0.8s @20tps）
+    /**
+     * 特效寿命（tick）。取自配置 {@code magic_burst|life}，可在编辑器的「生物」分类里改；
+     * 缺省 16 tick（约 0.8s @20tps）。
+     */
+    public static int life() {
+        return MythicalConfig.DATA.getInt("mythical_creatures_reborn:magic_burst", "life", 16);
+    }
 
     private int age = 0;
 
@@ -37,7 +44,7 @@ public class MagicBurstEntity extends Entity {
     @Override
     public void tick() {
         this.age++;
-        if (this.age > LIFE) {
+        if (this.age > life()) {
             this.discard();
         }
     }

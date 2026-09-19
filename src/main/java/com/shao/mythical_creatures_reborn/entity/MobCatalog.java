@@ -64,8 +64,9 @@ import java.util.function.Supplier;
  *       敌对的几条见 {@link MobSpawnRules}；{@code null} 表示不参与自然刷怪（召唤物等）；</li>
  *   <li>{@code renderBase} —— 客户端资源基准名，对应 {@code geo/&lt;名&gt;.geo.json} +
  *       {@code textures/entity/&lt;名&gt;.png}（与实体 id 不必相同，但要与磁盘上的文件一致）；</li>
- *   <li>{@code animation} —— 动画基准名，传 {@code null} 表示与 {@code renderBase} 同名；
- *       尚未制作专属动画的写 {@code "mod_placeholder"} 复用占位动画；</li>
+ *   <li>{@code animation} —— 动画基准名，传 {@code null} 表示与 {@code renderBase} 同名。
+ *       38 个生物现在都有各自的动画文件，因此本表全部走同名回落；字段保留是为了给
+ *       「确实要复用别的动画文件」留出口；</li>
  *   <li>{@code cullDisabled} —— 超大型实体禁用视锥剔除。</li>
  * </ul>
  *
@@ -76,9 +77,6 @@ public final class MobCatalog {
 
     private MobCatalog() {
     }
-
-    /** 占位动画常量：尚未单独制作动画的生物共用它。 */
-    private static final String PLACEHOLDER = "mod_placeholder";
 
     /**
      * 一条生物定义。
@@ -113,13 +111,6 @@ public final class MobCatalog {
         return new MobDef<>(type, attributes, spawnRule, renderBase, null, false);
     }
 
-    /** 复用已有动画文件（通常是 {@code mod_placeholder}）的生物。 */
-    public static <T extends Mob & GeoAnimatable> MobDef<T> mob(
-            RegistryObject<EntityType<T>> type, Supplier<AttributeSupplier.Builder> attributes,
-            SpawnPlacements.SpawnPredicate<T> spawnRule, String renderBase, String animation) {
-        return new MobDef<>(type, attributes, spawnRule, renderBase, animation, false);
-    }
-
     /** 超大型生物：禁用视锥剔除，防止抬头 / 靠近时模型被剔除而消失（动画与资源同名）。 */
     public static <T extends Mob & GeoAnimatable> MobDef<T> giant(
             RegistryObject<EntityType<T>> type, Supplier<AttributeSupplier.Builder> attributes,
@@ -150,29 +141,34 @@ public final class MobCatalog {
             mob(ModEntities.PINKIE_PIE, PinkiePieEntity::createAttributes, Animal::checkAnimalSpawnRules, "pinkie_pie"),
             mob(ModEntities.RARITY, RarityEntity::createAttributes, Animal::checkAnimalSpawnRules, "rarity"),
 
-            // ── 暂用 mod_placeholder 占位动画的生物 ──
-            mob(ModEntities.BUFFALO, BuffaloEntity::createAttributes, Animal::checkAnimalSpawnRules, "buffalo", PLACEHOLDER),
-            mob(ModEntities.CHIEF_THUNDERHOOVES, ChiefThunderhoovesEntity::createAttributes, Animal::checkAnimalSpawnRules, "chiefthunderhooves", PLACEHOLDER),
-            mob(ModEntities.BLACK_WIDOW_SPIDER, BlackWidowEntity::createAttributes, MobSpawnRules::hostile, "blackwidow", PLACEHOLDER),
-            mob(ModEntities.LEVIATHAN, LeviathanEntity::createAttributes, MobSpawnRules::hostile, "leviathan", PLACEHOLDER),
-            mob(ModEntities.CENTIPEDE, CentipedeEntity::createAttributes, MobSpawnRules::cave, "centipede", PLACEHOLDER),
-            mob(ModEntities.HYDRA, HydraEntity::createAttributes, MobSpawnRules::hostile, "hydra", PLACEHOLDER),
+            // ── 其余生物（全部使用各自的 <renderBase>.animation.json）──
+            // 2026-09-19：38 个生物的专属动画全部导出完成，原先 20 处指向共享占位动画
+            // mod_placeholder 的接线全部改回自己的文件，否则 Blockbench 里做好的动作在游戏里不生效。
+            mob(ModEntities.BUFFALO, BuffaloEntity::createAttributes, Animal::checkAnimalSpawnRules, "buffalo"),
+            mob(ModEntities.CHIEF_THUNDERHOOVES, ChiefThunderhoovesEntity::createAttributes, Animal::checkAnimalSpawnRules, "chiefthunderhooves"),
+            mob(ModEntities.BLACK_WIDOW_SPIDER, BlackWidowEntity::createAttributes, MobSpawnRules::hostile, "blackwidow"),
+            mob(ModEntities.LEVIATHAN, LeviathanEntity::createAttributes, MobSpawnRules::hostile, "leviathan"),
+            mob(ModEntities.CENTIPEDE, CentipedeEntity::createAttributes, MobSpawnRules::cave, "centipede"),
+            // 九头蛇：用自己的 hydra.animation.json（idle / walk / run / attack）。它曾与此表的其它
+            // 生物一样错指向共享的 mod_placeholder 空动画，导致 BB 里做好的动画一直没生效
+            // —— 详见 2026-09-15 的动画接线排查。
+            mob(ModEntities.HYDRA, HydraEntity::createAttributes, MobSpawnRules::hostile, "hydra"),
             giant(ModEntities.WINDIGO, WindigoEntity::createAttributes, MobSpawnRules::hostile, "windigo"),
-            mob(ModEntities.BABY_MOOSE, BabyMooseEntity::createAttributes, Animal::checkAnimalSpawnRules, "moose", PLACEHOLDER),
-            mob(ModEntities.ADULT_MOOSE, AdultMooseEntity::createAttributes, Animal::checkAnimalSpawnRules, "moosebig", PLACEHOLDER),
-            mob(ModEntities.TOUGH_GUY, ToughGuyEntity::createAttributes, MobSpawnRules::village, "toughguy", PLACEHOLDER),
-            mob(ModEntities.MAVIS, MavisEntity::createAttributes, MobSpawnRules::village, "mavis", PLACEHOLDER),
-            mob(ModEntities.MANTICORE, ManticoreEntity::createAttributes, MobSpawnRules::hostile, "manticore", PLACEHOLDER),
-            mob(ModEntities.RAINBOW_CENTIPEDE, RainbowCentipedeEntity::createAttributes, MobSpawnRules::hostile, "giantcentipede", PLACEHOLDER),
-            mob(ModEntities.ARCTIC_SCORPION, ArcticScorpionEntity::createAttributes, MobSpawnRules::hostile, "arcticscorpion", PLACEHOLDER),
-            mob(ModEntities.TIMBER_WOLF, TimberWolfEntity::createAttributes, MobSpawnRules::hostile, "timberwolf", PLACEHOLDER),
-            mob(ModEntities.CRABZILLA, CrabzillaEntity::createAttributes, MobSpawnRules::riverbank, "crabzilla", PLACEHOLDER),
-            mob(ModEntities.IRON_WILL, IronWillEntity::createAttributes, Animal::checkAnimalSpawnRules, "ironwill", PLACEHOLDER),
-            mob(ModEntities.SKULL_OF_DOOM, SkullOfDoomEntity::createAttributes, MobSpawnRules::hostile, "skullofdoom", PLACEHOLDER),
-            mob(ModEntities.PRINCE_RUTHERFORD, PrinceRutherfordEntity::createAttributes, Animal::checkAnimalSpawnRules, "princeyakfur", PLACEHOLDER),
+            mob(ModEntities.BABY_MOOSE, BabyMooseEntity::createAttributes, Animal::checkAnimalSpawnRules, "moose"),
+            mob(ModEntities.ADULT_MOOSE, AdultMooseEntity::createAttributes, Animal::checkAnimalSpawnRules, "moosebig"),
+            mob(ModEntities.TOUGH_GUY, ToughGuyEntity::createAttributes, MobSpawnRules::village, "toughguy"),
+            mob(ModEntities.MAVIS, MavisEntity::createAttributes, MobSpawnRules::village, "mavis"),
+            mob(ModEntities.MANTICORE, ManticoreEntity::createAttributes, MobSpawnRules::hostile, "manticore"),
+            mob(ModEntities.RAINBOW_CENTIPEDE, RainbowCentipedeEntity::createAttributes, MobSpawnRules::hostile, "giantcentipede"),
+            mob(ModEntities.ARCTIC_SCORPION, ArcticScorpionEntity::createAttributes, MobSpawnRules::hostile, "arcticscorpion"),
+            mob(ModEntities.TIMBER_WOLF, TimberWolfEntity::createAttributes, MobSpawnRules::hostile, "timberwolf"),
+            mob(ModEntities.CRABZILLA, CrabzillaEntity::createAttributes, MobSpawnRules::riverbank, "crabzilla"),
+            mob(ModEntities.IRON_WILL, IronWillEntity::createAttributes, Animal::checkAnimalSpawnRules, "ironwill"),
+            mob(ModEntities.SKULL_OF_DOOM, SkullOfDoomEntity::createAttributes, MobSpawnRules::hostile, "skullofdoom"),
+            mob(ModEntities.PRINCE_RUTHERFORD, PrinceRutherfordEntity::createAttributes, Animal::checkAnimalSpawnRules, "princeyakfur"),
             giant(ModEntities.SPIKEZILLA, SpikezillaEntity::createAttributes, MobSpawnRules::hostile, "spikezilla"),
-            mob(ModEntities.RHINOCEROS, RhinocerosEntity::createAttributes, Animal::checkAnimalSpawnRules, "rhinoceros", PLACEHOLDER),
-            mob(ModEntities.ROBOT_SOMBRA, RobotSombraEntity::createAttributes, MobSpawnRules::hostile, "robot_sombra", PLACEHOLDER),
-            mob(ModEntities.CRAGADILE, CragadileEntity::createAttributes, MobSpawnRules::hostile, "cragadile", PLACEHOLDER)
+            mob(ModEntities.RHINOCEROS, RhinocerosEntity::createAttributes, Animal::checkAnimalSpawnRules, "rhinoceros"),
+            mob(ModEntities.ROBOT_SOMBRA, RobotSombraEntity::createAttributes, MobSpawnRules::hostile, "robot_sombra"),
+            mob(ModEntities.CRAGADILE, CragadileEntity::createAttributes, MobSpawnRules::hostile, "cragadile")
     );
 }

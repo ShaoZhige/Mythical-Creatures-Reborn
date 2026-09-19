@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
@@ -18,6 +19,12 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Set;
 
 public class AppleProjectileEntity extends ModThrowableProjectile {
+
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:apple_projectile";
+
+    /** 取自配置 {@code mythical_creatures_reborn:apple_projectile|damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float damage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "damage"); }
 
     // 友方小马集合：仅对这 7 个实体免伤并回血（六小马 + 圣光辉辉）。
     // 不能用 instanceof PonyEntity —— 本模组几乎所有生物都继承 PonyEntity（含敌对生物），
@@ -71,7 +78,7 @@ public class AppleProjectileEntity extends ModThrowableProjectile {
                             SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.6F, 1.2F);
                 } else if (target != this.getOwner()) {
                     // 对其他生物（含本模组的敌对生物）：正常造成 9 点伤害
-                    target.hurt(this.damageSources().thrown(this, this.getOwner()), 9.0F);
+                    target.hurt(this.damageSources().thrown(this, this.getOwner()), damage());
                 }
             }
         }

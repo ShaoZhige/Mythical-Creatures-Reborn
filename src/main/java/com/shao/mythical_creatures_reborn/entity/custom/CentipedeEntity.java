@@ -20,11 +20,6 @@ public class CentipedeEntity extends HostilePonyEntity {
     @Override protected boolean canFly() { return false; }
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
-    @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getAmbientSound() { return null; }
-    @Nullable @Override
-    protected net.minecraft.sounds.SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) { return null; }
-
     public static AttributeSupplier.Builder createAttributes() {
         return PonyAttributes.of("mythical_creatures_reborn:centipede");
     }

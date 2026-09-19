@@ -1,4 +1,5 @@
 package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -38,16 +39,26 @@ import java.util.Optional;
  */
 public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
 
-    /** 命中粗化半径（方块）。原版等效约 0.3，这里放大到 1.0，命中容易很多。 */
-    private static final double HIT_RADIUS = 1.0D;
-
     /** 是否由生物（AI）发射（而非玩家）。用 synched data 保证双端一致 ——
      *  客户端投掷物走一参构造器、且 Projectile.getOwner() 在客户端返回 null，无法实时判断。 */
     private static final EntityDataAccessor<Boolean> DATA_MOB_SHOT =
             SynchedEntityData.defineId(ModThrowableProjectile.class, EntityDataSerializers.BOOLEAN);
 
-    /** 生物发射的投掷物寿命（tick）。10 秒后自动消失，避免飞出加载范围长期残留占用内存。 */
-    private static final int MOB_SHOT_LIFETIME = 200; // 20 tick/s × 10s
+    /* ================================================================
+     * 通用投掷物参数 | Shared projectile params
+     *  取自配置 {@code projectile_params}（可在编辑器的「投掷物」分类里改）。
+     *  注意：这两个值每 tick 都可能被读，因此做成方法而非 static final —— 配置重载后能立刻生效。
+     * ================================================================ */
+
+    /** 命中粗化半径（方块）。原版等效约 0.3，这里默认放大到 1.0，命中容易很多。 */
+    private static double hitRadius() {
+        return MythicalConfig.DATA.projectileParam("hit_radius", 1.0D);
+    }
+
+    /** 生物发射的投掷物寿命（tick）。默认 10 秒后自动消失，避免飞出加载范围长期残留占用内存。 */
+    private static int mobShotLifetime() {
+        return MythicalConfig.DATA.projectileParamInt("mob_shot_lifetime", 200);
+    }
 
     public ModThrowableProjectile(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
@@ -71,7 +82,7 @@ public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
     @Override
     public void tick() {
         // 生物发射的投掷物：寿命到期直接消失，避免长期残留占用内存（玩家发射的保持原行为）
-        if (this.isMobShot() && this.tickCount > MOB_SHOT_LIFETIME) {
+        if (this.isMobShot() && this.tickCount > mobShotLifetime()) {
             this.discard();
             return;
         }
@@ -113,10 +124,10 @@ public abstract class ModThrowableProjectile extends ThrowableItemProjectile {
         double bestDist = Double.MAX_VALUE;
         Entity bestEnt = null;
         Vec3 bestPos = null;
-        AABB probe = this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D + HIT_RADIUS);
+        AABB probe = this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D + hitRadius());
         for (Entity e : this.level().getEntities(this, probe, this::canHitEntity)) {
             if (e == this.getOwner()) continue; // 排除持有者，避免出生即自伤
-            AABB box = e.getBoundingBox().inflate(HIT_RADIUS);
+            AABB box = e.getBoundingBox().inflate(hitRadius());
             Optional<Vec3> hit = box.clip(start, end);
             if (hit.isPresent()) {
                 double d = start.distanceToSqr(hit.get());

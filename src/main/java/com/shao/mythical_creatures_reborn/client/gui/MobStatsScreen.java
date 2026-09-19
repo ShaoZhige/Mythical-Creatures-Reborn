@@ -1,6 +1,7 @@
 package com.shao.mythical_creatures_reborn.client.gui;
 
 import com.shao.mythical_creatures_reborn.config.MobStatsManager;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 import com.shao.mythical_creatures_reborn.config.MobStatsManager.Category;
 import com.shao.mythical_creatures_reborn.config.MobStatsManager.Row;
 import com.shao.mythical_creatures_reborn.config.MobStatsManager.Target;
@@ -601,10 +602,17 @@ public class MobStatsScreen extends Screen {
     private Component labelOf(Target t) {
         if (t.category == Category.GLOBAL)
             return Component.translatable("gui.mythical_creatures_reborn.editor.global");
+        // 虚名（非真实注册实体）有专用显示名，不进注册表查询
+        if (t.category == Category.PROJECTILE && MythicalConfig.D.PROJECTILE_PARAMS.equals(t.id))
+            return Component.translatable("gui.mythical_creatures_reborn.editor.projectile_params");
         ResourceLocation rl = parseRl(t.id);
-        if (t.category == Category.ENTITY && rl != null) {
+        // 生物与投掷物都是已注册实体，用实体的本地化名；projectile_params 等虚名查不到，回退到短名
+        if ((t.category == Category.ENTITY || t.category == Category.PROJECTILE) && rl != null) {
             EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(rl);
-            if (type != null) return type.getDescription();
+            // 🔴 原版实体注册表是 DefaultedRegistry，未知 id 会兜底返回 Pig（显示成「猪」），
+            //    必须回验注册键一致才算命中。
+            if (type != null && rl.equals(ForgeRegistries.ENTITY_TYPES.getKey(type)))
+                return type.getDescription();
         }
         if (t.category == Category.ITEM && rl != null) {
             Item item = BuiltInRegistries.ITEM.get(rl);

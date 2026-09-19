@@ -40,11 +40,15 @@ public class SimpleGeoRenderer<T extends Entity & GeoAnimatable> extends GeoEnti
     /**
      * 禁用视锥剔除的渲染器（超大型实体：雪魔、穗龙斯拉、大熊星座）。
      *
+     * <p>⚠️ 动画名必须从 {@code MobCatalog} 传进来，不能写死成 {@code baseName}：
+     * 否则一旦某个巨型生物配了独立的动画文件，禁用剔除这条分支会静默丢掉动画接线。</p>
+     *
      * <p>Renderer with frustum culling disabled — for the oversized entities whose model
      * would otherwise pop out of view when you look up or stand next to it.</p>
      */
-    public static <T extends Entity & GeoAnimatable> SimpleGeoRenderer<T> noCull(EntityRendererProvider.Context ctx, String baseName) {
-        return new SimpleGeoRenderer<>(ctx, baseName, baseName, true);
+    public static <T extends Entity & GeoAnimatable> SimpleGeoRenderer<T> noCull(
+            EntityRendererProvider.Context ctx, String baseName, String animationName) {
+        return new SimpleGeoRenderer<>(ctx, baseName, animationName, true);
     }
 
     @Override

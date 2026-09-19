@@ -1,4 +1,7 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import com.shao.mythical_creatures_reborn.util.EntityHateFilter;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +30,21 @@ import java.util.EnumSet;
  */
 public class SpikezillaSweepGoal extends Goal {
 
+    /* ── 数值来自配置（键 = 本实体注册名；可在编辑器的「生物」分类里改）──
+       所有 cfg/cfgInt 都带原硬编码值作 fallback，配置缺失时行为与改动前完全一致。 */
+    private String eid() {
+        ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(this.mob.getType());
+        return rl == null ? "" : rl.toString();
+    }
+
+    private double cfg(String key, double fallback) {
+        return MythicalConfig.DATA.get(eid(), key, fallback);
+    }
+
+    private int cfgInt(String key, int fallback) {
+        return (int) cfg(key, fallback);
+    }
+
     // ── 可调参数 ──────────────────────────────────────────────────────
     /**
      * 有效攻击半径：覆盖自身碰撞箱半宽 + 近战余量（格）。
@@ -37,18 +55,6 @@ public class SpikezillaSweepGoal extends Goal {
     private double effectiveReach() {
         return this.mob.getBbWidth() * 0.5D + 2.0D;
     }
-    /** 横扫扇形半角（度）：以实体朝向为中心，向前 ±60° 内命中 */
-    private static final double SWEEP_HALF_ANGLE = 60.0D;
-    /** 伤害倍率：横扫伤害 = 实体攻击力 × 此倍率 */
-    private static final double DAMAGE_MULT = 1.6D;
-    /** 额外水平击退冲量（叠加在原版击退之上，方块/tick） */
-    private static final double EXTRA_KNOCKBACK = 1.4D;
-    /** 额外竖直击退（略微把人挑起，让"打飞"更明显） */
-    private static final double EXTRA_KNOCKBACK_Y = 0.4D;
-    /** 攻击冷却（tick）：约 0.9 秒挥一次 */
-    private static final int ATTACK_COOLDOWN = 18;
-    /** 挥击前的蓄力/前摇（tick），到点才结算伤害，让动作有节奏 */
-    private static final int WINDUP = 6;
     /** 攻击动画时长（tick）：导出动画长 0.8s=16t，覆盖前摇 + 挥击 + 收势 */
     private static final int ATTACK_ANIM_TICKS = 16;
 
@@ -108,7 +114,7 @@ public class SpikezillaSweepGoal extends Goal {
             this.windup--;
             if (this.windup == 0) {
                 sweep();
-                this.attackCooldown = ATTACK_COOLDOWN;
+                this.attackCooldown = cfgInt("sweep_cooldown", 18);
             }
             return;
         }
@@ -118,7 +124,7 @@ public class SpikezillaSweepGoal extends Goal {
             // 目标已进入挥击范围：停下 → 起前摇（同时开始播 attack 动画）
             this.mob.getNavigation().stop();
             if (this.attackCooldown <= 0) {
-                this.windup = WINDUP;
+                this.windup = cfgInt("sweep_windup", 6);
                 this.animTicks = ATTACK_ANIM_TICKS;
                 this.mob.setAttackAnimation(true);
             }
@@ -130,13 +136,13 @@ public class SpikezillaSweepGoal extends Goal {
 
     /** 结算一次横扫：对身前扇形内所有敌对目标造成伤害 + 击退。 */
     private void sweep() {
-        double dmg = this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE) * DAMAGE_MULT;
+        double dmg = this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE) * cfg("sweep_damage_mult", 1.6);
         Vec3 origin = this.mob.position();
         Vec3 look = this.mob.getLookAngle();
         Vec3 flatLook = new Vec3(look.x, 0.0D, look.z);
         if (flatLook.lengthSqr() < 1.0E-6D) flatLook = new Vec3(0.0D, 0.0D, 1.0D);
         flatLook = flatLook.normalize();
-        double cosHalf = Math.cos(Math.toRadians(SWEEP_HALF_ANGLE));
+        double cosHalf = Math.cos(Math.toRadians(cfg("sweep_half_angle", 60.0)));
 
         double reach = effectiveReach();
         for (Entity e : this.mob.level().getEntities(this.mob,
@@ -145,7 +151,7 @@ public class SpikezillaSweepGoal extends Goal {
             if (!isHostileTo(living)) continue;
             if (living.distanceToSqr(this.mob) > reach * reach) continue;
 
-            // 扇形判定：与朝向的水平夹角在 ±SWEEP_HALF_ANGLE 内
+            // 扇形判定：与朝向的水平夹角在 ±cfg("sweep_half_angle", 60.0) 内
             Vec3 to = new Vec3(living.getX() - origin.x, 0.0D, living.getZ() - origin.z);
             if (to.lengthSqr() > 1.0E-6D) {
                 Vec3 toN = to.normalize();
@@ -173,9 +179,9 @@ public class SpikezillaSweepGoal extends Goal {
         if (dir.lengthSqr() < 1.0E-6D) dir = this.mob.getLookAngle();
         dir = dir.normalize();
         Vec3 cur = living.getDeltaMovement();
-        living.setDeltaMovement(cur.x + dir.x * EXTRA_KNOCKBACK,
-                                cur.y + EXTRA_KNOCKBACK_Y,
-                                cur.z + dir.z * EXTRA_KNOCKBACK);
+        living.setDeltaMovement(cur.x + dir.x * cfg("sweep_knockback", 1.4),
+                                cur.y + cfg("sweep_knockback_y", 0.4),
+                                cur.z + dir.z * cfg("sweep_knockback", 1.4));
         living.hurtMarked = true; // 强制同步速度到客户端，击退才可见
     }
 }

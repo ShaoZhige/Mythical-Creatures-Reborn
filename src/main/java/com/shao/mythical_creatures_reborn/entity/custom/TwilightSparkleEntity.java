@@ -111,8 +111,8 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
                 fx, fz);
 
         // 概率召唤紫悦的魔法团（一次召唤三只，以紫悦为主人，会自动环绕并攻击敌对生物）
-        if (!this.level().isClientSide() && this.magicSummonCooldown <= 0 && this.random.nextFloat() < 0.35F) {
-            for (int m = 0; m < 3; m++) {
+        if (!this.level().isClientSide() && this.magicSummonCooldown <= 0 && this.random.nextFloat() < summonChance()) {
+            for (int m = 0; m < summonCount(); m++) {
                 double ang = Math.toRadians(m * 120.0);
                 double ox = Math.cos(ang) * 0.6;
                 double oz = Math.sin(ang) * 0.6;
@@ -121,16 +121,25 @@ public class TwilightSparkleEntity extends NeutralPonyEntity {
                 magic.setOwner(this);
                 this.level().addFreshEntity(magic);
             }
-            this.magicSummonCooldown = 120; // 约 6 秒冷却
+            this.magicSummonCooldown = summonCooldown(); // 约 6 秒冷却
         }
     }
+
+    /* ── 紫悦专属：召唤与施法特效数值（取自配置，可在编辑器「生物」分类里改）──
+       全部带原硬编码值作 fallback，配置缺失时行为与改动前完全一致。 */
+    private static final String EID = "mythical_creatures_reborn:twilight_sparkle";
+
+    private float summonChance()   { return (float) MythicalConfig.DATA.get(EID, "summon_chance", 0.35F); }
+    private int   summonCount()    { return MythicalConfig.DATA.getInt(EID, "summon_count", 3); }
+    private int   summonCooldown() { return MythicalConfig.DATA.getInt(EID, "summon_cooldown", 120); }
+    private int   burstParticles() { return MythicalConfig.DATA.getInt(EID, "burst_particles", 28); }
 
     /** 在 (x,y,z) 处生成一次紫悦魔法爆发：冲击波实体 + 向外四散的紫色魔法粒子。 */
     private void castMagicBurst(Level level, double x, double y, double z) {
         level.addFreshEntity(new MagicBurstEntity(level, x, y, z));
         // 注意：服务端 Level.addParticle 是空操作，必须走 ServerLevel.sendParticles 才能广播到客户端。
         if (!(level instanceof ServerLevel sl)) return;
-        for (int i = 0; i < 28; i++) {
+        for (int i = 0; i < burstParticles(); i++) {
             Vec3 dir = new Vec3(level.random.nextDouble() - 0.5,
                                 level.random.nextDouble() - 0.5,
                                 level.random.nextDouble() - 0.5)

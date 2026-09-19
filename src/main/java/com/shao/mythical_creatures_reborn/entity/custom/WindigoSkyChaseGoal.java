@@ -1,4 +1,7 @@
 package com.shao.mythical_creatures_reborn.entity.custom;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -14,6 +17,21 @@ import java.util.EnumSet;
  * 思路借鉴「保持与目标同层、平滑靠拢、实时朝向」的飞行追击范式，方法为本模组自实现。
  */
 public class WindigoSkyChaseGoal extends Goal {
+
+    /* ── 数值来自配置（键 = 本实体注册名；可在编辑器的「生物」分类里改）──
+       所有 cfg/cfgInt 都带原硬编码值作 fallback，配置缺失时行为与改动前完全一致。 */
+    private String eid() {
+        ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(this.mob.getType());
+        return rl == null ? "" : rl.toString();
+    }
+
+    private double cfg(String key, double fallback) {
+        return MythicalConfig.DATA.get(eid(), key, fallback);
+    }
+
+    private int cfgInt(String key, int fallback) {
+        return (int) cfg(key, fallback);
+    }
     private final WindigoEntity mob;
     private final double speed;
     private final int attackInterval;
@@ -22,10 +40,6 @@ public class WindigoSkyChaseGoal extends Goal {
     private int strafeTimer = 0;
     private int strafeDir = 1;
 
-    // 保距区间（硬编码）：小于 MIN_DIST 后撤，大于 MAX_DIST 靠近，中间横向走位。
-    private static final double MIN_DIST = 12.0D;
-    private static final double MAX_DIST = 32.0D;
-    private static final double HOVER_OFFSET = 14.0D; // 悬停高度相对目标眼睛的偏移（离地更高，俯视压制）
 
     public WindigoSkyChaseGoal(WindigoEntity mob, double speed, int attackInterval, double range) {
         this.mob = mob;
@@ -73,9 +87,9 @@ public class WindigoSkyChaseGoal extends Goal {
         Vec3 move = Vec3.ZERO;
         if (dist > 1.0E-4D) {
             double nx = dx / dist, nz = dz / dist;
-            if (dist > MAX_DIST) {
+            if (dist > cfg("hover_max_dist", 32.0)) {
                 move = new Vec3(nx * speed, 0.0D, nz * speed);        // 过远：靠拢
-            } else if (dist < MIN_DIST) {
+            } else if (dist < cfg("hover_min_dist", 12.0)) {
                 move = new Vec3(-nx * speed, 0.0D, -nz * speed);     // 过近：后撤
             } else {
                 if (this.strafeTimer <= 0) {                         // 舒适区间：横向走位
@@ -89,7 +103,7 @@ public class WindigoSkyChaseGoal extends Goal {
         }
 
         // 垂直：缓慢跟随目标眼睛高度 + 偏移，悬停贴近但略高于目标
-        double targetY = target.getY() + target.getEyeHeight() + HOVER_OFFSET;
+        double targetY = target.getY() + target.getEyeHeight() + cfg("hover_offset", 14.0);
         double dy = targetY - this.mob.getY();
         double vy = Math.max(-0.25D, Math.min(0.25D, dy * 0.06D));
 
