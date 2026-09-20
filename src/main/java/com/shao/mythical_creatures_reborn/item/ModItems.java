@@ -214,7 +214,7 @@ public class ModItems {
     public static final RegistryObject<AxeItem> APPLE_AXE = ITEMS.register("apple_axe",
             () -> new AxeItem(ModTiers.APPLE, 5.0F, -3.0F, new Item.Properties()));
     public static final RegistryObject<HoeItem> APPLE_HOE = ITEMS.register("apple_hoe",
-            () -> new HoeItem(ModTiers.APPLE, -3, 0.0F, new Item.Properties()));
+            () -> new HoeItem(ModTiers.APPLE, -1, 0.0F, new Item.Properties()));
     public static final RegistryObject<ShovelItem> APPLE_SHOVEL = ITEMS.register("apple_shovel",
             () -> new ShovelItem(ModTiers.APPLE, 1.5F, -3.0F, new Item.Properties()));
 
