@@ -39,7 +39,9 @@ public abstract class HostilePonyEntity extends PonyEntity implements Enemy {
         // 物品展示框继承自 Entity 而非 LivingEntity，本就不会被这条索敌选中，天然安全。
         // 已驯服的个体不攻击其主人。
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false,
-                p -> !EntityHateFilter.shouldIgnore(p) && !(this.isTame() && p == this.getOwner())));
+                p -> !EntityHateFilter.shouldIgnore(p)
+                        && !(this.isTame() && p == this.getOwner())
+                        && !isSameSpecies(p)));
     }
 
     /**
@@ -48,6 +50,15 @@ public abstract class HostilePonyEntity extends PonyEntity implements Enemy {
      */
     @Override
     protected boolean hasAttackAnimation() { return true; }
+
+    /**
+     * 是否与目标同种（同种群）：同种敌对生物之间互不索敌，避免集群生成（如木狼、蜈蚣、
+     * 小寄生兽等 {@code minCount>1} 的种群）刷出来后自相残杀。
+     * <p>默认按 {@link EntityType} 判定（同注册名即同种）。个别需要「跨物种结盟」的子类可覆写此方法。</p>
+     */
+    protected boolean isSameSpecies(LivingEntity target) {
+        return target.getType() == this.getType();
+    }
 
     /**
      * 和平难度下自动移除（模仿原版 Monster 行为）：让“真正的敌对生物”在和平模式消失。

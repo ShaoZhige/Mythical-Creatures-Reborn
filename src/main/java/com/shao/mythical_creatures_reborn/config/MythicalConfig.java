@@ -525,30 +525,98 @@ public class MythicalConfig {
             return out;
         }
 
-        /** 备份并写回 common.toml 的 overrides（覆盖式重写整个数组，保留 b.comment 说明块） */
-        @SuppressWarnings({"rawtypes", "unchecked"})
+        /**
+         * 备份并写回 common.toml 的 overrides（覆盖式重写整个数组，保留其余内容与注释块）。
+         * <p>
+         * <b>为什么直接写文件：</b> Forge 的 {@code ModConfig.save()} 只序列化 nightconfig 的
+         * {@code configData}，不读 ForgeConfigSpec；而 {@code overrides.set()} + {@code getConfigData().set()}
+         * 两条写入路径会与 spec 缓存互相打架，导致「第一次保存成功、再进世界后第二次保存失效」。
+         * 这里改为<b>纯文件写入</b>——把 parsed+comments 直接序列化成 TOML 文本，替换掉原文件里的
+         * {@code overrides = [...]} 段，彻底绕开 Forge 那套双缓存。下次进世界 {@code Loading} →
+         * {@link #bake()} 会重新读文件，配置天然生效。
+         * </p>
+         */
         public void persistIfDirty() {
-            List<List<Object>> list = buildOverridesList();
-            overrides.set(list);
             ModConfig cfg = MythicalConfig.COMMON_CONFIG;
             if (cfg == null) {
                 LOGGER.error("找不到 COMMON 配置，无法将 override 写入 common.toml");
                 return;
             }
             Path path = cfg.getFullPath();
+            // 先备份，保证任何写坏都能回滚（.bak 与主文件同目录）
             try {
                 Files.copy(path, Paths.get(path + ".bak"), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                // 备份失败不该阻断保存流程，但要让玩家知道 .bak 没写成（原先静默吞掉，出问题无从查起）
                 LOGGER.warn("备份 common.toml 失败（{} 未更新）: {}", path + ".bak", e.getMessage());
             }
             try {
-                cfg.getConfigData().set("overrides", list);
-                cfg.save();
-                LOGGER.info("已将 {} 条生物属性 override 写入 common.toml", list.size());
-            } catch (Exception e) {
-                LOGGER.error("保存 common.toml 失败: {}", e.getMessage());
+                String content = Files.readString(path);
+                String replaced = replaceOverridesBlock(content, buildOverridesList());
+                Files.writeString(path, replaced);
+                LOGGER.info("已将 override 直接写入 common.toml（{} 条）", buildOverridesList().size());
+            } catch (IOException e) {
+                LOGGER.error("写回 common.toml 失败: {}", e.getMessage());
             }
+        }
+
+        /** 将 parsed+comments 序列化为 overrides 数组的 TOML 文本（不含缩进前导） */
+        private String buildOverridesText(List<List<Object>> list) {
+            StringBuilder sb = new StringBuilder();
+            for (List<Object> row : list) {
+                if (sb.length() > 0) sb.append(",\n");
+                sb.append("    [");
+                for (int i = 0; i < row.size(); i++) {
+                    if (i > 0) sb.append(", ");
+                    Object v = row.get(i);
+                    if (v instanceof String s) {
+                        sb.append('"').append(s.replace("\\", "\\\\").replace("\"", "\\\"")).append('"');
+                    } else if (v instanceof Number n) {
+                        // 整数不带小数点，小数保留（避免 100 -> 100.0 之类类型抖动）
+                        if (n.doubleValue() == Math.rint(n.doubleValue()))
+                            sb.append(n.longValue());
+                        else
+                            sb.append(n.doubleValue());
+                    } else {
+                        sb.append('"').append(String.valueOf(v)).append('"');
+                    }
+                }
+                sb.append("]");
+            }
+            return sb.toString();
+        }
+
+        /**
+         * 在整份 common.toml 文本里，把 {@code overrides = [...]} 段替换为新数组。
+         * 其余所有内容（顶部注释、其他键）原样保留。
+         */
+        private String replaceOverridesBlock(String content, List<List<Object>> list) {
+            int idx = content.indexOf("overrides");
+            if (idx < 0) {
+                // 文件里根本没有 overrides 键（极端情况）：追加到末尾
+                return content + "\noverrides = [\n" + buildOverridesText(list) + "\n]\n";
+            }
+            // 定位 '=' 之后、'[' 开始
+            int eq = content.indexOf('=', idx);
+            int open = content.indexOf('[', eq);
+            if (eq < 0 || open < 0) {
+                LOGGER.error("common.toml 里 overrides 结构异常，无法定位数组，放弃写入");
+                return content;
+            }
+            // 用括号配对找到匹配的 ']'
+            int depth = 0;
+            int close = open;
+            for (int i = open; i < content.length(); i++) {
+                char c = content.charAt(i);
+                if (c == '[') depth++;
+                else if (c == ']') {
+                    depth--;
+                    if (depth == 0) { close = i; break; }
+                }
+            }
+            String before = content.substring(0, open + 1);
+            String after = content.substring(close);
+            String body = buildOverridesText(list);
+            return before + "\n" + body + "\n" + after;
         }
     }
 }
