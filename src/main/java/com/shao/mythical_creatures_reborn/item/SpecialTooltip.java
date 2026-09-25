@@ -12,7 +12,7 @@ import java.util.Map;
  * 套装 / 特殊装备 / 可爱标志 的 tooltip 渲染。
  *
  * <p>三个约定：效果一行一个（多次 {@code tooltip.add()} —— 翻译文本不认 {@code \n}，不能靠换行符）；
- * 效果文本不用灰色（灰色只留给「按住 Shift」这类提示语）；同类效果颜色统一，由 {@link Fx} 集中定义，
+ * 效果文本不用灰色（灰色只留给「按住 Shift」这类提示语）；同类效果颜色统一，颜色集中定义在本类，
  * 不散落在语言文件里。</p>
  */
 public final class SpecialTooltip {
@@ -23,6 +23,9 @@ public final class SpecialTooltip {
     public static final String SET_HINT_KEY     = PREFIX + "set.hint";
     public static final String SPECIAL_HINT_KEY = PREFIX + "special.hint";
     public static final String MARK_HINT_KEY    = PREFIX + "cutiemark.hold_shift";
+
+    /** 标题行颜色。白色不与 {@link Fx} 里任何效果色重复。 */
+    private static final ChatFormatting HEADER_COLOR = ChatFormatting.WHITE;
 
     /**
      * 效果类型 → 统一配色。
@@ -86,9 +89,7 @@ public final class SpecialTooltip {
         Map.entry("twilight_sword",     List.of(line("magic",     Fx.SPECIAL),
                                                 line("ray",       Fx.SPECIAL))),
         Map.entry("unstable_item",      List.of(line("throw",     Fx.SPECIAL))),
-        Map.entry("ursa_claws",         List.of(line("damage",    Fx.ATTACK),
-                                                line("aoe",       Fx.ATTACK),
-                                                line("sharp",     Fx.SPECIAL),
+        Map.entry("ursa_claws",         List.of(line("aoe",       Fx.ATTACK),
                                                 line("dual",      Fx.SPECIAL)))
     );
 
@@ -109,7 +110,7 @@ public final class SpecialTooltip {
     /** 逐行追加：标题一行 + 每个效果各一行（关键：每行一次 tooltip.add） */
     private static void appendLines(List<Component> tooltip, String headerKey,
                                     String baseKey, List<Line> lines) {
-        tooltip.add(Component.translatable(headerKey).withStyle(ChatFormatting.GOLD));
+        tooltip.add(Component.translatable(headerKey).withStyle(HEADER_COLOR));
         for (Line l : lines) {
             tooltip.add(Component.translatable(baseKey + "." + l.key())
                     .withStyle(l.fx().color));
