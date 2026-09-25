@@ -30,11 +30,8 @@ import java.util.function.Supplier;
  * 因此 {@link #hasItem} 返回三态 —— 明确有 / 明确无 / 查不到（{@code null}），
  * 只有拿到前两种<b>明确结论</b>时才通知 {@link EffectGrants}。</p>
  *
- * <p><b>本类不需要任何防抖机制。</b>只要把"查不到"如实报成 {@code null}（保持现状），
- * 就不存在「偶发抖动导致误判取下」的问题。旧版曾用「连续 3 次未命中才移除」来掩盖它，
- * 那只是因为当时把"查询失败"和"确实没有"混为一谈了；三态区分之后，
- * 查询成功即真值（背包与 Curios 槽内容都是内存数据），可以放心立即生效 ——
- * 摘下标志会<b>立刻</b>收回，不必等 3 秒。</p>
+ * <p>本类不需要防抖：把"查不到"如实报成 {@code null}（保持现状），就不会因偶发查询失败而误删效果。
+ * 三态区分后查询成功即真值（背包与 Curios 槽都是内存数据），摘下标志会<b>立刻</b>收回。</p>
  */
 @Mod.EventBusSubscriber(modid = MythicalCreaturesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CutieMarkHandler {
@@ -122,8 +119,8 @@ public class CutieMarkHandler {
         // 来源二：Curios 饰品栏（所有槽类型）
         try {
             var handler = CuriosApi.getCuriosInventory(player).resolve();
-            // 🔴 Capability 尚未挂载时（玩家刚登录 / 换维度 / 初始化中）拿到的是 empty。
-            //    这是"查不到"，必须报 null —— 若当成"玩家没带"，buff 会被误删并来回闪。
+            // Capability 尚未挂载时（刚登录 / 换维度 / 初始化中）拿到的是 empty，
+            // 属于"查不到"，必须报 null；当成"没带"会让 buff 被误删并来回闪。
             if (handler.isEmpty()) return null;
 
             var curios = handler.get();

@@ -24,11 +24,10 @@ public class ToughGuyEntity extends NeutralPonyEntity {
     @Override protected Item getTamingItem() { return Items.APPLE; }
 
     /**
-     * 攻击 AI（2026-09-19 新增）。
+     * 攻击 AI。
      *
-     * <p>硬汉此前直接继承 {@link PonyEntity}，**只有被动反击**，bbmodel 里做好的 {@code attack}
-     * 动画在游戏里永远不会播。现在改为继承 {@link NeutralPonyEntity}（中立生物基类），
-     * 于是同时具备：</p>
+     * <p>继承 {@link NeutralPonyEntity}（中立生物基类）而非 {@link PonyEntity}，
+     * 使 bbmodel 里的 {@code attack} 动画能正常播放，同时具备：</p>
      * <ul>
      *   <li>**中立**：不会无缘无故攻击玩家/动物；</li>
      *   <li>**主动攻击敌对生物**：{@link NeutralPonyEntity} 已挂上「打模组内一切

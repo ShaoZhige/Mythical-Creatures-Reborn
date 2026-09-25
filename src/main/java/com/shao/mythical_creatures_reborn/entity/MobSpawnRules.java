@@ -34,12 +34,9 @@ public final class MobSpawnRules {
      * 通用敌对生物生成判定（适用于任意 Entity 子类，本项目敌对生物继承自 PonyEntity/Animal 而非 Monster）：
      * 非和平难度 + 原版 {@link Monster#isDarkEnoughToSpawn}（时间校正后的"够暗"判定）。
      *
-     * 【曾经的 bug】旧实现用 {@code getBrightness(LightLayer.SKY, pos) <= 8} 判"夜晚"是错的：
-     * LightLayer.SKY 是**原始天光**（露天恒为 15，不随时间变化，只被方块遮挡），所以露天夜里
-     * 该值仍是 15 → 判定恒 false → 所有模组敌对生物在空旷处**永远刷不出来**，只在树下/洞穴
-     * 这类被遮挡的阴影里刷。正确做法是用原版 isDarkEnoughToSpawn：它用 getMaxLocalRawBrightness
-     * （已减去随昼夜变化的 skyDarken）判定，因此夜晚露天 / 洞穴 / 阴影都能刷，白天露天则被挡住，
-     * 与僵尸/骷髅完全同一原理。
+     * <p>不能用 {@code getBrightness(LightLayer.SKY, pos)} 判夜晚：那是原始天光，露天下恒为 15、
+     * 不随昼夜变化，会让敌对生物在空旷处永远刷不出来。{@code isDarkEnoughToSpawn} 用的是
+     * 时间校正后的亮度（{@code getMaxLocalRawBrightness}），与僵尸/骷髅同一原理。</p>
      *
      * Generic hostile spawn rule (any entity; our hostiles extend PonyEntity/Animal, not Monster):
      * non-peaceful AND vanilla {@link Monster#isDarkEnoughToSpawn} (time-adjusted darkness).

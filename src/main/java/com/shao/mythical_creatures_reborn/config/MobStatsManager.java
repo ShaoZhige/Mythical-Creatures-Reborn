@@ -69,12 +69,9 @@ public final class MobStatsManager {
             "horizontal_factor", "inertia_decay", "jump_height");
 
     /**
-     * 技能 / AI 调参键（仅当实体在 ENTITY_DEFAULTS 里登记了对应默认值时才暴露）。
-     * <p>
-     * 这些原先是各 Goal 类里的 {@code private static final} 魔法数字（雪魔冲刺、麋鹿冲撞、
-     * 穗龙斯拉横扫、末日颅骨俯冲）。登记到配置后即可在编辑器里改，无需改代码。
-     * ⚠️ 新增技能键必须同时加进本列表**和** {@code MythicalConfig.D} 的默认值登记，
-     * 否则 GUI 不会显示（keysOf 只暴露有默认值的键）。
+     * 技能调参键（仅当实体在 ENTITY_DEFAULTS 里登记了对应默认值时才暴露）。
+     * <p>新增键必须同时加进本列表和 {@code MythicalConfig.D} 的默认值登记，
+     * 否则 GUI 不显示（keysOf 只暴露有默认值的键）。
      */
     private static final List<String> ABILITY_KEYS = List.of(
             // 麋鹿：邻近防御

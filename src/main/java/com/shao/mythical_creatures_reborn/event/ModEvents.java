@@ -29,8 +29,7 @@ public class ModEvents {
      * 覆盖登录/重生等未触发装备变更事件的边缘情况。
      * 可爱标志由 {@code CutieMarkHandler} 自己的周期驱动（当前同样是 20 tick）。
      *
-     * <p>直接用实体自带的 {@link Player#tickCount} 取模，不需要再自己维护一张
-     * 「玩家 → 计数器」的 WeakHashMap（原先每 tick 对每个玩家做一次 map 读写，纯属多余状态）。</p>
+     * <p>直接用实体自带的 {@link Player#tickCount} 取模，无需另维护「玩家 → 计数器」映射。</p>
      */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {

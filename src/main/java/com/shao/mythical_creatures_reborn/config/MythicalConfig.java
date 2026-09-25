@@ -126,8 +126,8 @@ public class MythicalConfig {
             entity("mythical_creatures_reborn:iron_will", 400, 0.22, 15);
             entity("mythical_creatures_reborn:skull_of_doom", 50, 0.1, 7);
             entity("mythical_creatures_reborn:prince_rutherford", 630, 0.25, 35);
-            // 穗龙斯拉：移速 ×2.5（0.2 → 0.5，2026-09-19）。横扫 Goal 用 1.2× 移速追目标，
-            // 原速下巨型 boss 追不上地面目标；提到 0.5 后实际追击速度 ≈ 0.6 方块/tick。
+            // 穗龙斯拉：移速 ×2.5（0.2 → 0.5）。横扫 Goal 以 1.2× 移速追目标，
+            // 原速下追不上地面目标；0.5 时实际追击速度 ≈ 0.6 方块/tick。
             entity("mythical_creatures_reborn:spikezilla", 975, 0.5, 54);
             entity("mythical_creatures_reborn:rhinoceros", 60.0, 0.2, 7.0);
             entity("mythical_creatures_reborn:robot_sombra", 55, 0.28, 7);
@@ -171,9 +171,8 @@ public class MythicalConfig {
                 ENTITY_DEFAULTS.put(id + "|jump_height", 0.63);         // 满蓄力跳跃初速度基数
             }
 
-            // ── 技能 / AI 调参 ──────────────────────────────────────────────
-            // 这些数值原先硬编码在各个 Goal 类里（private static final 常量）。
-            // 登记到 ENTITY_DEFAULTS 后即可在编辑器的「生物」分类里改，也能写进 common.toml。
+            // ── 技能调参 ────────────────────────────────────────────────────
+            // 登记后可在编辑器的「生物」分类里改，也能写进 common.toml。
             // 只有在此登记过的键才会在 GUI 暴露（见 MobStatsManager.ABILITY_KEYS）。
 
             // 雪魔：地面冲锋 + 空中追击 + 不稳定物品霰弹
@@ -528,12 +527,9 @@ public class MythicalConfig {
         /**
          * 备份并写回 common.toml 的 overrides（覆盖式重写整个数组，保留其余内容与注释块）。
          * <p>
-         * <b>为什么直接写文件：</b> Forge 的 {@code ModConfig.save()} 只序列化 nightconfig 的
-         * {@code configData}，不读 ForgeConfigSpec；而 {@code overrides.set()} + {@code getConfigData().set()}
-         * 两条写入路径会与 spec 缓存互相打架，导致「第一次保存成功、再进世界后第二次保存失效」。
-         * 这里改为<b>纯文件写入</b>——把 parsed+comments 直接序列化成 TOML 文本，替换掉原文件里的
-         * {@code overrides = [...]} 段，彻底绕开 Forge 那套双缓存。下次进世界 {@code Loading} →
-         * {@link #bake()} 会重新读文件，配置天然生效。
+         * <b>直接写文件而不走 ForgeConfigSpec：</b> {@code ModConfig.save()} 只序列化 nightconfig 的
+         * {@code configData}，与 spec 缓存并行写入会互相打架，导致保存失效。
+         * 下次进世界 {@code Loading} → {@link #bake()} 重新读文件即生效。
          * </p>
          */
         public void persistIfDirty() {

@@ -142,16 +142,12 @@ public final class MobCatalog {
             mob(ModEntities.RARITY, RarityEntity::createAttributes, Animal::checkAnimalSpawnRules, "rarity"),
 
             // ── 其余生物（全部使用各自的 <renderBase>.animation.json）──
-            // 2026-09-19：38 个生物的专属动画全部导出完成，原先 20 处指向共享占位动画
-            // mod_placeholder 的接线全部改回自己的文件，否则 Blockbench 里做好的动作在游戏里不生效。
             mob(ModEntities.BUFFALO, BuffaloEntity::createAttributes, Animal::checkAnimalSpawnRules, "buffalo"),
             mob(ModEntities.CHIEF_THUNDERHOOVES, ChiefThunderhoovesEntity::createAttributes, Animal::checkAnimalSpawnRules, "chiefthunderhooves"),
             mob(ModEntities.BLACK_WIDOW_SPIDER, BlackWidowEntity::createAttributes, MobSpawnRules::hostile, "blackwidow"),
             mob(ModEntities.LEVIATHAN, LeviathanEntity::createAttributes, MobSpawnRules::hostile, "leviathan"),
             mob(ModEntities.CENTIPEDE, CentipedeEntity::createAttributes, MobSpawnRules::cave, "centipede"),
-            // 九头蛇：用自己的 hydra.animation.json（idle / walk / run / attack）。它曾与此表的其它
-            // 生物一样错指向共享的 mod_placeholder 空动画，导致 BB 里做好的动画一直没生效
-            // —— 详见 2026-09-15 的动画接线排查。
+            // 九头蛇：用自己的 hydra.animation.json（idle / walk / run / attack）。
             mob(ModEntities.HYDRA, HydraEntity::createAttributes, MobSpawnRules::hostile, "hydra"),
             giant(ModEntities.WINDIGO, WindigoEntity::createAttributes, MobSpawnRules::hostile, "windigo"),
             mob(ModEntities.BABY_MOOSE, BabyMooseEntity::createAttributes, Animal::checkAnimalSpawnRules, "moose"),

@@ -119,9 +119,8 @@ public class ModSounds {
 
     /* ================================================================
      * 共享音效 | Shared sounds
-     *  原先 13 个生物完全没有声音、且几乎没有生物有死亡音。这里补一组按「音色」而非
-     *  「生物」命名的共享 SoundEvent，供 EntitySoundProfiles 分配给缺声的生物 ——
-     *  避免为 38 个生物 × 3 种事件注册上百个重复条目（它们引用的本来就是同一批 ogg）。
+     *  按「音色」而非「生物」命名的共享 SoundEvent，供 EntitySoundProfiles 分配给缺声的生物，
+     *  避免为每个生物 × 每种事件重复注册（引用的本就是同一批 ogg）。
      * ================================================================ */
     public static final RegistryObject<SoundEvent> SHARED_GROWL =
             register("entity.shared.growl");

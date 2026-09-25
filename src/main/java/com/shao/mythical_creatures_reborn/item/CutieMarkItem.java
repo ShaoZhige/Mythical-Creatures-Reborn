@@ -1,7 +1,5 @@
 package com.shao.mythical_creatures_reborn.item;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,12 +19,10 @@ public class CutieMarkItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
-        if (Screen.hasShiftDown()) {
-            tooltip.add(Component.translatable(tooltipKey + ".detail").withStyle(ChatFormatting.DARK_GRAY));
-        } else {
-            tooltip.add(Component.translatable("tooltip.mythical_creatures_reborn.cutiemark.hold_shift")
-                    .withStyle(ChatFormatting.DARK_GRAY));
-        }
+        // 台词行：颜色由语言文件里的 § 码决定（不强制灰，否则会把台词染成灰色）
+        tooltip.add(Component.translatable(tooltipKey));
+        // 效果行：交给 SpecialTooltip 统一渲染（一行一个效果 + 按类型统一配色）
+        String markId = tooltipKey.substring(tooltipKey.lastIndexOf('.') + 1);
+        SpecialTooltip.appendMark(markId, tooltip);
     }
 }

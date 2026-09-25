@@ -47,8 +47,8 @@ public class ParaspriteEntity extends HostilePonyEntity {
 
     /**
      * 飞行生物的属性表：在核心四项之上追加 {@code FLYING_SPEED}。
-     * ⚠️ 该值取自配置键 {@code parasprite|fly_speed}，**必须在 MythicalConfig.ENTITY_DEFAULTS 登记**，
-     * 否则静默取 0.0、实体飞不起来（已登记为 0.25）。
+     * 飞行速度取自配置键 {@code parasprite|fly_speed}，必须已在 MythicalConfig.ENTITY_DEFAULTS
+     * 登记，否则静默取 0.0、实体飞不起来。
      */
     public static AttributeSupplier.Builder createAttributes() {
         return PonyAttributes.flying("mythical_creatures_reborn:parasprite");

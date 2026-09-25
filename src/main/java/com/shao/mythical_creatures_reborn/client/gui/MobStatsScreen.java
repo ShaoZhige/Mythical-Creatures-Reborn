@@ -609,8 +609,7 @@ public class MobStatsScreen extends Screen {
         // 生物与投掷物都是已注册实体，用实体的本地化名；projectile_params 等虚名查不到，回退到短名
         if ((t.category == Category.ENTITY || t.category == Category.PROJECTILE) && rl != null) {
             EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(rl);
-            // 🔴 原版实体注册表是 DefaultedRegistry，未知 id 会兜底返回 Pig（显示成「猪」），
-            //    必须回验注册键一致才算命中。
+            // 原版实体注册表是 DefaultedRegistry，未知 id 会兜底返回 Pig，必须回验注册键。
             if (type != null && rl.equals(ForgeRegistries.ENTITY_TYPES.getKey(type)))
                 return type.getDescription();
         }

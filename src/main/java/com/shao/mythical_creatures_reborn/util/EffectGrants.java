@@ -14,8 +14,8 @@ import java.util.UUID;
 /**
  * 药水效果（buff / debuff）的<b>唯一下发入口</b>。
  *
- * <p>🔴 <b>铁律：项目里所有给生物挂药水效果的代码都必须经过本类。</b>
- * 任何地方都不要再直接写 {@code entity.addEffect(...)} / {@code entity.removeEffect(...)}。</p>
+ * <p>所有给生物挂药水效果的代码都必须经过本类，不要直接调用
+ * {@code entity.addEffect(...)} / {@code entity.removeEffect(...)}。</p>
  *
  * <h2>两种给予条件（调用前必须先选一个）</h2>
  *
@@ -30,7 +30,7 @@ import java.util.UUID;
  * 用于套装加成（条件 = 穿齐四件）、可爱标志（条件 = 背包/饰品栏里有）。</p>
  *
  * <p><b>为什么要把条件传进来，而不是让本类自己猜：</b>药水效果本身不记录来源。
- * 如果靠「等级相同 + duration&lt;0 就是我的」来猜，遇到同名同等级就会互相误删、来回反复给
+ * 如果靠「等级相同 + duration&lt;0 就是本方的」来猜，遇到同名同等级就会互相误删、来回反复给
  * （buff 闪烁）；如果靠「多久没来续期」超时推断，则收回会有 1~2 个检测周期的延迟。
  * 直接把条件传进来，语义最直接：<b>true 就保证有，false 就立刻收回</b>，零延迟、零猜测。</p>
  *
@@ -119,7 +119,7 @@ public final class EffectGrants {
         if (shouldHave) {
             bySource.put(source, amplifier);
         } else if (bySource.remove(source) == null) {
-            // 本方<b>从未登记过</b>这个来源 —— 说明这个效果不是我们给的，就不该由我们来收。
+            // 本方<b>从未登记过</b>这个来源 —— 不是本方给的，就不该由本方收回。
             // 否则「没穿套装 / 没带标志」的那一轮空转检查会把别处给的无限 buff 误删。
             if (bySource.isEmpty()) {
                 byEffect.remove(effect);
@@ -140,12 +140,10 @@ public final class EffectGrants {
     /**
      * 玩家退出时清理来源记录，并<b>顺手把本方给过的永久效果收回去</b>。
      *
-     * <p><b>为什么不能只清记录：</b>玩家身上的无限 buff 会被写进存档持久化，下次登录依然存在。
-     * 如果这里只删记录，那么「穿着套装下线、下次登录时已经不穿了」的情况下，
-     * 这些效果就再没有任何来源来接管它，会变成永久残留的孤儿 buff。
-     * 主动收回后，若玩家其实还穿着套装，登录后第一次套装检查会重新给上。</p>
+     * <p>不能只清记录：无限 buff 会被写进存档，若只删记录，这些效果就再没有来源接管，
+     * 会成为永久残留的孤儿 buff。收回后若玩家仍穿着套装，登录时第一次套装检查会重新给上。</p>
      *
-     * <p>⚠️ 换维度 / 重生时<b>不要</b>调用本方法 —— 那时效果仍在，清掉记录就没人能收回了。</p>
+     * <p>换维度 / 重生时<b>不要</b>调用本方法 —— 那时效果仍在，清掉记录就没人能收回了。</p>
      */
     public static void clear(Player player) {
         Map<MobEffect, Map<String, Integer>> byEffect = SOURCES.remove(player.getUUID());

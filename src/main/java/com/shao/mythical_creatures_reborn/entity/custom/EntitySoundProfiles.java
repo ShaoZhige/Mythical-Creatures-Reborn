@@ -21,13 +21,12 @@ import java.util.function.Supplier;
  *   <li>参考模组没有专属处理的生物保持静默或原版默认，不强行配音。</li>
  * </ul>
  *
- * <p>音量沿用参考模组的逐生物数值，但整体 × {@link #VOLUME_SCALE} 并封顶
- * {@link #VOLUME_CAP}（玩家反馈参考模组原值如 7.5 / 5.65 太响会被吓到）。
- * 音高保持参考模组原值不变。</p>
+ * <p>音量沿用参考模组的逐生物数值，整体 × {@link #VOLUME_SCALE} 并封顶
+ * {@link #VOLUME_CAP}。音高保持参考模组原值不变。</p>
  */
 public final class EntitySoundProfiles {
 
-    /** 全局音量缩放：参考模组音量整体减半（被吓到好几次的反馈）。想再调就改这一个数。 */
+    /** 全局音量缩放：调整整体音量只需改这一个数。 */
     private static final float VOLUME_SCALE = 0.5F;
     /** 音量封顶：参考模组的极端值（木狼 7.5、大熊 5.65）收敛到这里。 */
     private static final float VOLUME_CAP = 2.0F;
