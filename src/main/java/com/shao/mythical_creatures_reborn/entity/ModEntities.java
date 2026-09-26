@@ -168,6 +168,11 @@ public class ModEntities {
                     EntityType.Builder.<CupcakeProjectileEntity>of(CupcakeProjectileEntity::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
                             .build("cupcake_projectile"));
+    public static final RegistryObject<EntityType<MavisOrbEntity>> MAVIS_ORB_PROJECTILE =
+            ENTITY_TYPES.register("mavis_orb_projectile", () ->
+                    EntityType.Builder.<MavisOrbEntity>of(MavisOrbEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .build("mavis_orb_projectile"));
 
     // ── 珍贵宝石（珍奇专属）：可投掷，命中上流血+修补 buff ──
     public static final RegistryObject<EntityType<PreciousGemEntity>> PRECIOUS_GEM_PROJECTILE =

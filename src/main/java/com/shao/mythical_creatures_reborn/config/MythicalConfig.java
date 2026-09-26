@@ -277,6 +277,7 @@ public class MythicalConfig {
             projectile("mythical_creatures_reborn:rainbow_dash_slash", "area_y_down", 10.0);// 判定盒 向下
             projectile("mythical_creatures_reborn:unstable_item", "magic_damage", 15.0);
             projectile("mythical_creatures_reborn:unstable_item", "frost_trigger_chance", 0.3); // 覆雪触发概率
+            projectile("mythical_creatures_reborn:mavis_orb_projectile", "damage", 6.0);        // 梅菲斯之球
         }
     }
 

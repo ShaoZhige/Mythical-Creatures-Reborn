@@ -429,6 +429,7 @@
   "stat.mythical_creatures_reborn.life": "特效寿命(tick)",
   "entity.mythical_creatures_reborn.precious_gem_projectile": "珍贵宝石",
   "entity.mythical_creatures_reborn.unstable_item": "不稳定物品",
+  "entity.mythical_creatures_reborn.mavis_orb_projectile": "梅菲斯之球",
   "entity.mythical_creatures_reborn.magic_burst": "魔法爆发",
   "gui.mythical_creatures_reborn.editor.projectile_params": "投掷物通用参数",
   "tooltip.mythical_creatures_reborn.set.header": "穿戴全套：",

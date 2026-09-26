@@ -52,6 +52,7 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.BALLOON_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.BUTTERFLY_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.CUPCAKE_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.MAVIS_ORB_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.PRECIOUS_GEM_PROJECTILE.get(), ThrownItemRenderer::new);
 
         // ── 生物：由 MobCatalog 元数据表驱动（新增生物不需要动这里）──

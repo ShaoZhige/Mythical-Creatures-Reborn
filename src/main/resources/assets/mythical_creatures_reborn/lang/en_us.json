@@ -429,6 +429,7 @@
   "stat.mythical_creatures_reborn.life": "Effect Lifetime (ticks)",
   "entity.mythical_creatures_reborn.precious_gem_projectile": "Precious Gem",
   "entity.mythical_creatures_reborn.unstable_item": "Unstable Item",
+  "entity.mythical_creatures_reborn.mavis_orb_projectile": "Mavis Orb",
   "entity.mythical_creatures_reborn.magic_burst": "Magic Burst",
   "gui.mythical_creatures_reborn.editor.projectile_params": "Shared Projectile Params",
   "tooltip.mythical_creatures_reborn.set.header": "Full Set:",

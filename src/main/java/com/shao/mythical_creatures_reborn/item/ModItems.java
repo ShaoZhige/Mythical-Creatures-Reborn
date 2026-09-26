@@ -112,7 +112,8 @@ public class ModItems {
             () -> new ThrowableFunItem(new Item.Properties(),
                     (level, shooter) -> new com.shao.mythical_creatures_reborn.entity.BalloonProjectileEntity(level, shooter)));
     public static final RegistryObject<Item> MAVIS_ORBS = ITEMS.register("mavis_orbs",
-            () -> new Item(new Item.Properties()));
+            () -> new ThrowableFunItem(new Item.Properties(),
+                    (level, shooter) -> new com.shao.mythical_creatures_reborn.entity.MavisOrbEntity(level, shooter)));
 
     // 可爱标志
     public static final RegistryObject<CutieMarkItem> APPLEJACK_CUTIEMARK = ITEMS.register("applejack_cutiemark",
