@@ -67,7 +67,8 @@ import java.util.function.Supplier;
  *   <li>{@code animation} —— 动画基准名，传 {@code null} 表示与 {@code renderBase} 同名。
  *       38 个生物现在都有各自的动画文件，因此本表全部走同名回落；字段保留是为了给
  *       「确实要复用别的动画文件」留出口；</li>
- *   <li>{@code cullDisabled} —— 超大型实体禁用视锥剔除。</li>
+ *   <li>{@code cullDisabled} —— 超大型实体禁用视锥剔除；</li>
+ *   <li>{@code renderScale} —— 渲染缩放（1.0 = 原始大小），只缩放渲染，不动任何资源。</li>
  * </ul>
  *
  * <p>Registration catalog for every mob in this mod: the single place to touch when adding one.
@@ -94,28 +95,39 @@ public final class MobCatalog {
             SpawnPlacements.SpawnPredicate<T> spawnRule,
             String renderBase,
             String animation,
-            boolean cullDisabled) {
+            boolean cullDisabled,
+            float renderScale) {
 
         /** 动画名为空时回落到资源基准名，省得每行都写两遍。 */
         public MobDef {
             if (animation == null) {
                 animation = renderBase;
             }
+            if (renderScale <= 0.0F) {
+                renderScale = 1.0F;
+            }
         }
     }
 
-    /** 常规生物：动画与资源同名，启用视锥剔除。 */
+    /** 常规生物：动画与资源同名，启用视锥剔除，渲染缩放 1.0。 */
     public static <T extends Mob & GeoAnimatable> MobDef<T> mob(
             RegistryObject<EntityType<T>> type, Supplier<AttributeSupplier.Builder> attributes,
             SpawnPlacements.SpawnPredicate<T> spawnRule, String renderBase) {
-        return new MobDef<>(type, attributes, spawnRule, renderBase, null, false);
+        return new MobDef<>(type, attributes, spawnRule, renderBase, null, false, 1.0F);
     }
 
     /** 超大型生物：禁用视锥剔除，防止抬头 / 靠近时模型被剔除而消失（动画与资源同名）。 */
     public static <T extends Mob & GeoAnimatable> MobDef<T> giant(
             RegistryObject<EntityType<T>> type, Supplier<AttributeSupplier.Builder> attributes,
             SpawnPlacements.SpawnPredicate<T> spawnRule, String renderBase) {
-        return new MobDef<>(type, attributes, spawnRule, renderBase, null, true);
+        return new MobDef<>(type, attributes, spawnRule, renderBase, null, true, 1.0F);
+    }
+
+    /** 小型生物：geo / 贴图 / UV / 动画全部保持原样，仅渲染时整体缩小。 */
+    public static <T extends Mob & GeoAnimatable> MobDef<T> small(
+            RegistryObject<EntityType<T>> type, Supplier<AttributeSupplier.Builder> attributes,
+            SpawnPlacements.SpawnPredicate<T> spawnRule, String renderBase, float renderScale) {
+        return new MobDef<>(type, attributes, spawnRule, renderBase, null, false, renderScale);
     }
 
     /**
@@ -132,7 +144,7 @@ public final class MobCatalog {
             mob(ModEntities.BEAR, BearEntity::createAttributes, Animal::checkAnimalSpawnRules, "bear"),
             mob(ModEntities.COCKATRICE, CockatriceEntity::createAttributes, MobSpawnRules::hostile, "cockatrice"),
             mob(ModEntities.KINGBOWSER_9000, KingbowserEntity::createAttributes, MobSpawnRules::hostile, "kingbowser_9000"),
-            mob(ModEntities.PARASPRITE, ParaspriteEntity::createAttributes, Animal::checkAnimalSpawnRules, "parasprite"),
+            small(ModEntities.PARASPRITE, ParaspriteEntity::createAttributes, Animal::checkAnimalSpawnRules, "parasprite", 0.25F),
             mob(ModEntities.PHOENIX, PhoenixEntity::createAttributes, Animal::checkAnimalSpawnRules, "phoenix"),
             giant(ModEntities.URSA_MAJOR, UrsamajorEntity::createAttributes, MobSpawnRules::hostile, "ursa_major"),
             mob(ModEntities.GARBLE, GarbleEntity::createAttributes, MobSpawnRules::hostile, "garble"),

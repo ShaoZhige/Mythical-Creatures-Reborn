@@ -196,7 +196,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<ParaspriteEntity>> PARASPRITE =
             ENTITY_TYPES.register("parasprite", () ->
                     EntityType.Builder.of(ParaspriteEntity::new, MobCategory.CREATURE)
-                            .sized(2.0F, 1.4F).clientTrackingRange(8).build("parasprite"));
+                            .sized(0.45F, 0.45F).clientTrackingRange(8).build("parasprite"));
     public static final RegistryObject<EntityType<PhoenixEntity>> PHOENIX =
             ENTITY_TYPES.register("phoenix", () ->
                     EntityType.Builder.of(PhoenixEntity::new, MobCategory.CREATURE)

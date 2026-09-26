@@ -75,7 +75,7 @@ public final class SpecialTooltip {
     );
 
     // ==================== 特殊装备效果表 ====================
-    // 注意：Map.of 最多 10 组键值对，这里 11 组，必须用 Map.ofEntries
+    // 注意：Map.of 最多 10 组键值对；这里用 ofEntries，继续加条目不会踩到编译上限
     private static final Map<String, List<Line>> SPECIAL_EFFECTS = Map.ofEntries(
         Map.entry("bear_claw_sword",    List.of(line("bleed",     Fx.SPECIAL))),
         Map.entry("bowsers_sword",      List.of(line("meteor",    Fx.SPECIAL))),
@@ -85,7 +85,6 @@ public final class SpecialTooltip {
         Map.entry("rainbow_dash_sword", List.of(line("cloud",     Fx.SPECIAL),
                                                 line("beam",      Fx.SPECIAL))),
         Map.entry("twilicane",          List.of(line("summon",    Fx.SPECIAL))),
-        Map.entry("twilight_star",      List.of(line("throw",     Fx.SPECIAL))),
         Map.entry("twilight_sword",     List.of(line("magic",     Fx.SPECIAL),
                                                 line("ray",       Fx.SPECIAL))),
         Map.entry("unstable_item",      List.of(line("throw",     Fx.SPECIAL))),

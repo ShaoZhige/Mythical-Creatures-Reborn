@@ -300,6 +300,9 @@ public final class MobStatsManager {
         public double cur;
         public boolean overridden;
         public String comment;
+        /** 编辑器专用：本行按下过「×」重置，保存时须清除其已有 override。
+         *  不能只看 {@code overridden}——重置会把 overridden 清成 false，save() 便会判定"无需处理"而静默丢弃。 */
+        public boolean pendingReset;
         public Row(String key, double def, double cur, boolean overridden, String comment) {
             this.key = key;
             this.def = def;

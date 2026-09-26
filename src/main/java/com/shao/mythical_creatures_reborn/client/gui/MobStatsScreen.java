@@ -346,6 +346,9 @@ public class MobStatsScreen extends Screen {
             row.cur = row.def; row.overridden = false;
         }
         row.comment = "";
+        // overridden 已清（行内显示"未覆盖"），但保存时仍需知道要发「清除 override」，
+        // 否则 save() 判定 active=false 且 overridden=false，会静默跳过、override 残留。
+        row.pendingReset = true;
         rebuildDetailRows();
     }
 
@@ -369,13 +372,15 @@ public class MobStatsScreen extends Screen {
                         MobStatsManager.set(t.id, row.key, row.cur, row.comment);
                     }
                     row.overridden = true;
-                } else if (row.overridden) {
+                    row.pendingReset = false;
+                } else if (row.overridden || row.pendingReset) {
                     if (isOnServer()) {
                         ModNetwork.CHANNEL.sendToServer(new MobStatsEditPacket(t.id, row.key, 0.0D, true, ""));
                     } else {
                         MobStatsManager.reset(t.id, row.key);
                     }
                     row.overridden = false;
+                    row.pendingReset = false;
                     row.comment = "";
                 }
             }
@@ -400,6 +405,7 @@ public class MobStatsScreen extends Screen {
                 if (t.category == Category.ITEM) { row.cur = 0.0; row.overridden = false; }
                 else { row.cur = row.def; row.overridden = false; }
                 row.comment = "";
+                row.pendingReset = false;
             }
         }
         this.added.clear();

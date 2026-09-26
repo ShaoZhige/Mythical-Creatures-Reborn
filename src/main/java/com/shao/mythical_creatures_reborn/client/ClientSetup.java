@@ -66,11 +66,17 @@ public class ClientSetup {
         EntityType<T> type = mob.type().get();
         String base = mob.renderBase();
         String animation = mob.animation();
-        if (mob.cullDisabled()) {
-            event.registerEntityRenderer(type, ctx -> SimpleGeoRenderer.noCull(ctx, base, animation));
-        } else {
-            event.registerEntityRenderer(type, ctx -> new SimpleGeoRenderer<>(ctx, base, animation));
-        }
+        float scale = mob.renderScale();
+        event.registerEntityRenderer(type, ctx -> {
+            SimpleGeoRenderer<T> renderer = mob.cullDisabled()
+                    ? SimpleGeoRenderer.noCull(ctx, base, animation)
+                    : new SimpleGeoRenderer<>(ctx, base, animation);
+            // 小型生物：只缩放渲染，geo / 贴图 / UV / 动画全部不动
+            if (scale != 1.0F) {
+                renderer.withScale(scale);
+            }
+            return renderer;
+        });
     }
 
     /** 注册3D模型，使 forge:separate_transforms 能引用它 */

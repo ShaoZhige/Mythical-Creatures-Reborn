@@ -584,25 +584,31 @@ public class MythicalConfig {
         /**
          * 在整份 common.toml 文本里，把 {@code overrides = [...]} 段替换为新数组。
          * 其余所有内容（顶部注释、其他键）原样保留。
+         *
+         * <p>定位前先把「行首为 # 的注释行」等长遮蔽成空格（{@link #maskCommentLines}）。
+         * 顶部示例注释里同样写着 {@code overrides = [} 与 {@code ]}，直接 {@code indexOf} 会命中
+         * 注释里的那一对、把注释段当成数组替换掉 —— 写出的数组体因此丢掉 {@code #}，
+         * 下次启动解析整个文件就报 {@code Invalid separator ',' in table name}。</p>
          */
         private String replaceOverridesBlock(String content, List<List<Object>> list) {
-            int idx = content.indexOf("overrides");
+            String masked = maskCommentLines(content);
+            int idx = masked.indexOf("overrides");
             if (idx < 0) {
                 // 文件里根本没有 overrides 键（极端情况）：追加到末尾
                 return content + "\noverrides = [\n" + buildOverridesText(list) + "\n]\n";
             }
             // 定位 '=' 之后、'[' 开始
-            int eq = content.indexOf('=', idx);
-            int open = content.indexOf('[', eq);
+            int eq = masked.indexOf('=', idx);
+            int open = masked.indexOf('[', eq);
             if (eq < 0 || open < 0) {
                 LOGGER.error("common.toml 里 overrides 结构异常，无法定位数组，放弃写入");
                 return content;
             }
-            // 用括号配对找到匹配的 ']'
+            // 用括号配对找到匹配的 ']'（只在非注释内容里数括号）
             int depth = 0;
             int close = open;
-            for (int i = open; i < content.length(); i++) {
-                char c = content.charAt(i);
+            for (int i = open; i < masked.length(); i++) {
+                char c = masked.charAt(i);
                 if (c == '[') depth++;
                 else if (c == ']') {
                     depth--;
@@ -613,6 +619,26 @@ public class MythicalConfig {
             String after = content.substring(close);
             String body = buildOverridesText(list);
             return before + "\n" + body + "\n" + after;
+        }
+
+        /**
+         * 把整份文本里「行首（允许前导空格 / Tab）为 # 的注释行」遮蔽成等长空格，保留换行与全部下标。
+         * 用于按索引定位真正的键与方括号时跳过注释内容。
+         */
+        private static String maskCommentLines(String content) {
+            StringBuilder sb = new StringBuilder(content.length());
+            int i = 0;
+            while (i < content.length()) {
+                int nl = content.indexOf('\n', i);
+                int end = nl < 0 ? content.length() : nl;
+                int p = i;
+                while (p < end && (content.charAt(p) == ' ' || content.charAt(p) == '\t')) p++;
+                boolean comment = p < end && content.charAt(p) == '#';
+                for (int k = i; k < end; k++) sb.append(comment ? ' ' : content.charAt(k));
+                if (nl >= 0) sb.append('\n');
+                i = nl < 0 ? content.length() : nl + 1;
+            }
+            return sb.toString();
         }
     }
 }
