@@ -32,12 +32,12 @@
 | Minecraft | 1.20.1 |
 | Forge | 47.x（开发环境 47.2.0） |
 | Java | 17（客户端与服务端都必须） |
-| GeckoLib | 4.4.9（**必须依赖**，缺失时生物无法播放动画） |
+| GeckoLib | 4.4.9（必须安装，缺失时模组会在启动期直接报错并中止加载） |
 | Curios API | 5.x（可选，仅「可爱标志」饰品相关功能需要） |
 
-GeckoLib 在 `mods.toml` 里声明为**可选**依赖且不限制版本，以便同时兼容原生 Forge 版
-与经 Sinytra Connector 运行的 Fabric 版（两者公开 API 一致）。是否真的可用由启动期自检把关，
-缺失时会在日志和聊天栏给出中英文提示。
+GeckoLib 在 `mods.toml` 里刻意声明为可选且不限版本，只为兼容原生 Forge 版与经 Sinytra Connector
+运行的 Fabric 版（两者公开 API 一致）；实际仍是必装，缺失时加载阶段会抛出可读的中英文错误并中止，
+避免出现随机 `NoClassDefFoundError`。
 
 ---
 
