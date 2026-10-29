@@ -1,0 +1,38 @@
+# ── 构建产物与缓存 ──
+.gradle/
+.gradle_repo/
+build/
+out/
+bin/
+
+# ── 本地运行时（内嵌 JDK，300MB+）──
+runtime/
+
+# ── 建模/工具工程 ──
+# blockbench/ 已纳入版本管理（模型工程文件），不再忽略
+
+# ── IDE ──
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# ── Forge 开发运行目录 ──
+run/
+runs/
+logs/
+crash-reports/
+
+# ── 操作系统 ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── 编译输出 ──
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
