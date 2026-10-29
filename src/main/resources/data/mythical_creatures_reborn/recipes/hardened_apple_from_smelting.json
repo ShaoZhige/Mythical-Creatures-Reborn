@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "mythical_creatures_reborn:apples"
+  },
+  "result": "mythical_creatures_reborn:hardened_apple",
+  "experience": 0.3,
+  "cookingtime": 200
+}

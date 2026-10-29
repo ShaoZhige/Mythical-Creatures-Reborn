@@ -1,0 +1,15 @@
+{
+	"loader": "forge:separate_transforms",
+	"gui_light": "front",
+	"base": {
+		"parent": "mythical_creatures_reborn:item/twilicane_3d"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "item/generated",
+			"textures": {
+				"layer0": "mythical_creatures_reborn:item/twilicane_2d"
+			}
+		}
+	}
+}

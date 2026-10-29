@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "mythical_creatures_reborn:reinforced_bone"
+  },
+  "result": "mythical_creatures_reborn:scorching_bone",
+  "experience": 0.7,
+  "cookingtime": 200
+}

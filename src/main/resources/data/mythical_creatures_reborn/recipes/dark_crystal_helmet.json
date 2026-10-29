@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": { "item": "mythical_creatures_reborn:dark_crystal" }
+  },
+  "result": { "item": "mythical_creatures_reborn:dark_crystal_helmet" }
+}

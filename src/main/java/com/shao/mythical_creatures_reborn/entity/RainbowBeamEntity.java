@@ -1,0 +1,176 @@
+package com.shao.mythical_creatures_reborn.entity;
+import com.shao.mythical_creatures_reborn.config.MythicalConfig;
+
+import com.shao.mythical_creatures_reborn.item.RainbowDashSword;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.UUID;
+
+public class RainbowBeamEntity extends Projectile {
+
+    /** 配置注册名（common.toml / 编辑器里用这个键覆盖） */
+    private static final String PID = "mythical_creatures_reborn:rainbow_beam";
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|beam_length}（可在配置编辑器「投掷物」分类里改） */
+    private static float beamLength() { return (float) MythicalConfig.DATA.projectileAttr(PID, "beam_length"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|beam_size}（可在配置编辑器「投掷物」分类里改） */
+    private static float beamSize() { return (float) MythicalConfig.DATA.projectileAttr(PID, "beam_size"); }
+
+    /** 取自配置 {@code mythical_creatures_reborn:rainbow_beam|damage}（可在配置编辑器「投掷物」分类里改） */
+    private static float damage() { return (float) MythicalConfig.DATA.projectileAttr(PID, "damage"); }
+
+    
+    
+    
+    private static final int DAMAGE_INTERVAL = 4;
+
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID =
+            SynchedEntityData.defineId(RainbowBeamEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+
+    public int tickCount = 0;
+
+    public RainbowBeamEntity(EntityType<? extends RainbowBeamEntity> type, Level level) {
+        super(type, level);
+        this.noPhysics = true;
+    }
+
+    public RainbowBeamEntity(Level level, LivingEntity shooter) {
+        super(ModEntities.RAINBOW_BEAM.get(), level);
+        this.noPhysics = true;
+        this.entityData.set(OWNER_UUID, Optional.of(shooter.getUUID()));
+        syncToShooter(shooter);
+    }
+
+    private void syncToShooter(LivingEntity shooter) {
+        Vec3 look = shooter.getLookAngle();
+        this.setPos(shooter.position().add(0, 1.2, 0).add(look.scale(2.0F)));
+        this.setYRot(shooter.getYRot());
+        this.setXRot(shooter.getXRot());
+        this.xRotO = this.getXRot();
+        this.yRotO = this.getYRot();
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        this.entityData.define(OWNER_UUID, Optional.empty());
+    }
+
+    public static float getBeamLength() {
+        return beamLength();
+    }
+
+    public float getSpinAngle() {
+        return tickCount * 30.0F;
+    }
+
+    @Override
+    public void tick() {
+        tickCount++;
+
+        if (this.level().isClientSide) {
+            // 客户端直接跟随施法者视角，避免网络延迟导致的跟手迟钝。
+            // ⚠ 这里只能用通用类型 Player（经 level().getPlayerByUUID 取），
+            //   绝对不要写 Minecraft.getInstance().player —— 该字段声明类型是 LocalPlayer，
+            //   会在字节码里引入客户端专属类，专用服务器加载本类时被 Forge 的 dist 检查直接拒绝，
+            //   表现为服务端启动即崩（Attempted to load class .../LocalPlayer for invalid dist DEDICATED_SERVER）。
+            getOwnerUUID().ifPresent(uuid -> {
+                Player caster = this.level().getPlayerByUUID(uuid);
+                if (caster != null) {
+                    this.setYRot(caster.getYRot());
+                    this.setXRot(caster.getXRot());
+                    this.yRotO = this.getYRot();
+                    this.xRotO = this.getXRot();
+                }
+            });
+            // super.tick() 放在旋转更新之后，避免 Projectile 覆盖已设置的旋转
+            super.tick();
+            return;
+        }
+
+        LivingEntity owner = getOwner();
+        if (owner == null || !owner.isAlive()) {
+            this.discard();
+            return;
+        }
+
+        // 检查是否还在施法
+        if (owner instanceof Player player) {
+            if (!(player.getMainHandItem().getItem() instanceof RainbowDashSword) || !player.isUsingItem()) {
+                this.discard();
+                return;
+            }
+        } else {
+            this.discard();
+            return;
+        }
+
+        // 跟随玩家
+        syncToShooter(owner);
+
+        // 伤害
+        if (tickCount % DAMAGE_INTERVAL == 0) {
+            Vec3 origin = this.position();
+            Vec3 dir = Vec3.directionFromRotation(this.getXRot(), this.getYRot());
+            Vec3 end = origin.add(dir.scale(beamLength()));
+
+            AABB beamBox = new AABB(origin, end).inflate(beamSize());
+            for (LivingEntity target : this.level().getEntitiesOfClass(LivingEntity.class, beamBox,
+                    e -> e != owner && e.isAlive()
+                        && !(e instanceof TamableAnimal ta && ta.isOwnedBy(owner)))) {
+                if (target.getBoundingBox().clip(origin, end).isPresent()) {
+                    target.hurt(this.damageSources().magic(), damage());
+                    target.invulnerableTime = 0;
+                }
+            }
+        }
+        // Projectile.tick() 放最后，避免覆盖已设置的旋转/位置
+        super.tick();
+    }
+
+    public Optional<UUID> getOwnerUUID() {
+        return this.entityData.get(OWNER_UUID);
+    }
+
+    @Nullable
+    public LivingEntity getOwner() {
+        return getOwnerUUID()
+                .map(uuid -> this.level().getPlayerByUUID(uuid))
+                .orElse(null);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        tickCount = tag.getInt("TickCount");
+        if (tag.hasUUID("Owner")) {
+            this.entityData.set(OWNER_UUID, Optional.of(tag.getUUID("Owner")));
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        tag.putInt("TickCount", tickCount);
+        getOwnerUUID().ifPresent(uuid -> tag.putUUID("Owner", uuid));
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return new ClientboundAddEntityPacket(this);
+    }
+}

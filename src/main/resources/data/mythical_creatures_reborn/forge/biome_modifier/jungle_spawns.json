@@ -1,0 +1,16 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:bamboo_jungle"
+  ],
+  "spawners": [
+    {
+      "type": "mythical_creatures_reborn:cockatrice",
+      "weight": 10,
+      "minCount": 2,
+      "maxCount": 3
+    }
+  ]
+}
